@@ -5,24 +5,13 @@ import { Instagram, Twitter, Linkedin } from 'lucide-react';
 export default function Footer() {
   const footerLinks = {
     home: [
-      { label: 'Categories', href: '/categories' },
-      { label: 'Recently Onboarded', href: '/recently-onboarded' },
-      { label: 'Top Consultants', href: '/top-consultants' },
+      { label: 'Home', href: '/' },
+      { label: 'Blog', href: '/blog' },
     ],
     services: [
-      { label: '1:1 Online Consulting', href: '/online-consulting' },
-      { label: 'Ask A Mentor', href: '/ask-mentor' },
-      { label: 'Webinars', href: '/webinars' },
+      { label: 'All Posts', href: '/blog' },
     ],
-    aboutUs: [
-      { label: 'Terms & Conditions', href: '/terms' },
-      { label: 'Privacy Policy', href: '/privacy' },
-      { label: 'Refund Policy', href: '/refund' },
-    ],
-    contact: [
-      { label: 'Call Us', href: '/contact' },
-      { label: 'Email Us', href: '/contact' },
-      { label: 'Join as Consultant', href: '/join' },
+
     ],
   };
 
@@ -88,38 +77,6 @@ export default function Footer() {
             <h3 className="font-semibold text-base mb-4">Services</h3>
             <ul className="space-y-2">
               {footerLinks.services.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm hover:opacity-80 transition-opacity"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-base mb-4">About Us</h3>
-            <ul className="space-y-2">
-              {footerLinks.aboutUs.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm hover:opacity-80 transition-opacity"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-base mb-4">Contact</h3>
-            <ul className="space-y-2">
-              {footerLinks.contact.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
