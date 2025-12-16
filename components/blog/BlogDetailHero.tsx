@@ -45,12 +45,12 @@ export default function BlogDetailHero({ blog }: BlogDetailHeroProps) {
         <span>{blog.readTime}</span>
       </div>
 
-      <div className="rounded-lg overflow-hidden mb-8">
+      <div className="w-3/4 mx-auto rounded-lg overflow-hidden mb-8">
         <Image
           src={blog.imageUrl}
           alt={blog.title}
           width={800}
-          height={400}
+          height={200}
           className="w-full h-auto object-cover"
           priority
         />

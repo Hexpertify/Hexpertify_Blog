@@ -17,67 +17,28 @@ interface BlogAuthorCardProps {
 
 export default function BlogAuthorCard({ author, authorBio, authorAvatar, socialLinks }: BlogAuthorCardProps) {
   return (
-    <div className="bg-purple-100 rounded-2xl p-6 sticky top-20">
-      <h3 className="text-center text-lg font-bold text-gray-900 mb-4">Know your Author</h3>
+    <div className="bg-purple-50/50 rounded-lg p-6 text-center">
+      <h3 className="text-lg font-bold text-gray-900 mb-4">Know Your Author</h3>
 
-      <div className="bg-[#1a1a2e] rounded-xl p-6 mb-4 text-center">
-        {authorAvatar ? (
-          <div className="relative w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden ring-4 ring-yellow-400">
-            <Image
-              src={authorAvatar}
-              alt={author}
-              fill
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 mx-auto mb-4 flex items-center justify-center ring-4 ring-yellow-400/30">
-            <span className="text-3xl font-bold text-gray-900">{author.charAt(0)}</span>
-          </div>
-        )}
-
-        <div className="mb-2">
-          <p className="text-white font-bold text-lg">{author}</p>
-          <p className="text-gray-400 text-sm">@{author.toLowerCase().replace(/\s+/g, '')}</p>
+      {authorAvatar ? (
+        <div className="relative w-32 h-32 rounded-lg mx-auto mb-4 overflow-hidden">
+          <Image
+            src={authorAvatar}
+            alt={author}
+            fill
+            className="object-cover"
+          />
         </div>
+      ) : (
+        <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-500 mx-auto mb-4 flex items-center justify-center">
+          <span className="text-4xl font-bold text-gray-900">{author.charAt(0)}</span>
+        </div>
+      )}
 
+      <div className="mb-4">
+        <p className="text-gray-900 font-bold text-lg">{author} <CheckCircle2 className="inline text-blue-500" /></p>
         {authorBio && (
-          <p className="text-gray-300 text-sm mt-4 leading-relaxed px-2">{authorBio}</p>
-        )}
-
-        {socialLinks && (socialLinks.twitter || socialLinks.linkedin || socialLinks.github) && (
-          <div className="flex justify-center gap-4 mt-5">
-            {socialLinks.twitter && (
-              <a
-                href={socialLinks.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <Twitter size={20} />
-              </a>
-            )}
-            {socialLinks.linkedin && (
-              <a
-                href={socialLinks.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <Linkedin size={20} />
-              </a>
-            )}
-            {socialLinks.github && (
-              <a
-                href={socialLinks.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <Github size={20} />
-              </a>
-            )}
-          </div>
+          <p className="text-gray-600 text-sm mt-2">{authorBio}</p>
         )}
       </div>
 

@@ -17,6 +17,7 @@ export default function Home() {
   const [filteredPosts, setFilteredPosts] = useState<any[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [faqs, setFaqs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,6 +54,10 @@ export default function Home() {
     }
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
   const latestBlog = allPosts[0] ? {
     slug: allPosts[0].slug,
     title: allPosts[0].title,
@@ -68,14 +73,20 @@ export default function Home() {
     imageUrl: post.imageUrl,
   }));
 
-  const blogPosts = filteredPosts.map((post, index) => ({
-    id: index,
-    slug: post.slug,
-    title: post.title,
-    description: post.description,
-    date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-    imageUrl: post.imageUrl,
-  }));
+  const blogPosts = filteredPosts
+    .filter(post =>
+      searchQuery === '' ||
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.description.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .map((post, index) => ({
+      id: index,
+      slug: post.slug,
+      title: post.title,
+      description: post.description,
+      date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      imageUrl: post.imageUrl,
+    }));
 
   if (loading) {
     return (
@@ -130,7 +141,7 @@ export default function Home() {
           <div className="mb-12">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
               <h2 className="text-3xl font-bold text-gray-900">Browse by Categories</h2>
-              <BlogSearchBar />
+              <BlogSearchBar onSearch={handleSearch} />
             </div>
             <div className="w-full rounded-full border border-gray-300 bg-white px-6 py-4">
               <BlogCategoryFilter categories={categories} onCategoryChange={handleCategoryChange} />
@@ -144,9 +155,11 @@ export default function Home() {
               ))
             ) : (
               <div className="col-span-3 text-center py-12 text-gray-500">
-                {selectedCategory === 'All'
-                  ? 'No blog posts available yet.'
-                  : `No blog posts found in the "${selectedCategory}" category.`
+                {searchQuery
+                  ? `No blog posts found matching "${searchQuery}".`
+                  : selectedCategory === 'All'
+                    ? 'No blog posts available yet.'
+                    : `No blog posts found in the "${selectedCategory}" category.`
                 }
               </div>
             )}

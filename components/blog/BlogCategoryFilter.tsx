@@ -28,7 +28,7 @@ export default function BlogCategoryFilter({ categories, onCategoryChange }: Blo
           }`}
           style={
             selectedCategory === category
-              ? { backgroundColor: '#450BC8' }
+              ? { backgroundColor: '#450BC8', borderColor: '#450BC8', color: 'white' }
               : undefined
           }
           onMouseEnter={(e) => {

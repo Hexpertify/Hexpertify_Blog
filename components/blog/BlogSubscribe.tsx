@@ -13,7 +13,7 @@ export default function BlogSubscribe() {
   };
 
   return (
-    <div className="bg-purple-50 rounded-lg p-6">
+    <div className="bg-purple-50/50 rounded-lg p-6">
       <h3 className="text-lg font-bold text-gray-900 mb-2">Subscribe Now</h3>
       <p className="text-sm text-gray-600 mb-4">Stay Updated with Frequently Blogs</p>
 

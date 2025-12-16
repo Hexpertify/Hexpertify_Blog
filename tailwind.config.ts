@@ -60,6 +60,10 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        purple: {
+          50: '#D0BCFF',
+          600: '#450BC8',
+        },
       },
       keyframes: {
         'accordion-down': {

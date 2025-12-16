@@ -88,14 +88,14 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
 
           <div className="lg:col-span-3">
             {blog.tableOfContents.length > 0 && (
-              <div className="bg-purple-50 rounded-lg p-6 mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Table of Contents</h3>
+              <div className="bg-purple-50/50 rounded-lg px-9 py-6 mb-8 max-w-xl mx-auto">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Table of Contents</h3>
                 <ol className="space-y-2">
                   {blog.tableOfContents.map((item, index) => (
                     <li key={item.id} className="text-sm leading-relaxed">
                       <a
                         href={item.anchor ? `#${item.anchor}` : '#'}
-                        className="text-gray-700 hover:text-purple-600 transition-colors"
+                        className="text-gray-700 hover:text-purple-600 transition-colors font-semibold"
                       >
                         <span className="font-semibold">{index + 1}.</span> {item.title}
                       </a>
