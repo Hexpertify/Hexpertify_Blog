@@ -12,7 +12,6 @@ export default function Footer() {
       { label: 'All Posts', href: '/blog' },
     ],
   };
-  };
 
   return (
     <footer className="bg-[#9b7fd4] text-white">
