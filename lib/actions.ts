@@ -66,7 +66,7 @@ export async function deletePost(slug: string) {
 
 export async function togglePublishPost(slug: string) {
   try {
-    const post = getPostBySlug(slug);
+    const post = await getPostBySlug(slug);
     if (!post) {
       return { success: false, error: 'Post not found' };
     }
