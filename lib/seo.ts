@@ -75,7 +75,7 @@ export async function getSEOByPage(page: string): Promise<SEOMetadata | null> {
   }
 }
 
-export function saveSEO(page: string, metadata: Omit<SEOMetadata, 'page'>) {
+export async function saveSEO(page: string, metadata: Omit<SEOMetadata, 'page'>) {
   const data = {
     title: metadata.title,
     description: metadata.description,
@@ -94,12 +94,12 @@ export function saveSEO(page: string, metadata: Omit<SEOMetadata, 'page'>) {
   };
 
   const filePath = `content/seo/${page}.json`;
-  commitFile(filePath, JSON.stringify(data, null, 2), `Update SEO: ${page}`);
+  await commitFile(filePath, JSON.stringify(data, null, 2), `Update SEO: ${page}`);
 }
 
-export function deleteSEO(page: string) {
+export async function deleteSEO(page: string) {
   const filePath = `content/seo/${page}.json`;
-  deleteFile(filePath, `Delete SEO: ${page}`);
+  await deleteFile(filePath, `Delete SEO: ${page}`);
 }
 
 export function getDefaultSEO(): Omit<SEOMetadata, 'page'> {

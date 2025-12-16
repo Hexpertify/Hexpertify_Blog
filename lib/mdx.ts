@@ -117,10 +117,10 @@ export function savePost(slug: string, metadata: PostMetadata, content: string) 
   });
 
   const filePath = `content/posts/${slug}.mdx`;
-  commitFile(filePath, frontmatter, `Update post: ${slug}`);
+  await commitFile(filePath, frontmatter, `Update post: ${slug}`);
 }
 
-export function deletePost(slug: string) {
+export async function deletePost(slug: string) {
   const filePath = `content/posts/${slug}.mdx`;
-  deleteFile(filePath, `Delete post: ${slug}`);
+  await deleteFile(filePath, `Delete post: ${slug}`);
 }

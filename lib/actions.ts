@@ -25,7 +25,7 @@ export async function fetchPostBySlug(slug: string) {
 
 export async function createPost(metadata: PostMetadata, content: string) {
   try {
-    savePost(metadata.slug, metadata, content);
+    await savePost(metadata.slug, metadata, content);
     safeRevalidate('/');
     safeRevalidate('/blog/[slug]', 'page');
     safeRevalidate('/admin/dashboard');
@@ -39,7 +39,7 @@ export async function createPost(metadata: PostMetadata, content: string) {
 
 export async function updatePost(slug: string, metadata: PostMetadata, content: string) {
   try {
-    savePost(slug, metadata, content);
+    await savePost(slug, metadata, content);
     safeRevalidate('/');
     safeRevalidate(`/blog/${slug}`);
     safeRevalidate('/admin/dashboard');
@@ -53,7 +53,7 @@ export async function updatePost(slug: string, metadata: PostMetadata, content: 
 
 export async function deletePost(slug: string) {
   try {
-    deleteMdxPost(slug);
+    await deleteMdxPost(slug);
     safeRevalidate('/');
     safeRevalidate('/admin/dashboard');
     safeRevalidate('/admin/posts');
@@ -87,7 +87,7 @@ export async function togglePublishPost(slug: string) {
       tableOfContents: post.tableOfContents,
     };
 
-    savePost(slug, metadata, post.content);
+    await savePost(slug, metadata, post.content);
     safeRevalidate('/');
     safeRevalidate(`/blog/${slug}`);
     safeRevalidate('/admin/dashboard');
@@ -105,7 +105,7 @@ export async function fetchAllCategories() {
 
 export async function createCategory(categoryName: string) {
   try {
-    const result = addCategoryToFile(categoryName);
+    const result = await addCategoryToFile(categoryName);
     if (result.success) {
       safeRevalidate('/');
       safeRevalidate('/admin/dashboard');
@@ -121,7 +121,7 @@ export async function createCategory(categoryName: string) {
 
 export async function removeCategoryAction(categoryName: string) {
   try {
-    const result = deleteCategoryFromFile(categoryName);
+    const result = await deleteCategoryFromFile(categoryName);
     if (result.success) {
       safeRevalidate('/');
       safeRevalidate('/admin/dashboard');
@@ -149,7 +149,7 @@ export async function fetchFAQsByPage(pageName: string) {
 
 export async function createFAQ(id: string, metadata: Omit<FAQMetadata, 'id'>) {
   try {
-    saveFAQ(id, metadata);
+    await saveFAQ(id, metadata);
     safeRevalidate('/');
     safeRevalidate('/blog/[slug]', 'page');
     safeRevalidate('/admin/faqs');
@@ -162,7 +162,7 @@ export async function createFAQ(id: string, metadata: Omit<FAQMetadata, 'id'>) {
 
 export async function updateFAQ(id: string, metadata: Omit<FAQMetadata, 'id'>) {
   try {
-    saveFAQ(id, metadata);
+    await saveFAQ(id, metadata);
     safeRevalidate('/');
     safeRevalidate('/blog/[slug]', 'page');
     safeRevalidate('/admin/faqs');
@@ -175,7 +175,7 @@ export async function updateFAQ(id: string, metadata: Omit<FAQMetadata, 'id'>) {
 
 export async function deleteFAQ(id: string) {
   try {
-    deleteFAQFile(id);
+    await deleteFAQFile(id);
     safeRevalidate('/');
     safeRevalidate('/blog/[slug]', 'page');
     safeRevalidate('/admin/faqs');
@@ -203,7 +203,7 @@ export async function togglePublishFAQ(id: string) {
       relatedTo: faq.relatedTo,
     };
 
-    saveFAQ(id, metadata);
+    await saveFAQ(id, metadata);
     safeRevalidate('/');
     safeRevalidate('/blog/[slug]', 'page');
     safeRevalidate('/admin/faqs');
@@ -228,7 +228,7 @@ export async function fetchDefaultSEO() {
 
 export async function createSEO(page: string, metadata: Omit<SEOMetadata, 'page'>) {
   try {
-    saveSEO(page, metadata);
+    await saveSEO(page, metadata);
     safeRevalidate('/');
     safeRevalidate(`/${page}`);
     safeRevalidate('/admin/seo');
@@ -254,7 +254,7 @@ export async function updateSEO(page: string, metadata: Omit<SEOMetadata, 'page'
 
 export async function deleteSEO(page: string) {
   try {
-    deleteSEOFile(page);
+    await deleteSEOFile(page);
     safeRevalidate('/');
     safeRevalidate('/admin/seo');
     await triggerRebuild();

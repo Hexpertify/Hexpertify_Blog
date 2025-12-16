@@ -88,7 +88,7 @@ export async function getFAQById(id: string): Promise<FAQ | null> {
   }
 }
 
-export function saveFAQ(id: string, metadata: Omit<FAQMetadata, 'id'>) {
+export async function saveFAQ(id: string, metadata: Omit<FAQMetadata, 'id'>) {
   const frontmatter = matter.stringify('', {
     question: metadata.question,
     answer: metadata.answer,
@@ -100,12 +100,12 @@ export function saveFAQ(id: string, metadata: Omit<FAQMetadata, 'id'>) {
   });
 
   const filePath = `content/faqs/${id}.mdx`;
-  commitFile(filePath, frontmatter, `Update FAQ: ${id}`);
+  await commitFile(filePath, frontmatter, `Update FAQ: ${id}`);
 }
 
-export function deleteFAQ(id: string) {
+export async function deleteFAQ(id: string) {
   const filePath = `content/faqs/${id}.mdx`;
-  deleteFile(filePath, `Delete FAQ: ${id}`);
+  await deleteFile(filePath, `Delete FAQ: ${id}`);
 }
 
 export function getFAQsByCategory(category: string): FAQ[] {
