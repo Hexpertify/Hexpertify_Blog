@@ -33,14 +33,6 @@ function AllPostsPage() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  useEffect(() => {
-    filterPosts();
-  }, [filterPosts]);
-
   const loadData = useCallback(async () => {
     try {
       const [postsData, catsData] = await Promise.all([
@@ -78,6 +70,14 @@ function AllPostsPage() {
 
     setFilteredPosts(filtered);
   }, [posts, searchQuery, categoryFilter, statusFilter]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    filterPosts();
+  }, [filterPosts]);
 
   const handleDelete = async (slug: string) => {
     if (!confirm('Are you sure you want to delete this post?')) return;
