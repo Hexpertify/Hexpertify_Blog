@@ -99,7 +99,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   }
 }
 
-export function savePost(slug: string, metadata: PostMetadata, content: string) {
+export async function savePost(slug: string, metadata: PostMetadata, content: string) {
   const frontmatter = matter.stringify(content, {
     title: metadata.title,
     slug: metadata.slug,
