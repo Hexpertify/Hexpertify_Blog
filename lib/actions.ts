@@ -188,7 +188,7 @@ export async function deleteFAQ(id: string) {
 
 export async function togglePublishFAQ(id: string) {
   try {
-    const faq = getFAQById(id);
+    const faq = await getFAQById(id);
     if (!faq) {
       return { success: false, error: 'FAQ not found' };
     }
