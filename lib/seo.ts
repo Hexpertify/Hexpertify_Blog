@@ -29,31 +29,36 @@ export function ensureSEODirectory() {
 }
 
 export function getAllSEOPages(): SEOMetadata[] {
-  ensureSEODirectory();
+  try {
+    ensureSEODirectory();
 
-  const fileNames = fs.readdirSync(seoDirectory);
-  const allSEO = fileNames
-    .filter((fileName) => fileName.endsWith('.json'))
-    .map((fileName) => {
-      const page = fileName.replace(/\.json$/, '');
-      const fullPath = path.join(seoDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, 'utf8');
-      const data = JSON.parse(fileContents);
+    const fileNames = fs.readdirSync(seoDirectory);
+    const allSEO = fileNames
+      .filter((fileName) => fileName.endsWith('.json'))
+      .map((fileName) => {
+        const page = fileName.replace(/\.json$/, '');
+        const fullPath = path.join(seoDirectory, fileName);
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const data = JSON.parse(fileContents);
 
-      return {
-        page,
-        ...data,
-      } as SEOMetadata;
-    })
-    .sort((a, b) => a.page.localeCompare(b.page));
+        return {
+          page,
+          ...data,
+        } as SEOMetadata;
+      })
+      .sort((a, b) => a.page.localeCompare(b.page));
 
-  return allSEO;
+    return allSEO;
+  } catch (error) {
+    console.error('Error reading SEO pages:', error);
+    return [];
+  }
 }
 
 export function getSEOByPage(page: string): SEOMetadata | null {
-  ensureSEODirectory();
-
   try {
+    ensureSEODirectory();
+
     const fullPath = path.join(seoDirectory, `${page}.json`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const data = JSON.parse(fileContents);

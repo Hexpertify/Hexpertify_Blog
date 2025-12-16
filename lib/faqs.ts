@@ -25,31 +25,36 @@ export function ensureFAQsDirectory() {
 }
 
 export function getAllFAQs(): FAQ[] {
-  ensureFAQsDirectory();
+  try {
+    ensureFAQsDirectory();
 
-  const fileNames = fs.readdirSync(faqsDirectory);
-  const allFAQs = fileNames
-    .filter((fileName) => fileName.endsWith('.mdx'))
-    .map((fileName) => {
-      const id = fileName.replace(/\.mdx$/, '');
-      const fullPath = path.join(faqsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, 'utf8');
-      const { data } = matter(fileContents);
+    const fileNames = fs.readdirSync(faqsDirectory);
+    const allFAQs = fileNames
+      .filter((fileName) => fileName.endsWith('.mdx'))
+      .map((fileName) => {
+        const id = fileName.replace(/\.mdx$/, '');
+        const fullPath = path.join(faqsDirectory, fileName);
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const { data } = matter(fileContents);
 
-      return {
-        id,
-        question: data.question || '',
-        answer: data.answer || '',
-        category: data.category || 'General',
-        published: data.published || false,
-        order: data.order || 0,
-        createdAt: data.createdAt || new Date().toISOString(),
-        relatedTo: data.relatedTo || 'homepage',
-      };
-    })
-    .sort((a, b) => a.order - b.order);
+        return {
+          id,
+          question: data.question || '',
+          answer: data.answer || '',
+          category: data.category || 'General',
+          published: data.published || false,
+          order: data.order || 0,
+          createdAt: data.createdAt || new Date().toISOString(),
+          relatedTo: data.relatedTo || 'homepage',
+        };
+      })
+      .sort((a, b) => a.order - b.order);
 
-  return allFAQs;
+    return allFAQs;
+  } catch (error) {
+    console.error('Error reading FAQs:', error);
+    return [];
+  }
 }
 
 export function getPublishedFAQs(): FAQ[] {
@@ -58,9 +63,9 @@ export function getPublishedFAQs(): FAQ[] {
 }
 
 export function getFAQById(id: string): FAQ | null {
-  ensureFAQsDirectory();
-
   try {
+    ensureFAQsDirectory();
+
     const fullPath = path.join(faqsDirectory, `${id}.mdx`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data } = matter(fileContents);

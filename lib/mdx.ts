@@ -40,32 +40,37 @@ export function ensurePostsDirectory() {
 }
 
 export function getAllPosts(): Post[] {
-  ensurePostsDirectory();
+  try {
+    ensurePostsDirectory();
 
-  const fileNames = fs.readdirSync(postsDirectory);
-  const allPostsData = fileNames
-    .filter((fileName) => fileName.endsWith('.mdx'))
-    .map((fileName) => {
-      const fileSlug = fileName.replace(/\.mdx$/, '');
-      const fullPath = path.join(postsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, 'utf8');
-      const { data, content } = matter(fileContents);
+    const fileNames = fs.readdirSync(postsDirectory);
+    const allPostsData = fileNames
+      .filter((fileName) => fileName.endsWith('.mdx'))
+      .map((fileName) => {
+        const fileSlug = fileName.replace(/\.mdx$/, '');
+        const fullPath = path.join(postsDirectory, fileName);
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const { data, content } = matter(fileContents);
 
-      return {
-        ...( data as PostMetadata),
-        slug: fileSlug,
-        content,
-      };
-    })
-    .sort((a, b) => {
-      if (new Date(a.date) < new Date(b.date)) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
+        return {
+          ...( data as PostMetadata),
+          slug: fileSlug,
+          content,
+        };
+      })
+      .sort((a, b) => {
+        if (new Date(a.date) < new Date(b.date)) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
 
-  return allPostsData;
+    return allPostsData;
+  } catch (error) {
+    console.error('Error reading posts:', error);
+    return [];
+  }
 }
 
 export function getPublishedPosts(): Post[] {
@@ -74,9 +79,9 @@ export function getPublishedPosts(): Post[] {
 }
 
 export function getPostBySlug(slug: string): Post | null {
-  ensurePostsDirectory();
-
   try {
+    ensurePostsDirectory();
+
     const fullPath = path.join(postsDirectory, `${slug}.mdx`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
