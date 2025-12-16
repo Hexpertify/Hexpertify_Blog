@@ -1,0 +1,78 @@
+---
+title: Understanding 404 Errors
+slug: understanding-404-errors
+description: Learn what 404 errors are, how to identify them, and how to fix them in your web applications.
+author: Hexpertify Team
+authorBio: Experts in web development and troubleshooting.
+authorAvatar: https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg
+authorSocialLinks:
+  twitter: https://twitter.com/hexpertify
+  linkedin: https://linkedin.com/company/hexpertify
+  github: https://github.com/hexpertify
+category: Web Development
+imageUrl: https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg
+readTime: 5 Minutes read
+published: true
+date: '2024-12-16'
+tableOfContents:
+  - id: 1
+    title: Understanding the Problem
+    anchor: understanding-the-problem
+  - id: 2
+    title: How to Verify
+    anchor: how-to-verify
+  - id: 3
+    title: Suggested Fix
+    anchor: suggested-fix
+  - id: 4
+    title: Summary
+    anchor: summary
+---
+
+# Understanding 404 Errors
+
+## Understanding the Problem
+
+The console message "Failed to load resource: the server responded with a status of 404 ()" indicates that your browser attempted to fetch a resource (like an image, script, stylesheet, or API endpoint) from a web server, but the server reported that it could not find the resource at the specified URL. The 404 status code is a standard HTTP response code meaning "Not Found". This typically happens when the URL is incorrect, the file has been moved or deleted, or there's a typo in the resource path within your code.
+
+## How to Verify
+
+### Identify the Resource
+In your DevTools console, click on the link next to the 404 error message. This link usually points to the specific URL that failed to load.
+
+### Check the URL
+Copy the URL that failed and paste it directly into your browser's address bar. If you get a "404 Not Found" page, it confirms the server cannot find the resource at that address.
+
+### Inspect Network Requests
+In the DevTools "Network" tab, filter by "XHR", "JS", "CSS", or "Img" to see if the failed request appears with a 404 status. Examining the "Initiator" column can often show which part of your code tried to load the missing resource.
+
+## Suggested Fix
+
+The primary fix is to ensure that the URL pointing to the resource is correct and that the resource actually exists at that location on the server.
+
+### Correct the URL
+- **Absolute Paths**: If you're using an absolute path (e.g., /images/logo.png), ensure it starts from the correct root directory of your web server.
+- **Relative Paths**: If you're using a relative path (e.g., ../styles/main.css), double-check that the path correctly navigates from the current HTML file's location to the resource.
+- **Typos**: Carefully look for any spelling mistakes, incorrect capitalization (especially on case-sensitive servers), or extra/missing characters in the path or filename.
+
+Example of a common fix: If your console shows an error for /img/logo.png but the image is actually located at /assets/images/logo.png, you would update your HTML or CSS accordingly:
+
+```html
+<!-- Before (causing 404) -->
+<img src="/img/logo.png" alt="Logo">
+
+<!-- After (fixed) -->
+<img src="/assets/images/logo.png" alt="Logo">
+```
+
+**Use code snippets with caution**
+
+### Verify File Existence
+Confirm that the file exists on your web server at the expected path. This might involve checking your project's file structure or the deployment artifacts.
+
+### Server-side Routing
+If the 404 is for an API endpoint or a dynamic route, ensure your server-side routing configuration correctly handles the requested path.
+
+## Summary
+
+A 404 error means the server couldn't find the requested resource. To fix it, verify the exact URL that failed, check for typos in the path, and confirm the resource exists at the specified server location.
