@@ -14,15 +14,22 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { categoryName } = await request.json();
+    console.log('POST /api/categories called');
+    const body = await request.json();
+    console.log('Request body:', body);
+    const { categoryName } = body;
     
     if (!categoryName?.trim()) {
+      console.log('Category name is missing or empty');
       return NextResponse.json({ success: false, error: 'Category name is required' }, { status: 400 });
     }
 
+    console.log('Adding category:', categoryName.trim());
     const result = await addCategory(categoryName.trim());
+    console.log('Add category result:', result);
     
     if (result.success) {
+      console.log('Revalidating paths and triggering rebuild');
       revalidatePath('/');
       revalidatePath('/admin/dashboard');
       revalidatePath('/admin/posts');
@@ -32,21 +39,29 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
+    console.error('POST /api/categories error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { categoryName } = await request.json();
+    console.log('DELETE /api/categories called');
+    const body = await request.json();
+    console.log('Request body:', body);
+    const { categoryName } = body;
     
     if (!categoryName) {
+      console.log('Category name is missing');
       return NextResponse.json({ success: false, error: 'Category name is required' }, { status: 400 });
     }
 
+    console.log('Deleting category:', categoryName);
     const result = await deleteCategory(categoryName);
+    console.log('Delete category result:', result);
     
     if (result.success) {
+      console.log('Revalidating paths and triggering rebuild');
       revalidatePath('/');
       revalidatePath('/admin/dashboard');
       revalidatePath('/admin/posts');
@@ -56,6 +71,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
+    console.error('DELETE /api/categories error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
