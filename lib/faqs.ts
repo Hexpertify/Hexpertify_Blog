@@ -108,16 +108,16 @@ export async function deleteFAQ(id: string) {
   await deleteFile(filePath, `Delete FAQ: ${id}`);
 }
 
-export function getFAQsByCategory(category: string): FAQ[] {
-  const allFAQs = getPublishedFAQs();
+export async function getFAQsByCategory(category: string): Promise<FAQ[]> {
+  const allFAQs = await getPublishedFAQs();
   if (category === 'All') {
     return allFAQs;
   }
   return allFAQs.filter((faq) => faq.category === category);
 }
 
-export function getAllFAQCategories(): string[] {
-  const allFAQs = getAllFAQs();
+export async function getAllFAQCategories(): Promise<string[]> {
+  const allFAQs = await getAllFAQs();
   const categories = new Set<string>();
   allFAQs.forEach((faq) => categories.add(faq.category));
   return ['All', ...Array.from(categories).sort()];
