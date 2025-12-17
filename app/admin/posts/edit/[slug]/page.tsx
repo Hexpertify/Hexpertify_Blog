@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,7 +23,8 @@ interface TOCItem {
   anchor: string;
 }
 
-export default function EditPostPage({ params }: { params: { slug: string } }) {
+export default function EditPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = use(params);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(false);
@@ -52,12 +53,12 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
 
   useEffect(() => {
     loadData();
-  }, [params.slug]);
+  }, [resolvedParams.slug]);
 
   const loadData = async () => {
     try {
       const [post, cats] = await Promise.all([
-        fetchPostBySlug(params.slug),
+        fetchPostBySlug(resolvedParams.slug),
         fetchAllCategories()
       ]);
 

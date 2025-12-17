@@ -37,8 +37,9 @@ async function getBlogData(slug: string) {
   };
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const blog = await getBlogData(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const blog = await getBlogData(slug);
 
   if (!blog) {
     return {
@@ -48,15 +49,16 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   return await SEOHead({
-    page: `blog-${params.slug}`,
+    page: `blog-${slug}`,
     fallbackTitle: `${blog.title} | Hexpertify Blog`,
     fallbackDescription: blog.description,
   });
 }
 
-export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
-  const blog = await getBlogData(params.slug);
-  const faqs = await getFAQsByPage(params.slug);
+export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const blog = await getBlogData(slug);
+  const faqs = await getFAQsByPage(slug);
 
   if (!blog) {
     return (

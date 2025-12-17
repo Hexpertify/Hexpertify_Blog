@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 
-export default function EditFAQPage({ params }: { params: { id: string } }) {
+export default function EditFAQPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ export default function EditFAQPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     loadFAQ();
     loadBlogSlugs();
-  }, [params.id]);
+  }, [resolvedParams.id]);
 
   const loadBlogSlugs = async () => {
     try {
@@ -47,7 +48,7 @@ export default function EditFAQPage({ params }: { params: { id: string } }) {
 
   const loadFAQ = async () => {
     try {
-      const faq = await fetchFAQById(params.id);
+      const faq = await fetchFAQById(resolvedParams.id);
 
       if (!faq) throw new Error('FAQ not found');
 
@@ -82,7 +83,7 @@ export default function EditFAQPage({ params }: { params: { id: string } }) {
           relatedTo: formData.relatedTo,
         };
 
-        const result = await updateFAQ(params.id, metadata);
+        const result = await updateFAQ(resolvedParams.id, metadata);
 
         if (!result.success) {
           throw new Error(result.error || 'Failed to update FAQ');

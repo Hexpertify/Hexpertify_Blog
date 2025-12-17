@@ -72,6 +72,7 @@ export default function Home() {
     title: post.title,
     date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
     imageUrl: post.imageUrl,
+    slug: post.slug,
   }));
 
   const blogPosts = filteredPosts
