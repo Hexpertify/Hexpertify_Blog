@@ -29,20 +29,20 @@ export default function Footer() {
   return (
     <footer className="text-gray-900">
       <div className="bg-[#d0bcff]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-10 items-start">
-            <div className="md:col-span-1">
-              <div className="mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-10 items-start">
+            <div className="md:col-span-1 order-last md:order-first">
+              <div className="mb-4 flex items-start md:items-center">
                 <Image
                   src="/n.png"
                   alt="Hexpertify Logo"
-                  width={180}
-                  height={72}
+                  width={160}
+                  height={64}
                   className="h-auto"
                 />
               </div>
 
-              <div className="flex items-center gap-4 text-gray-900">
+              <div className="flex items-center gap-4 text-gray-900 mt-2">
                 <Link
                   href="https://instagram.com"
                   target="_blank"
@@ -50,7 +50,7 @@ export default function Footer() {
                   className="hover:opacity-80 transition-opacity"
                   aria-label="Instagram"
                 >
-                  <Instagram size={18} />
+                  <Instagram size={20} />
                 </Link>
                 <Link
                   href="https://twitter.com"
@@ -59,7 +59,7 @@ export default function Footer() {
                   className="hover:opacity-80 transition-opacity"
                   aria-label="X"
                 >
-                  <Twitter size={18} />
+                  <Twitter size={20} />
                 </Link>
                 <Link
                   href="https://linkedin.com"
@@ -68,7 +68,7 @@ export default function Footer() {
                   className="hover:opacity-80 transition-opacity"
                   aria-label="LinkedIn"
                 >
-                  <Linkedin size={18} />
+                  <Linkedin size={20} />
                 </Link>
               </div>
             </div>
@@ -141,8 +141,13 @@ export default function Footer() {
       </div>
 
       <div className="bg-[#450BC8]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 text-center">
-          <p className="text-sm text-white">© {new Date().getFullYear()} Hexpertify. All rights reserved.</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Image src="/n.png" alt="Hexpertify Logo" width={140} height={56} />
+            </div>
+            <p className="text-sm text-white text-center sm:text-right">© {new Date().getFullYear()} Hexpertify. All rights reserved.</p>
+          </div>
         </div>
       </div>
     </footer>
