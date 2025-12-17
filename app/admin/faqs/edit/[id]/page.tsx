@@ -16,8 +16,8 @@ import { fetchFAQById, updateFAQ, fetchAllPosts } from '@/lib/actions';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function EditFAQPage({ params }: any) {
-  const resolvedParams = use(params);
+export default function EditFAQPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params) as { id: string };
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(false);

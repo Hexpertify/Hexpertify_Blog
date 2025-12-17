@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,8 @@ import { fetchSEOByPage, updateSEO, fetchDefaultSEO } from '@/lib/actions';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function EditSEOPage({ params }: { params: { page: string } }) {
+export default function EditSEOPage({ params }: { params: Promise<{ page: string }> }) {
+  const resolvedParams = use(params) as { page: string };
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -37,16 +38,16 @@ export default function EditSEOPage({ params }: { params: { page: string } }) {
 
   useEffect(() => {
     loadSEO();
-  }, [params.page]);
+  }, [resolvedParams.page]);
 
   const loadSEO = async () => {
     try {
-      let seo = await fetchSEOByPage(params.page);
+      let seo = await fetchSEOByPage(resolvedParams.page);
 
       if (!seo) {
         const defaultSEO = await fetchDefaultSEO();
         seo = {
-          page: params.page,
+          page: resolvedParams.page,
           ...defaultSEO,
         };
       }
@@ -96,7 +97,7 @@ export default function EditSEOPage({ params }: { params: { page: string } }) {
         updatedAt: new Date().toISOString(),
       };
 
-      const result = await updateSEO(params.page, metadata);
+      const result = await updateSEO(resolvedParams.page, metadata);
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to update SEO');
@@ -138,7 +139,7 @@ export default function EditSEOPage({ params }: { params: { page: string } }) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Edit SEO: {params.page}</CardTitle>
+              <CardTitle>Edit SEO: {resolvedParams.page}</CardTitle>
               <CardDescription>Update SEO metadata for this page</CardDescription>
             </CardHeader>
             <CardContent>
