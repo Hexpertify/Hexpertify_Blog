@@ -55,11 +55,6 @@ npm run dev
 
 Visit `http://localhost:3000` to see the blog.
 
-### Admin Access
-
-- **URL**: `http://localhost:3000/admin/login`
-- **Email**: `admin@hexpertify.com`
-- **Password**: `blog@hexpertify.build`
 
 ## Project Structure
 
