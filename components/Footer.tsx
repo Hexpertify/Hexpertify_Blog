@@ -5,24 +5,28 @@ import { Instagram, Twitter, Linkedin } from 'lucide-react';
 export default function Footer() {
   const footerLinks = {
     home: [
-      { label: 'Categories', href: '/blog' },
-      { label: 'Recently Onboarded', href: '/services' },
-      { label: 'Top Consultants', href: '/services' },
+      { label: 'Home', href: 'https://hexpertify.vercel.app/' },
+      { label: 'Categories', href: 'https://hexpertify.vercel.app/#categories' },
+      { label: 'Recently Onboarded', href: 'https://hexpertify.vercel.app/#recently-onboarded' },
+      { label: 'Top Consultants', href: 'https://hexpertify.vercel.app/#top-consultants' },
     ],
     services: [
-      { label: '1:1 Online Consulting', href: '/services' },
-      { label: 'Hire A Mentor', href: '/services' },
-      { label: 'Webinars', href: '/services' },
+      { label: 'Services', href: 'https://hexpertify.vercel.app/#categories' },
+      { label: '1:1 Online Consultation', href: 'https://hexpertify.vercel.app/#categories' },
+      { label: 'Hire A Mentor', href: 'https://hexpertify.vercel.app/hire-a-mentor' },
+      { label: 'Webinars', href: 'https://hexpertify.vercel.app/services/webinar' },
     ],
     about: [
-      { label: 'Terms & Conditions', href: '/terms' },
-      { label: 'Privacy Policy', href: '/privacy' },
-      { label: 'Refund Policy', href: '/refund-policy' },
+      { label: 'About Us', href: 'https://hexpertify.vercel.app/about-us' },
+      { label: 'Terms & Conditions', href: 'https://hexpertify.vercel.app/terms-conditions' },
+      { label: 'Privacy Policy', href: 'https://hexpertify.vercel.app/privacy-policy' },
+      { label: 'Refund Policy', href: 'https://hexpertify.vercel.app/refund-policy' },
     ],
     contact: [
-      { label: 'Call Us', href: '/contact' },
-      { label: 'Email Us', href: '/contact' },
-      { label: 'Join as Consultant', href: '/join-as-consultant' },
+      { label: 'Contact Us', href: 'https://hexpertify.vercel.app/contact-us' },
+      { label: 'Call Us', href: 'tel:8940506900' },
+      { label: 'Email Us', href: 'mailto:hexpertifyapp@gmail.com' },
+      { label: 'Join as Consultant', href: 'mailto:hexpertifyapp@gmail.com' },
     ],
   };
 
