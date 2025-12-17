@@ -5,6 +5,7 @@ import { getAllCategories, addCategory as addCategoryToFile, deleteCategory as d
 import { getAllFAQs, getFAQById, getFAQsByPage, saveFAQ, deleteFAQ as deleteFAQFile, FAQMetadata } from './faqs';
 import { getAllSEOPages, getSEOByPage, saveSEO, deleteSEO as deleteSEOFile, SEOMetadata, getDefaultSEO } from './seo';
 import { triggerRebuild } from './github';
+import { enqueueNotification } from './notifications';
 import { revalidatePath } from 'next/cache';
 
 function safeRevalidate(path: string, type?: string) {
@@ -31,6 +32,14 @@ export async function createPost(metadata: PostMetadata, content: string) {
     safeRevalidate('/admin/dashboard');
     safeRevalidate('/admin/posts');
     await triggerRebuild();
+    // if post is published at creation, enqueue notification job
+    if (metadata.published) {
+      try {
+        await enqueueNotification({ post_slug: metadata.slug, title: metadata.title, description: metadata.description });
+      } catch (e) {
+        // ignore enqueue errors
+      }
+    }
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -45,6 +54,12 @@ export async function updatePost(slug: string, metadata: PostMetadata, content: 
     safeRevalidate('/admin/dashboard');
     safeRevalidate('/admin/posts');
     await triggerRebuild();
+    // if post is published after update, enqueue notification job
+    if (metadata.published) {
+      try {
+        await enqueueNotification({ post_slug: slug, title: metadata.title, description: metadata.description });
+      } catch (e) {}
+    }
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -94,6 +109,12 @@ export async function togglePublishPost(slug: string) {
     safeRevalidate('/admin/dashboard');
     safeRevalidate('/admin/posts');
     await triggerRebuild();
+    // enqueue notification if post is now published
+    if (metadata.published) {
+      try {
+        await enqueueNotification({ post_slug: slug, title: metadata.title, description: metadata.description });
+      } catch (e) {}
+    }
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
