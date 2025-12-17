@@ -5,16 +5,18 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-<parameter name="oldString">'use client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import AdminNav from '@/components/admin/AdminNav';
+import ProtectedRoute from '@/components/admin/ProtectedRoute';
+import { fetchFAQById, updateFAQ, fetchAllPosts } from '@/lib/actions';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-
-
-export default function EditFAQPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditFAQPage({ params }: any) {
   const resolvedParams = use(params);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -32,23 +34,17 @@ export default function EditFAQPage({ params }: { params: Promise<{ id: string }
   });
 
   useEffect(() => {
-    loadFAQ();
-    loadBlogSlugs();
+    loadData();
   }, [resolvedParams.id]);
 
-  const loadBlogSlugs = async () => {
+  const loadData = async () => {
     try {
-      const posts = await fetchAllPosts();
-      const slugs = posts.map(post => post.slug);
-      setBlogSlugs(slugs);
-    } catch (error) {
-      console.error('Error loading blog slugs:', error);
-    }
-  };
+      const [faq, posts] = await Promise.all([
+        fetchFAQById(resolvedParams.id),
+        fetchAllPosts()
+      ]);
 
-  const loadFAQ = async () => {
-    try {
-      const faq = await fetchFAQById(resolvedParams.id);
+      setBlogSlugs(posts.map(post => post.slug));
 
       if (!faq) throw new Error('FAQ not found');
 
@@ -221,7 +217,7 @@ export default function EditFAQPage({ params }: { params: Promise<{ id: string }
                     onCheckedChange={(checked) => setFormData({ ...formData, published: checked })}
                   />
                   <Label htmlFor="published" className="cursor-pointer">
-                    Published
+                    Publish immediately
                   </Label>
                 </div>
 

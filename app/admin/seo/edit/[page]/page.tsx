@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,8 +14,7 @@ import { fetchSEOByPage, updateSEO, fetchDefaultSEO } from '@/lib/actions';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function EditSEOPage({ params }: { params: Promise<{ page: string }> }) {
-  const resolvedParams = use(params);
+export default function EditSEOPage({ params }: { params: { page: string } }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -38,16 +37,16 @@ export default function EditSEOPage({ params }: { params: Promise<{ page: string
 
   useEffect(() => {
     loadSEO();
-  }, [resolvedParams.page]);
+  }, [params.page]);
 
   const loadSEO = async () => {
     try {
-      let seo = await fetchSEOByPage(resolvedParams.page);
+      let seo = await fetchSEOByPage(params.page);
 
       if (!seo) {
         const defaultSEO = await fetchDefaultSEO();
         seo = {
-          page: resolvedParams.page,
+          page: params.page,
           ...defaultSEO,
         };
       }
@@ -97,7 +96,7 @@ export default function EditSEOPage({ params }: { params: Promise<{ page: string
         updatedAt: new Date().toISOString(),
       };
 
-      const result = await updateSEO(resolvedParams.page, metadata);
+      const result = await updateSEO(params.page, metadata);
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to update SEO');
@@ -139,7 +138,7 @@ export default function EditSEOPage({ params }: { params: Promise<{ page: string
 
           <Card>
             <CardHeader>
-              <CardTitle>Edit SEO: {resolvedParams.page}</CardTitle>
+              <CardTitle>Edit SEO: {params.page}</CardTitle>
               <CardDescription>Update SEO metadata for this page</CardDescription>
             </CardHeader>
             <CardContent>
