@@ -25,7 +25,7 @@ export default function FAQSection({ faqs, title = 'FAQs', className = '' }: FAQ
   }
 
   return (
-    <div className={`bg-purple-50 rounded-lg p-8 ${className}`}>
+    <div className={`bg-purple-50/50 rounded-lg p-8 ${className}`}>
       <h2 className="text-3xl font-bold text-gray-900 mb-8">{title}</h2>
 
       <Accordion type="single" collapsible className="w-full">
