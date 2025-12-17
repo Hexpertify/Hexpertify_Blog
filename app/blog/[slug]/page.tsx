@@ -72,24 +72,26 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <BlogDetailHero blog={blog} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 py-12">
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 py-8 sm:py-12">
+          <div className="order-2 lg:order-1 space-y-4 sm:space-y-6 max-w-sm mx-auto lg:max-w-none lg:mx-0">
             <BlogAuthorCard
               author={blog.author}
               authorBio={blog.authorBio}
               authorAvatar={blog.authorAvatar}
               socialLinks={blog.authorSocialLinks}
             />
-            <BlogSubscribe />
+            <div className="hidden lg:block">
+              <BlogSubscribe />
+            </div>
           </div>
 
-          <div className="lg:col-span-3">
+          <div className="order-1 lg:order-2 lg:col-span-3">
             {blog.tableOfContents.length > 0 && (
-              <div className="bg-purple-50/50 rounded-lg px-9 py-6 mb-8 max-w-xl mx-auto">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Table of Contents</h3>
+              <div className="bg-purple-50/50 rounded-lg px-4 sm:px-9 py-4 sm:py-6 mb-6 sm:mb-8 max-w-xl mx-auto">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 text-center">Table of Contents</h3>
                 <ol className="space-y-2">
                   {blog.tableOfContents.map((item, index) => (
                     <li key={item.id} className="text-sm leading-relaxed">
@@ -105,21 +107,25 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
               </div>
             )}
 
+            <div className="lg:hidden mb-6 sm:mb-8 max-w-sm mx-auto">
+              <BlogSubscribe />
+            </div>
+
             <div className="prose max-w-none">
               <div
-                className="text-gray-700 leading-relaxed"
+                className="text-gray-700 leading-relaxed text-justify"
                 dangerouslySetInnerHTML={{
                   __html: blog.content
-                    .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">$1</h2>')
-                    .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-gray-900 mt-6 mb-3">$1</h3>')
+                    .replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">$1</h2>')
+                    .replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-bold text-gray-900 mt-6 mb-3">$1</h3>')
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em>$1</em>')
                     .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="rounded-lg my-6 w-full" />')
                     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-purple-600 hover:underline">$1</a>')
                     .replace(/`(.*?)`/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm">$1</code>')
                     .replace(/^- (.*$)/gim, '<li class="ml-6">$1</li>')
-                    .replace(/\n\n/g, '</p><p class="mb-4">')
-                    .replace(/^(.)/g, '<p class="mb-4">$1')
+                    .replace(/\n\n/g, '</p><p class="mb-4 text-justify">')
+                    .replace(/^(.)/g, '<p class="mb-4 text-justify">$1')
                     .replace(/(.)\n/g, '$1</p>')
                 }}
               />

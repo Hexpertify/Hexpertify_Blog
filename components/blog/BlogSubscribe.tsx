@@ -13,11 +13,11 @@ export default function BlogSubscribe() {
   };
 
   return (
-    <div className="bg-purple-50/50 rounded-lg p-6">
-      <h3 className="text-lg font-bold text-gray-900 mb-2">Subscribe Now</h3>
-      <p className="text-sm text-gray-600 mb-4">Stay Updated with Frequently Blogs</p>
+    <div className="bg-purple-50/50 rounded-lg p-3 sm:p-4">
+      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5">Subscribe Now</h3>
+      <p className="text-xs text-gray-600 mb-2.5">Stay Updated with Frequently Blogs</p>
 
-      <form onSubmit={handleSubscribe} className="space-y-3">
+      <form onSubmit={handleSubscribe} className="space-y-2">
         <Input
           type="email"
           placeholder="Enter Your Email Id"
@@ -28,7 +28,7 @@ export default function BlogSubscribe() {
         />
         <Button
           type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-full"
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-full py-2"
         >
           Subscribe Now
         </Button>
