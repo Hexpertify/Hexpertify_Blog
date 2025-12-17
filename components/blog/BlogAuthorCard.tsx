@@ -18,6 +18,7 @@ interface BlogAuthorCardProps {
 export default function BlogAuthorCard({ author, authorBio, authorAvatar, socialLinks }: BlogAuthorCardProps) {
   return (
     <div className="rounded-lg bg-[#d0bcff] p-3 sm:p-4">
+      <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 text-center">Know your Author</h3>
       <div className="flex items-center gap-3 sm:flex-col sm:text-center">
         <div className="flex-shrink-0">
           {authorAvatar ? (
@@ -32,7 +33,6 @@ export default function BlogAuthorCard({ author, authorBio, authorAvatar, social
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-base sm:text-sm font-bold text-gray-900 mb-1">Know your Author</h3>
           <p className="text-sm sm:text-base font-bold text-gray-900 truncate">
             {author} <CheckCircle2 className="inline text-blue-500" size={16} />
           </p>
