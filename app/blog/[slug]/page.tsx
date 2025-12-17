@@ -26,6 +26,7 @@ async function getBlogData(slug: string) {
     author: post.author,
     authorBio: post.authorBio || '',
     authorAvatar: post.authorAvatar || '',
+    authorConsultationUrl: post.authorConsultationUrl || '',
     authorSocialLinks: post.authorSocialLinks || {},
     tableOfContents: (post.tableOfContents || []) as TOCItem[],
     date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
@@ -82,6 +83,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
                 author={blog.author}
                 authorBio={blog.authorBio}
                 authorAvatar={blog.authorAvatar}
+                authorConsultationUrl={blog.authorConsultationUrl}
                 socialLinks={blog.authorSocialLinks}
               />
             </div>
@@ -112,6 +114,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
                 author={blog.author}
                 authorBio={blog.authorBio}
                 authorAvatar={blog.authorAvatar}
+                authorConsultationUrl={blog.authorConsultationUrl}
                 socialLinks={blog.authorSocialLinks}
               />
             </div>

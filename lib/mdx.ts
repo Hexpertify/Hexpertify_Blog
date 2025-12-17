@@ -12,6 +12,7 @@ export interface PostMetadata {
   author: string;
   authorBio?: string;
   authorAvatar?: string;
+  authorConsultationUrl?: string;
   authorSocialLinks?: {
     twitter?: string;
     linkedin?: string;
@@ -107,6 +108,7 @@ export async function savePost(slug: string, metadata: PostMetadata, content: st
     author: metadata.author,
     authorBio: metadata.authorBio || '',
     authorAvatar: metadata.authorAvatar || '',
+    authorConsultationUrl: metadata.authorConsultationUrl || '',
     authorSocialLinks: metadata.authorSocialLinks || {},
     category: metadata.category,
     imageUrl: metadata.imageUrl,

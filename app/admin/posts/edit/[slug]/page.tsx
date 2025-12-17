@@ -38,6 +38,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
     author: 'Cloud',
     authorBio: '',
     authorAvatar: '',
+    authorConsultationUrl: '',
     authorTwitter: '',
     authorLinkedin: '',
     authorGithub: '',
@@ -75,6 +76,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         author: post.author,
         authorBio: post.authorBio || '',
         authorAvatar: post.authorAvatar || '',
+        authorConsultationUrl: post.authorConsultationUrl || '',
         authorTwitter: socialLinks.twitter || '',
         authorLinkedin: socialLinks.linkedin || '',
         authorGithub: socialLinks.github || '',
@@ -121,6 +123,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         author: formData.author,
         authorBio: formData.authorBio,
         authorAvatar: formData.authorAvatar,
+        authorConsultationUrl: formData.authorConsultationUrl,
         authorSocialLinks: {
           twitter: formData.authorTwitter,
           linkedin: formData.authorLinkedin,
@@ -290,6 +293,19 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
                       />
                       <p className="text-xs text-gray-500">
                         Image URL for author profile picture
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="authorConsultationUrl">Author Consultation URL</Label>
+                      <Input
+                        id="authorConsultationUrl"
+                        value={formData.authorConsultationUrl}
+                        onChange={(e) => setFormData({ ...formData, authorConsultationUrl: e.target.value })}
+                        placeholder="https://calendly.com/..."
+                      />
+                      <p className="text-xs text-gray-500">
+                        URL for booking consultations with the author
                       </p>
                     </div>
 

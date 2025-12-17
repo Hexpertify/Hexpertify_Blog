@@ -78,6 +78,7 @@ export async function togglePublishPost(slug: string) {
       author: post.author,
       authorBio: post.authorBio,
       authorAvatar: post.authorAvatar,
+      authorConsultationUrl: post.authorConsultationUrl,
       authorSocialLinks: post.authorSocialLinks,
       category: post.category,
       imageUrl: post.imageUrl,

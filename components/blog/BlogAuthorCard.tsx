@@ -3,11 +3,13 @@
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
 
 interface BlogAuthorCardProps {
   author: string;
   authorBio?: string;
   authorAvatar?: string;
+  authorConsultationUrl?: string;
   socialLinks?: {
     twitter?: string;
     linkedin?: string;
@@ -15,7 +17,7 @@ interface BlogAuthorCardProps {
   };
 }
 
-export default function BlogAuthorCard({ author, authorBio, authorAvatar, socialLinks }: BlogAuthorCardProps) {
+export default function BlogAuthorCard({ author, authorBio, authorAvatar, authorConsultationUrl, socialLinks }: BlogAuthorCardProps) {
   return (
     <div className="rounded-lg bg-[#d0bcff] p-3 sm:p-4">
       <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 text-center">Know your Author</h3>
@@ -39,9 +41,17 @@ export default function BlogAuthorCard({ author, authorBio, authorAvatar, social
           {authorBio && <p className="text-xs text-gray-700 mt-0.5">({authorBio})</p>}
 
           <div className="mt-2 sm:mt-3">
-            <Button className="w-full rounded-full bg-[#450BC8] hover:bg-[#3709A0] text-white py-2 text-sm font-semibold">
-              Book Consultation
-            </Button>
+            {authorConsultationUrl ? (
+              <Link href={authorConsultationUrl} target="_blank" rel="noopener noreferrer">
+                <Button className="w-full rounded-full bg-[#450BC8] hover:bg-[#3709A0] text-white py-2 text-sm font-semibold">
+                  Book Consultation
+                </Button>
+              </Link>
+            ) : (
+              <Button className="w-full rounded-full bg-[#450BC8] hover:bg-[#3709A0] text-white py-2 text-sm font-semibold" disabled>
+                Book Consultation
+              </Button>
+            )}
           </div>
         </div>
       </div>

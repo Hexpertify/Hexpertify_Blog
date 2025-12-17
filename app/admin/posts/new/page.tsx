@@ -36,6 +36,7 @@ export default function NewPostPage() {
     author: 'Cloud',
     authorBio: '',
     authorAvatar: '',
+    authorConsultationUrl: '',
     authorTwitter: '',
     authorLinkedin: '',
     authorGithub: '',
@@ -105,6 +106,7 @@ export default function NewPostPage() {
         author: formData.author,
         authorBio: formData.authorBio,
         authorAvatar: formData.authorAvatar,
+        authorConsultationUrl: formData.authorConsultationUrl,
         authorSocialLinks: {
           twitter: formData.authorTwitter,
           linkedin: formData.authorLinkedin,
@@ -261,6 +263,19 @@ export default function NewPostPage() {
                       />
                       <p className="text-xs text-gray-500">
                         Image URL for author profile picture
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="authorConsultationUrl">Author Consultation URL</Label>
+                      <Input
+                        id="authorConsultationUrl"
+                        value={formData.authorConsultationUrl}
+                        onChange={(e) => setFormData({ ...formData, authorConsultationUrl: e.target.value })}
+                        placeholder="https://calendly.com/..."
+                      />
+                      <p className="text-xs text-gray-500">
+                        URL for booking consultations with the author
                       </p>
                     </div>
 
