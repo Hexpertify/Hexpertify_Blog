@@ -46,7 +46,7 @@ export default function Footer() {
                     className="h-auto mx-auto md:mx-0"
                   />
 
-                  <div className="mt-3 flex justify-center">
+                  <div className="mt-1 flex justify-center">
                     <div className="w-full flex justify-center items-center gap-4">
                       <Link
                         href="https://www.instagram.com/hexpertify"
