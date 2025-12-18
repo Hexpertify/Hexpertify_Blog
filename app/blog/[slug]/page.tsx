@@ -48,11 +48,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
-  return await SEOHead({
+  const seo = await SEOHead({
     page: `blog-${slug}`,
     fallbackTitle: `${blog.title} | Hexpertify Blog`,
     fallbackDescription: blog.description,
   });
+
+  return {
+    ...seo,
+    alternates: {
+      canonical: `https://hexpertify.com/blog/${slug}`,
+    },
+  };
 }
 
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
