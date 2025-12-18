@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     ...seo,
     alternates: {
-      canonical: `${SITE_URL}/blog/${slug}`,
+      canonical: SITE_URL,
     },
   };
 }
