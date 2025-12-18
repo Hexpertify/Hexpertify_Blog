@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 
-const TOKEN_ENV_NAMES = ['VERCEL_BLOB_TOKEN', 'VERCEL_TOKEN', 'VERCEL_BLOB_UPLOAD_TOKEN'];
+const TOKEN_ENV_NAMES = ['BLOB_READ_WRITE_TOKEN', 'VERCEL_BLOB_TOKEN', 'VERCEL_TOKEN', 'VERCEL_BLOB_UPLOAD_TOKEN'];
 
 function getBlobToken(): string | undefined {
   for (const name of TOKEN_ENV_NAMES) {
@@ -41,12 +41,10 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const uint8 = new Uint8Array(arrayBuffer);
 
-    // Use the token by setting it on the environment for @vercel/blob if needed
-    // @vercel/blob reads from process.env.VERCEL_BLOB_TOKEN by default; ensure it's present
-    process.env.VERCEL_BLOB_TOKEN = token;
-
+    // Pass token option directly to put to avoid relying on env mutation
     const result = await put(`blog-images/${Date.now()}-${fileName}`, uint8, {
       access: 'public',
+      token,
     });
 
     if (!result?.url) {
