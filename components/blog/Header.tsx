@@ -10,10 +10,10 @@ export default function Header() {
         <div className="flex justify-center items-center h-16">
           <Link href="/">
             <Image
-              src="/purple_logo.jpeg"
-              alt="Expertify Logo"
-              width={314}
-              height={80}
+              src="/image.png"
+              alt="Hexpertify Blogs Logo"
+              width={940}
+              height={788}
               className="h-16 w-auto cursor-pointer"
               priority
             />
