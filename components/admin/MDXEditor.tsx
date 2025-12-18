@@ -20,10 +20,17 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
   const handleImageUpload = async (file: File) => {
     setUploading(true);
     try {
-      const blob = await put(`blog-images/${Date.now()}-${file.name}`, file, {
-        access: 'public',
-      });
-      return blob.url;
+      // Check if we're in a Vercel environment
+      if (process.env.VERCEL || process.env.NEXT_PUBLIC_VERCEL_ENV) {
+        const blob = await put(`blog-images/${Date.now()}-${file.name}`, file, {
+          access: 'public',
+        });
+        return blob.url;
+      } else {
+        // For local development, show a message
+        alert('Image upload is only available when deployed on Vercel. For development testing, use the manual image insertion with external URLs.');
+        throw new Error('Image upload not available in development');
+      }
     } catch (error) {
       console.error('Image upload failed:', error);
       throw new Error('Failed to upload image');
@@ -33,8 +40,17 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
   };
 
   const insertImage = async () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+    if (process.env.VERCEL || process.env.NEXT_PUBLIC_VERCEL_ENV) {
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    } else {
+      // For local development, prompt for URL
+      const url = prompt('Enter image URL (image upload is only available in production):', 'https://example.com/image.jpg');
+      if (url) {
+        const alt = prompt('Enter alt text for the image:', 'Blog image') || 'Blog image';
+        insertMarkdown('image', url, alt);
+      }
     }
   };
 
@@ -167,7 +183,7 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
               size="sm"
               onClick={insertImage}
               disabled={uploading}
-              title="Upload Image"
+              title={process.env.VERCEL || process.env.NEXT_PUBLIC_VERCEL_ENV ? "Upload Image" : "Insert Image URL (upload only in production)"}
             >
               {uploading ? <Upload size={16} className="animate-spin" /> : <ImageIcon size={16} />}
             </Button>
