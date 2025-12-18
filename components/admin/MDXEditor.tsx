@@ -67,7 +67,9 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
         const alt = prompt('Enter alt text for the image:', file.name.split('.')[0]) || 'Blog image';
         insertMarkdown('image', url, alt);
       } catch (error) {
-        alert('Failed to upload image. Please try again.');
+        const message = (error as any)?.message || 'Failed to upload image. Please try again.';
+        console.error('Upload error (shown to user):', message, error);
+        alert(message);
       }
     }
     // Reset the input
