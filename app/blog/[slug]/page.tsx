@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import Header from '@/components/blog/Header';
 import BlogDetailHero from '@/components/blog/BlogDetailHero';
 import BlogAuthorCard from '@/components/blog/BlogAuthorCard';
@@ -129,23 +132,66 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             </div>
 
             <div className="prose max-w-none">
-              <div
-                className="text-gray-700 leading-relaxed text-justify"
-                dangerouslySetInnerHTML={{
-                  __html: blog.content
-                    .replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">$1</h2>')
-                    .replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-bold text-gray-900 mt-6 mb-3">$1</h3>')
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="rounded-lg my-6 w-full" />')
-                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-purple-600 hover:underline">$1</a>')
-                    .replace(/`(.*?)`/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm">$1</code>')
-                    .replace(/^- (.*$)/gim, '<li class="ml-6">$1</li>')
-                    .replace(/\n\n/g, '</p><p class="mb-4 text-justify">')
-                    .replace(/^(.)/g, '<p class="mb-4 text-justify">$1')
-                    .replace(/(.)\n/g, '$1</p>')
-                }}
-              />
+              <div className="text-gray-700 leading-relaxed text-justify">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h2: ({ children }) => (
+                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mt-6 mb-3">
+                        {children}
+                      </h3>
+                    ),
+                    p: ({ children }) => (
+                      <p className="mb-4 text-justify">{children}</p>
+                    ),
+                    strong: ({ children }) => <strong>{children}</strong>,
+                    em: ({ children }) => <em>{children}</em>,
+                    img: ({ src, alt }) => (
+                      <div className="my-6">
+                        <Image
+                          src={src || ''}
+                          alt={alt || 'Blog image'}
+                          width={800}
+                          height={400}
+                          className="rounded-lg w-full h-auto"
+                          priority={false}
+                        />
+                      </div>
+                    ),
+                    a: ({ href, children }) => (
+                      <a
+                        href={href}
+                        className="text-purple-600 hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {children}
+                      </a>
+                    ),
+                    code: ({ children }) => (
+                      <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                        {children}
+                      </code>
+                    ),
+                    li: ({ children }) => (
+                      <li className="ml-6">{children}</li>
+                    ),
+                    ul: ({ children }) => (
+                      <ul className="mb-4">{children}</ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className="mb-4">{children}</ol>
+                    ),
+                  }}
+                >
+                  {blog.content}
+                </ReactMarkdown>
+              </div>
             </div>
           </div>
         </div>

@@ -43,7 +43,8 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
     if (file) {
       try {
         const url = await handleImageUpload(file);
-        insertMarkdown('image', url);
+        const alt = prompt('Enter alt text for the image:', file.name.split('.')[0]) || 'Blog image';
+        insertMarkdown('image', url, alt);
       } catch (error) {
         alert('Failed to upload image. Please try again.');
       }
@@ -54,7 +55,7 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
     }
   };
 
-  const insertMarkdown = (syntax: string, placeholder: string = '') => {
+  const insertMarkdown = (syntax: string, placeholder: string = '', alt?: string) => {
     const textarea = document.getElementById('mdx-editor') as HTMLTextAreaElement;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
@@ -85,7 +86,7 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
         cursorOffset = selectedText ? newText.length - 4 : 1;
         break;
       case 'image':
-        newText = `![alt text](${selectedText || 'image-url'})`;
+        newText = `![${alt || 'alt text'}](${selectedText || 'image-url'})`;
         cursorOffset = selectedText ? newText.length : 11;
         break;
       case 'code':
