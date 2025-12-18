@@ -14,6 +14,12 @@ interface MDXEditorProps {
 export default function MDXEditor({ value, onChange }: MDXEditorProps) {
   const [activeTab, setActiveTab] = useState('edit');
   const [uploading, setUploading] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [altTextInput, setAltTextInput] = useState<string>('');
+  const [uploadUrlState, setUploadUrlState] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (file: File) => {
@@ -66,18 +72,13 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
   };
 
   const insertImage = async () => {
-    if (process.env.VERCEL || process.env.NEXT_PUBLIC_VERCEL_ENV) {
-      if (fileInputRef.current) {
-        fileInputRef.current.click();
-      }
-    } else {
-      // For local development, prompt for URL
-      const url = prompt('Enter image URL (image upload is only available in production):', 'https://example.com/image.jpg');
-      if (url) {
-        const alt = prompt('Enter alt text for the image:', 'Blog image') || 'Blog image';
-        insertMarkdown('image', url, alt);
-      }
-    }
+    // Open inline uploader panel. Users can pick a file or paste a URL (dev fallback).
+    setUploadError(null);
+    setUploadUrlState(null);
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setAltTextInput('');
+    setShowUploader(true);
   };
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,6 +216,124 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
             >
               {uploading ? <Upload size={16} className="animate-spin" /> : <ImageIcon size={16} />}
             </Button>
+
+            {/* Inline uploader panel */}
+            {showUploader && (
+              <div className="absolute z-50 right-6 top-14 w-[360px] bg-white border rounded shadow-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <strong>Upload Image</strong>
+                  <button
+                    onClick={() => {
+                      setShowUploader(false);
+                      setSelectedFile(null);
+                      setPreviewUrl(null);
+                      setUploadError(null);
+                    }}
+                    className="text-sm text-gray-500"
+                    aria-label="Close uploader"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0] || null;
+                      setSelectedFile(f);
+                      setUploadUrlState(null);
+                      setUploadError(null);
+                      if (f) {
+                        setPreviewUrl(URL.createObjectURL(f));
+                        setAltTextInput(f.name.split('.').slice(0, -1).join('.') || '');
+                      } else {
+                        setPreviewUrl(null);
+                      }
+                    }}
+                  />
+
+                  {previewUrl && (
+                    <div className="border rounded overflow-hidden">
+                      <img src={previewUrl} alt="preview" className="w-full h-36 object-cover" />
+                    </div>
+                  )}
+
+                  <input
+                    type="text"
+                    placeholder="Alt text"
+                    value={altTextInput}
+                    onChange={(e) => setAltTextInput(e.target.value)}
+                    className="w-full border px-2 py-1 rounded"
+                  />
+
+                  {uploadError && <div className="text-sm text-red-600">{uploadError}</div>}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="bg-purple-600 text-white px-3 py-1 rounded disabled:opacity-60"
+                      onClick={async () => {
+                        setUploadError(null);
+                        if (!selectedFile) {
+                          // dev fallback: prompt for url
+                          const url = prompt('Enter image URL (for dev):', 'https://example.com/image.jpg');
+                          if (url) {
+                            setUploadUrlState(url);
+                          }
+                          return;
+                        }
+
+                        try {
+                          setUploading(true);
+                          const url = await handleImageUpload(selectedFile);
+                          setUploadUrlState(url);
+                        } catch (err: any) {
+                          setUploadError(err?.message || 'Upload failed');
+                        } finally {
+                          setUploading(false);
+                        }
+                      }}
+                      disabled={uploading}
+                    >
+                      {uploading ? 'Uploading...' : 'Upload'}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="border px-3 py-1 rounded"
+                      onClick={() => {
+                        if (uploadUrlState) {
+                          insertMarkdown('image', uploadUrlState, altTextInput || 'image');
+                          setShowUploader(false);
+                          setSelectedFile(null);
+                          setPreviewUrl(null);
+                          setUploadUrlState(null);
+                        } else {
+                          alert('No uploaded image to insert.');
+                        }
+                      }}
+                    >
+                      Insert
+                    </button>
+
+                    <button
+                      type="button"
+                      className="border px-3 py-1 rounded"
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setPreviewUrl(null);
+                        setUploadUrlState(null);
+                        setUploadError(null);
+                      }}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             <Button
               type="button"
               variant="outline"
