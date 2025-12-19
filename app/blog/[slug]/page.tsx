@@ -36,6 +36,8 @@ async function getBlogData(slug: string) {
       title: p.title,
       date: new Date(p.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       imageUrl: p.imageUrl,
+      author: p.author,
+      authorDesignation: p.authorDesignation || '',
     }));
 
   return {

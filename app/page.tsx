@@ -75,6 +75,8 @@ export default function Home() {
     date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
     imageUrl: post.imageUrl,
     slug: post.slug,
+    author: post.author,
+    authorDesignation: post.authorDesignation,
   }));
 
   const blogPosts = filteredPosts
@@ -179,11 +181,11 @@ export default function Home() {
                 Blogs by
               </span>
               <span className="mt-2 block bg-gradient-to-r from-purple-700 via-purple-600 to-purple-400 bg-clip-text text-transparent">
-                Certified Experts
+                <span className="font-extrabold">CERTIFIED</span> Experts
               </span>
             </h1>
             <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-              Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.
+              Each and every blog is written by <span className="font-extrabold">CERTIFIED</span> & Verified Experts from Hexpertify.
             </p>
           </div>
 

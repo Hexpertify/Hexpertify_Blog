@@ -65,9 +65,9 @@ export default function BlogSubscribe() {
 
   return (
     <>
-      <div className="bg-purple-50/50 rounded-lg p-3 sm:p-4">
+      <div className="bg-purple-50/50 rounded-lg p-3 sm:p-4 mx-auto max-w-xs sm:max-w-none">
       <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5">Subscribe Now</h3>
-      <p className="text-xs text-gray-600 mb-2.5">Stay Updated with Frequently Blogs</p>
+      <p className="text-xs text-gray-600 mb-2.5">Get the Latest Expert Insights</p>
 
         <form onSubmit={handleSubscribe} className="space-y-2">
         <Input
@@ -96,7 +96,7 @@ export default function BlogSubscribe() {
                 <h3 className="text-lg font-bold text-gray-900">Subscribe Now</h3>
                 <button aria-label="Close" onClick={handleClose} className="text-gray-500 hover:text-gray-700">✕</button>
               </div>
-              <p className="text-sm text-gray-600 mb-4">Stay Updated with Frequently Blogs</p>
+              <p className="text-sm text-gray-600 mb-4">Get the Latest Expert Insights</p>
               <form onSubmit={handleSubscribe} className="space-y-3">
                 <Input
                   type="email"

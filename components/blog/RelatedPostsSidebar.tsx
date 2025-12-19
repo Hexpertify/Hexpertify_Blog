@@ -16,6 +16,8 @@ interface RelatedPost {
   title: string;
   date: string;
   imageUrl: string;
+  author: string;
+  authorDesignation?: string;
 }
 
 interface RelatedPostsSidebarProps {
@@ -62,6 +64,8 @@ export default function RelatedPostsSidebar({ posts }: RelatedPostsSidebarProps)
                 date={post.date}
                 imageUrl={post.imageUrl}
                 slug={post.slug}
+                author={post.author}
+                authorDesignation={post.authorDesignation}
               />
             </CarouselItem>
           ))}

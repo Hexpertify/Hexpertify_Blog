@@ -39,23 +39,31 @@ export default function BlogDetailHero({ blog }: BlogDetailHeroProps) {
       </h1>
 
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs sm:text-sm text-gray-600 mb-6 sm:mb-8">
-        <span className="text-purple-600 font-medium">By {blog.author}{blog.authorDesignation ? `, ${blog.authorDesignation}` : ''}</span>
-        <span className="text-gray-300">|</span>
-        <span>{blog.date}</span>
-        <span className="text-gray-300">|</span>
-        <span>{blog.readTime}</span>
+        <span className="text-purple-600 font-medium">By {blog.author}</span>
+        {blog.authorDesignation && (
+          <>
+            <span className="text-gray-700 font-semibold">|</span>
+            <span className="text-gray-700 font-semibold">{blog.authorDesignation}</span>
+          </>
+        )}
+        <span className="text-gray-700 font-semibold">|</span>
+        <span className="text-gray-700 font-semibold">{blog.date}</span>
+        <span className="text-gray-700 font-semibold">|</span>
+        <span className="text-gray-700 font-semibold">{blog.readTime}</span>
       </div>
 
       <div className="w-full sm:w-2/3 lg:w-1/2 mx-auto rounded-lg overflow-hidden mb-2 sm:mb-3 lg:mb-4">
-        <Image
-          src={blog.imageUrl}
-          alt={blog.title}
-          title={blog.title}
-          width={800}
-          height={200}
-          className="w-full h-40 sm:h-48 lg:h-56 object-cover"
-          priority
-        />
+        <div className="relative w-full h-64 bg-gray-200">
+          <Image
+            src={blog.imageUrl}
+            alt={blog.title}
+            title={blog.title}
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 50vw, (min-width: 640px) 100vw, 100vw"
+            priority
+          />
+        </div>
       </div>
     </div>
   );

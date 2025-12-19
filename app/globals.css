@@ -112,4 +112,23 @@ html {
   .section-padding-y {
     @apply py-6 sm:py-8;
   }
+
+  /* Thin scrollbar utility for horizontal category scroller */
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar {
+    height: 0.5px;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.3); /* very light gray */
+    border-radius: 9999px;
+  }
 }

@@ -6,9 +6,11 @@ interface TopReadsCardProps {
   date: string;
   imageUrl: string;
   slug: string;
+  author: string;
+  authorDesignation?: string;
 }
 
-export default function TopReadsCard({ title, date, imageUrl, slug }: TopReadsCardProps) {
+export default function TopReadsCard({ title, date, imageUrl, slug, author, authorDesignation }: TopReadsCardProps) {
   return (
     <Link href={`/blog/${slug}`} className="block" title={`Read blog: ${title}`}>
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer flex gap-4 p-4">
@@ -26,7 +28,10 @@ export default function TopReadsCard({ title, date, imageUrl, slug }: TopReadsCa
           <h4 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-2">
             {title}
           </h4>
-          <p className="text-xs text-gray-500">{date}</p>
+            <p className="text-[11px] text-gray-500">
+              By <span className="font-semibold">{author}</span>
+              {authorDesignation ? ` • ${authorDesignation}` : ''} • {date}
+          </p>
         </div>
       </div>
     </Link>

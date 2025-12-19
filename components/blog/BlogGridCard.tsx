@@ -15,7 +15,7 @@ export default function BlogGridCard({ title, description, date, imageUrl, autho
   return (
     <Link href={`/blog/${slug}`} title={`Read blog: ${title}`}>
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full flex flex-col">
-      <div className="relative w-full h-36 sm:h-48 bg-gray-200">
+      <div className="relative w-full h-44 sm:h-60 bg-gray-200">
         <Image
           src={imageUrl}
           alt={title}
