@@ -6,8 +6,9 @@ import Header from '@/components/blog/Header';
 import BlogDetailHero from '@/components/blog/BlogDetailHero';
 import BlogAuthorCard from '@/components/blog/BlogAuthorCard';
 import BlogSubscribe from '@/components/blog/BlogSubscribe';
+import RelatedPostsSidebar from '@/components/blog/RelatedPostsSidebar';
 import FAQSection from '@/components/FAQSection';
-import { getPostBySlug } from '@/lib/mdx';
+import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { getFAQsByPage } from '@/lib/faqs';
 import SEOHead from '@/components/SEOHead';
 
@@ -20,15 +21,29 @@ interface TOCItem {
 }
 
 async function getBlogData(slug: string) {
-  const post = await getPostBySlug(slug);
+  const [post, allPosts] = await Promise.all([
+    getPostBySlug(slug),
+    getPublishedPosts(),
+  ]);
 
   if (!post || !post.published) return null;
+
+  const relatedPosts = allPosts
+    .filter((p) => p.slug !== slug && p.published && p.category === post.category)
+    .slice(0, 5)
+    .map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      date: new Date(p.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      imageUrl: p.imageUrl,
+    }));
 
   return {
     slug: post.slug,
     title: post.title,
     description: post.description,
     author: post.author,
+    authorDesignation: post.authorDesignation || '',
     authorBio: post.authorBio || '',
     authorAvatar: post.authorAvatar || '',
     authorConsultationUrl: post.authorConsultationUrl || '',
@@ -40,6 +55,7 @@ async function getBlogData(slug: string) {
     imageUrl: post.imageUrl,
     category: post.category,
     content: post.content,
+    relatedPosts,
   };
 }
 
@@ -109,8 +125,10 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-3xl font-bold text-gray-900">Blog not found</h1>
+        <main className="max-w-7xl mx-auto section-padding-y">
+          <div className="page-padding">
+            <h1 className="text-3xl font-bold text-gray-900">Blog not found</h1>
+          </div>
         </main>
       </div>
     );
@@ -122,24 +140,37 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
       <Schema value={buildArticleSchema(blog)} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="max-w-7xl mx-auto section-padding-y">
+        <div className="page-padding">
         <BlogDetailHero blog={blog} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 py-8 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-4 pb-8 sm:pt-6 sm:pb-10">
           <div className="order-2 lg:order-1 space-y-4 sm:space-y-6 max-w-sm mx-auto lg:max-w-none lg:mx-0">
             <div className="hidden lg:block">
               <BlogAuthorCard
                 author={blog.author}
-                authorBio={blog.authorBio}
+                authorDesignation={blog.authorDesignation}
                 authorAvatar={blog.authorAvatar}
                 authorConsultationUrl={blog.authorConsultationUrl}
                 socialLinks={blog.authorSocialLinks}
               />
             </div>
             <BlogSubscribe />
+            <RelatedPostsSidebar posts={blog.relatedPosts} />
           </div>
 
           <div className="order-1 lg:order-2 lg:col-span-3">
+            {/* Mobile author card above TOC */}
+            <div className="lg:hidden mb-6 sm:mb-8 max-w-sm mx-auto">
+              <BlogAuthorCard
+                author={blog.author}
+                authorDesignation={blog.authorDesignation}
+                authorAvatar={blog.authorAvatar}
+                authorConsultationUrl={blog.authorConsultationUrl}
+                socialLinks={blog.authorSocialLinks}
+              />
+            </div>
+
             {blog.tableOfContents.length > 0 && (
               <div className="bg-purple-50/50 rounded-lg px-4 sm:px-9 py-4 sm:py-6 mb-6 sm:mb-8 max-w-xl mx-auto">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 text-center">Table of Contents</h3>
@@ -157,16 +188,6 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                 </ol>
               </div>
             )}
-
-            <div className="lg:hidden mb-6 sm:mb-8 max-w-sm mx-auto">
-              <BlogAuthorCard
-                author={blog.author}
-                authorBio={blog.authorBio}
-                authorAvatar={blog.authorAvatar}
-                authorConsultationUrl={blog.authorConsultationUrl}
-                socialLinks={blog.authorSocialLinks}
-              />
-            </div>
 
             <div className="prose max-w-none">
               <div className="text-gray-700 leading-relaxed text-justify">
@@ -188,8 +209,10 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     ),
                     strong: ({ children }) => <strong>{children}</strong>,
                     em: ({ children }) => <em>{children}</em>,
+                    // Use a span wrapper so the image remains valid inside paragraphs
+                    // and still behaves like a block with spacing.
                     img: ({ src, alt }) => (
-                      <div className="my-6">
+                      <span className="block my-6">
                         <Image
                           src={src || ''}
                           alt={alt || 'Blog image'}
@@ -199,7 +222,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                           className="rounded-lg w-full h-auto"
                           priority={false}
                         />
-                      </div>
+                      </span>
                     ),
                     a: ({ href, children }) => (
                       <a
@@ -236,6 +259,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
         <div className="mt-12">
           <FAQSection faqs={faqs} />
+        </div>
         </div>
       </main>
     </div>

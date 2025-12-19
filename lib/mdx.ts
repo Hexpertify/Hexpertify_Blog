@@ -10,6 +10,7 @@ export interface PostMetadata {
   slug: string;
   description: string;
   author: string;
+  authorDesignation?: string;
   authorBio?: string;
   authorAvatar?: string;
   authorConsultationUrl?: string;
@@ -106,6 +107,7 @@ export async function savePost(slug: string, metadata: PostMetadata, content: st
     slug: metadata.slug,
     description: metadata.description,
     author: metadata.author,
+    authorDesignation: metadata.authorDesignation || '',
     authorBio: metadata.authorBio || '',
     authorAvatar: metadata.authorAvatar || '',
     authorConsultationUrl: metadata.authorConsultationUrl || '',

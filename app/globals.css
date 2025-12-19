@@ -80,3 +80,36 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Responsive global typography scale */
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@layer utilities {
+  .page-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding-y {
+    @apply py-6 sm:py-8;
+  }
+}

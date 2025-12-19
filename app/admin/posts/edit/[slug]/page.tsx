@@ -38,6 +38,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     description: '',
     content: '',
     author: 'Cloud',
+    authorDesignation: '',
     authorBio: '',
     authorAvatar: '',
     authorConsultationUrl: '',
@@ -76,6 +77,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
         description: post.description,
         content: post.content,
         author: post.author,
+        authorDesignation: post.authorDesignation || '',
         authorBio: post.authorBio || '',
         authorAvatar: post.authorAvatar || '',
         authorConsultationUrl: post.authorConsultationUrl || '',
@@ -123,6 +125,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
           slug: formData.slug,
           description: formData.description,
           author: formData.author,
+          authorDesignation: formData.authorDesignation,
           authorBio: formData.authorBio,
           authorAvatar: formData.authorAvatar,
           authorConsultationUrl: formData.authorConsultationUrl,
@@ -270,6 +273,16 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                         onChange={(e) => setFormData({ ...formData, author: e.target.value })}
                         placeholder="John Doe"
                         required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="authorDesignation">Author Designation</Label>
+                      <Input
+                        id="authorDesignation"
+                        value={formData.authorDesignation}
+                        onChange={(e) => setFormData({ ...formData, authorDesignation: e.target.value })}
+                        placeholder="AI Expert"
                       />
                     </div>
 
