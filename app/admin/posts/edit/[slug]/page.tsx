@@ -10,10 +10,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import AdminNav from '@/components/admin/AdminNav';
 import ProtectedRoute from '@/components/admin/ProtectedRoute';
 import MDXEditor from '@/components/admin/MDXEditor';
-import { fetchPostBySlug, updatePost, fetchAllCategories } from '@/lib/actions';
+import { fetchPostBySlug, updatePost, fetchAllCategories, fetchSEOByPage, updateSEO, createSEO } from '@/lib/actions';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -49,6 +50,14 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     imageUrl: '',
     readTime: '5 Minutes read',
     published: false,
+    seoTitle: '',
+    seoDescription: '',
+    seoKeywords: '',
+    seoOgImage: '',
+    seoOgTitle: '',
+    seoOgDescription: '',
+    seoTwitterTitle: '',
+    seoTwitterDescription: '',
   });
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
 
@@ -60,7 +69,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     try {
       const [post, cats] = await Promise.all([
         fetchPostBySlug(resolvedParams.slug),
-        fetchAllCategories()
+        fetchAllCategories(),
       ]);
 
       setCategories(cats.filter(cat => cat !== 'All'));
@@ -70,6 +79,14 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
       setOriginalSlug(post.slug);
       const socialLinks = post.authorSocialLinks || {};
       const toc = post.tableOfContents || [];
+
+      // Load existing SEO metadata for this blog post, if any
+      let seo: any = null;
+      try {
+        seo = await fetchSEOByPage(`blog-${post.slug}`);
+      } catch {
+        seo = null;
+      }
 
       setFormData({
         title: post.title,
@@ -88,6 +105,14 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
         imageUrl: post.imageUrl,
         readTime: post.readTime,
         published: post.published,
+        seoTitle: seo?.title || '',
+        seoDescription: seo?.description || '',
+        seoKeywords: seo?.keywords || '',
+        seoOgImage: seo?.ogImage || '',
+        seoOgTitle: seo?.ogTitle || '',
+        seoOgDescription: seo?.ogDescription || '',
+        seoTwitterTitle: seo?.twitterTitle || '',
+        seoTwitterDescription: seo?.twitterDescription || '',
       });
 
       setTocItems(toc);
@@ -105,9 +130,20 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
   };
 
   const updateTocItem = (id: number, field: 'title' | 'anchor', value: string) => {
-    setTocItems(tocItems.map(item =>
-      item.id === id ? { ...item, [field]: value } : item
-    ));
+    setTocItems(
+      tocItems.map((item) => {
+        if (item.id !== id) return item;
+
+        const updated: TOCItem = { ...item, [field]: value };
+
+        // Auto-generate anchor from title when it's empty and title changes
+        if (field === 'title' && !item.anchor.trim() && value.trim()) {
+          updated.anchor = generateSlug(value);
+        }
+
+        return updated;
+      })
+    );
   };
 
   const removeTocItem = (id: number) => {
@@ -146,6 +182,40 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
 
         if (!result.success) {
           throw new Error(result.error || 'Failed to update post');
+        }
+
+        // Create or update SEO metadata for this blog post (blog-{slug})
+        try {
+          const seoMetadata = {
+            title: formData.seoTitle || formData.title,
+            description: formData.seoDescription || formData.description,
+            ogTitle: formData.seoOgTitle || formData.seoTitle || formData.title,
+            ogDescription:
+              formData.seoOgDescription || formData.seoDescription || formData.description,
+            ogImage: formData.seoOgImage || formData.imageUrl,
+            ogType: 'article',
+            twitterCard: 'summary_large_image',
+            twitterTitle:
+              formData.seoTwitterTitle ||
+              formData.seoOgTitle ||
+              formData.seoTitle ||
+              formData.title,
+            twitterDescription:
+              formData.seoTwitterDescription ||
+              formData.seoOgDescription ||
+              formData.seoDescription ||
+              formData.description,
+            twitterImage: '',
+            keywords: formData.seoKeywords || '',
+            canonicalUrl: '',
+            robots: 'index, follow',
+            updatedAt: new Date().toISOString(),
+          };
+
+          // updateSEO will write or overwrite SEO for this page
+          await updateSEO(`blog-${metadata.slug}`, seoMetadata);
+        } catch (seoError) {
+          console.error('Error updating SEO for post:', seoError);
         }
 
         router.push('/admin/dashboard');
@@ -194,260 +264,378 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                   </Alert>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      placeholder="Enter post title"
-                      required
-                    />
-                  </div>
+                <Tabs defaultValue="basic" className="space-y-4">
+                  <TabsList>
+                    <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                    <TabsTrigger value="content">Content</TabsTrigger>
+                    <TabsTrigger value="seo">SEO</TabsTrigger>
+                  </TabsList>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="slug">Slug *</Label>
-                    <Input
-                      id="slug"
-                      value={formData.slug}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                      placeholder="post-slug"
-                      required
-                    />
-                  </div>
-                </div>
+                  <TabsContent value="basic" className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="title">Title *</Label>
+                        <Input
+                          id="title"
+                          value={formData.title}
+                          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                          placeholder="Enter post title"
+                          required
+                        />
+                      </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description *</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Brief description of the post"
-                    rows={3}
-                    required
-                  />
-                </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="slug">Slug *</Label>
+                        <Input
+                          id="slug"
+                          value={formData.slug}
+                          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                          placeholder="post-slug"
+                          required
+                        />
+                      </div>
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category *</Label>
-                    <Select
-                      value={formData.category}
-                      onValueChange={(value) => setFormData({ ...formData, category: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="readTime">Read Time</Label>
-                    <Input
-                      id="readTime"
-                      value={formData.readTime}
-                      onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
-                      placeholder="5 Minutes read"
-                    />
-                  </div>
-                </div>
-
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Author Details</h3>
-
-                  <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="author">Author Name *</Label>
-                      <Input
-                        id="author"
-                        value={formData.author}
-                        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                        placeholder="John Doe"
+                      <Label htmlFor="description">Description *</Label>
+                      <Textarea
+                        id="description"
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="Brief description of the post"
+                        rows={3}
                         required
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="authorDesignation">Author Designation</Label>
-                      <Input
-                        id="authorDesignation"
-                        value={formData.authorDesignation}
-                        onChange={(e) => setFormData({ ...formData, authorDesignation: e.target.value })}
-                        placeholder="AI Expert"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="authorBio">Author Bio</Label>
-                      <Textarea
-                        id="authorBio"
-                        value={formData.authorBio}
-                        onChange={(e) => setFormData({ ...formData, authorBio: e.target.value })}
-                        placeholder="Brief bio about the author..."
-                        rows={3}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="authorAvatar">Author Avatar URL</Label>
-                      <Input
-                        id="authorAvatar"
-                        value={formData.authorAvatar}
-                        onChange={(e) => setFormData({ ...formData, authorAvatar: e.target.value })}
-                        placeholder="https://images.pexels.com/..."
-                      />
-                      <p className="text-xs text-gray-500">
-                        Image URL for author profile picture
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="authorConsultationUrl">Author Consultation URL</Label>
-                      <Input
-                        id="authorConsultationUrl"
-                        value={formData.authorConsultationUrl}
-                        onChange={(e) => setFormData({ ...formData, authorConsultationUrl: e.target.value })}
-                        placeholder="https://calendly.com/..."
-                      />
-                      <p className="text-xs text-gray-500">
-                        URL for booking consultations with the author
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="authorTwitter">Twitter URL</Label>
-                        <Input
-                          id="authorTwitter"
-                          value={formData.authorTwitter}
-                          onChange={(e) => setFormData({ ...formData, authorTwitter: e.target.value })}
-                          placeholder="https://twitter.com/..."
-                        />
+                        <Label htmlFor="category">Category *</Label>
+                        <Select
+                          value={formData.category}
+                          onValueChange={(value) => setFormData({ ...formData, category: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category} value={category}>
+                                {category}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="authorLinkedin">LinkedIn URL</Label>
+                        <Label htmlFor="readTime">Read Time</Label>
                         <Input
-                          id="authorLinkedin"
-                          value={formData.authorLinkedin}
-                          onChange={(e) => setFormData({ ...formData, authorLinkedin: e.target.value })}
-                          placeholder="https://linkedin.com/in/..."
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="authorGithub">GitHub URL</Label>
-                        <Input
-                          id="authorGithub"
-                          value={formData.authorGithub}
-                          onChange={(e) => setFormData({ ...formData, authorGithub: e.target.value })}
-                          placeholder="https://github.com/..."
+                          id="readTime"
+                          value={formData.readTime}
+                          onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
+                          placeholder="5 Minutes read"
                         />
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                <div className="border-t pt-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Table of Contents</h3>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={addTocItem}
-                    >
-                      <Plus size={16} className="mr-2" />
-                      Add Item
-                    </Button>
-                  </div>
+                    <div className="border-t pt-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Author Details</h3>
 
-                  {tocItems.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-8 border-2 border-dashed rounded-lg">
-                      No table of contents items yet. Click "Add Item" to create one.
-                    </p>
-                  ) : (
-                    <div className="space-y-3">
-                      {tocItems.map((item, index) => (
-                        <div key={item.id} className="flex flex-col sm:flex-row gap-3 items-start border rounded-lg p-4">
-                          <div className="flex-1 space-y-3">
-                            <div className="space-y-2">
-                              <Label htmlFor={`toc-title-${item.id}`}>
-                                {index + 1}. Section Title
-                              </Label>
-                              <Input
-                                id={`toc-title-${item.id}`}
-                                value={item.title}
-                                onChange={(e) => updateTocItem(item.id, 'title', e.target.value)}
-                                placeholder="e.g., Introduction to Cloud Computing"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor={`toc-anchor-${item.id}`}>Anchor ID</Label>
-                              <Input
-                                id={`toc-anchor-${item.id}`}
-                                value={item.anchor}
-                                onChange={(e) => updateTocItem(item.id, 'anchor', e.target.value)}
-                                placeholder="e.g., introduction-to-cloud"
-                              />
-                              <p className="text-xs text-gray-500">
-                                Used for navigation links (optional)
-                              </p>
-                            </div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeTocItem(item.id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 size={16} />
-                          </Button>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="author">Author Name *</Label>
+                          <Input
+                            id="author"
+                            value={formData.author}
+                            onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                            placeholder="John Doe"
+                            required
+                          />
                         </div>
-                      ))}
+
+                        <div className="space-y-2">
+                          <Label htmlFor="authorDesignation">Author Designation</Label>
+                          <Input
+                            id="authorDesignation"
+                            value={formData.authorDesignation}
+                            onChange={(e) => setFormData({ ...formData, authorDesignation: e.target.value })}
+                            placeholder="AI Expert"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="authorBio">Author Bio</Label>
+                          <Textarea
+                            id="authorBio"
+                            value={formData.authorBio}
+                            onChange={(e) => setFormData({ ...formData, authorBio: e.target.value })}
+                            placeholder="Brief bio about the author..."
+                            rows={3}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="authorAvatar">Author Avatar URL</Label>
+                          <Input
+                            id="authorAvatar"
+                            value={formData.authorAvatar}
+                            onChange={(e) => setFormData({ ...formData, authorAvatar: e.target.value })}
+                            placeholder="https://images.pexels.com/..."
+                          />
+                          <p className="text-xs text-gray-500">
+                            Image URL for author profile picture
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="authorConsultationUrl">Author Consultation URL</Label>
+                          <Input
+                            id="authorConsultationUrl"
+                            value={formData.authorConsultationUrl}
+                            onChange={(e) => setFormData({ ...formData, authorConsultationUrl: e.target.value })}
+                            placeholder="https://calendly.com/..."
+                          />
+                          <p className="text-xs text-gray-500">
+                            URL for booking consultations with the author
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="authorTwitter">Twitter URL</Label>
+                            <Input
+                              id="authorTwitter"
+                              value={formData.authorTwitter}
+                              onChange={(e) => setFormData({ ...formData, authorTwitter: e.target.value })}
+                              placeholder="https://twitter.com/..."
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="authorLinkedin">LinkedIn URL</Label>
+                            <Input
+                              id="authorLinkedin"
+                              value={formData.authorLinkedin}
+                              onChange={(e) => setFormData({ ...formData, authorLinkedin: e.target.value })}
+                              placeholder="https://linkedin.com/in/..."
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="authorGithub">GitHub URL</Label>
+                            <Input
+                              id="authorGithub"
+                              value={formData.authorGithub}
+                              onChange={(e) => setFormData({ ...formData, authorGithub: e.target.value })}
+                              placeholder="https://github.com/..."
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="imageUrl">Featured Image URL *</Label>
-                  <Input
-                    id="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                    placeholder="https://images.pexels.com/..."
-                    required
-                  />
-                </div>
+                    <div className="space-y-2 border-t pt-6">
+                      <Label htmlFor="imageUrl">Featured Image URL *</Label>
+                      <Input
+                        id="imageUrl"
+                        value={formData.imageUrl}
+                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                        placeholder="https://images.pexels.com/..."
+                        required
+                      />
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="content">Content (MDX) *</Label>
-                  <MDXEditor
-                    value={formData.content}
-                    onChange={(value) => setFormData({ ...formData, content: value })}
-                  />
-                </div>
+                    <div className="flex items-center space-x-2 border-t pt-6">
+                      <Switch
+                        id="published"
+                        checked={formData.published}
+                        onCheckedChange={(checked) => setFormData({ ...formData, published: checked })}
+                      />
+                      <Label htmlFor="published" className="cursor-pointer">
+                        Published
+                      </Label>
+                    </div>
+                  </TabsContent>
 
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="published"
-                    checked={formData.published}
-                    onCheckedChange={(checked) => setFormData({ ...formData, published: checked })}
-                  />
-                  <Label htmlFor="published" className="cursor-pointer">
-                    Published
-                  </Label>
-                </div>
+                  <TabsContent value="content" className="space-y-6">
+                    <div className="border-t pt-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900">Table of Contents</h3>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addTocItem}
+                        >
+                          <Plus size={16} className="mr-2" />
+                          Add Item
+                        </Button>
+                      </div>
+
+                      {tocItems.length === 0 ? (
+                        <p className="text-sm text-gray-500 text-center py-8 border-2 border-dashed rounded-lg">
+                          No table of contents items yet. Click "Add Item" to create one.
+                        </p>
+                      ) : (
+                        <div className="space-y-3">
+                          {tocItems.map((item, index) => (
+                            <div key={item.id} className="flex flex-col sm:flex-row gap-3 items-start border rounded-lg p-4">
+                              <div className="flex-1 space-y-3">
+                                <div className="space-y-2">
+                                  <Label htmlFor={`toc-title-${item.id}`}>
+                                    {index + 1}. Section Title
+                                  </Label>
+                                  <Input
+                                    id={`toc-title-${item.id}`}
+                                    value={item.title}
+                                    onChange={(e) => updateTocItem(item.id, 'title', e.target.value)}
+                                    placeholder="e.g., Introduction to Cloud Computing"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor={`toc-anchor-${item.id}`}>Anchor ID</Label>
+                                  <Input
+                                    id={`toc-anchor-${item.id}`}
+                                    value={item.anchor}
+                                    onChange={(e) => updateTocItem(item.id, 'anchor', e.target.value)}
+                                    placeholder="e.g., introduction-to-cloud"
+                                  />
+                                  <p className="text-xs text-gray-500">
+                                    Used for navigation links (optional)
+                                  </p>
+                                </div>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeTocItem(item.id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 size={16} />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 border-t pt-6">
+                      <Label htmlFor="content">Content (MDX) *</Label>
+                      <MDXEditor
+                        value={formData.content}
+                        onChange={(value) => setFormData({ ...formData, content: value })}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="seo" className="space-y-6">
+                    <div className="border-t pt-6 space-y-4">
+                      <h3 className="text-lg font-semibold text-gray-900">SEO Settings</h3>
+                      <p className="text-xs text-gray-600">
+                        Configure how this post appears in search results and social previews.
+                      </p>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="seoTitle">SEO Title</Label>
+                        <Input
+                          id="seoTitle"
+                          value={formData.seoTitle}
+                          onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
+                          placeholder="Defaults to post title if left empty"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="seoDescription">SEO Description</Label>
+                        <Textarea
+                          id="seoDescription"
+                          value={formData.seoDescription}
+                          onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
+                          placeholder="Defaults to post description if left empty"
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="seoKeywords">SEO Keywords</Label>
+                        <Input
+                          id="seoKeywords"
+                          value={formData.seoKeywords}
+                          onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
+                          placeholder="e.g., cloud computing, beginner guide, hexpertify"
+                        />
+                        <p className="text-xs text-gray-500">
+                          Optional: comma-separated list of keywords.
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="seoOgImage">Social Share Image URL</Label>
+                        <Input
+                          id="seoOgImage"
+                          value={formData.seoOgImage}
+                          onChange={(e) => setFormData({ ...formData, seoOgImage: e.target.value })}
+                          placeholder="Defaults to featured image if left empty"
+                        />
+                        <p className="text-xs text-gray-500">
+                          Recommended: 1200x630 image used for social previews.
+                        </p>
+                      </div>
+
+                      <div className="border-t pt-4 space-y-3">
+                        <h4 className="text-sm font-semibold text-gray-900">Open Graph (Facebook, LinkedIn)</h4>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="seoOgTitle">OG Title</Label>
+                          <Input
+                            id="seoOgTitle"
+                            value={formData.seoOgTitle}
+                            onChange={(e) => setFormData({ ...formData, seoOgTitle: e.target.value })}
+                            placeholder="Defaults to SEO Title if left empty"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="seoOgDescription">OG Description</Label>
+                          <Textarea
+                            id="seoOgDescription"
+                            value={formData.seoOgDescription}
+                            onChange={(e) => setFormData({ ...formData, seoOgDescription: e.target.value })}
+                            placeholder="Defaults to SEO Description if left empty"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="border-t pt-4 space-y-3">
+                        <h4 className="text-sm font-semibold text-gray-900">Twitter</h4>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="seoTwitterTitle">Twitter Title</Label>
+                          <Input
+                            id="seoTwitterTitle"
+                            value={formData.seoTwitterTitle}
+                            onChange={(e) => setFormData({ ...formData, seoTwitterTitle: e.target.value })}
+                            placeholder="Defaults to OG / SEO Title if left empty"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="seoTwitterDescription">Twitter Description</Label>
+                          <Textarea
+                            id="seoTwitterDescription"
+                            value={formData.seoTwitterDescription}
+                            onChange={(e) => setFormData({ ...formData, seoTwitterDescription: e.target.value })}
+                            placeholder="Defaults to OG / SEO Description if left empty"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
 
                 <div className="flex gap-4">
                   <Button

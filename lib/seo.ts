@@ -119,7 +119,7 @@ export function getDefaultSEO(): Omit<SEOMetadata, 'page'> {
     title: 'Hexpertify - Connect with Certified Experts',
     description: 'Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development. Get personalized consulting and expert guidance.',
     ogTitle: 'Hexpertify - Connect with Certified Experts',
-    ogDescription: 'Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.',
+    ogDescription: 'hexpertify-blogs',
     ogImage: 'https://hexpertify-blog-sigma.vercel.app/assets/images/logo.png',
     ogType: 'website',
     twitterCard: 'summary_large_image',

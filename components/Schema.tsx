@@ -1,3 +1,5 @@
+"use client";
+
 export default function Schema({ value }: { value: any }) {
   const json = JSON.stringify(value);
   return (

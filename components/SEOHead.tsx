@@ -46,7 +46,7 @@ export default async function SEOHead({ page, fallbackTitle, fallbackDescription
     keywords: seo.keywords,
     openGraph: {
       title: seo.ogTitle || seo.title,
-      description: seo.ogDescription || seo.description,
+      description: 'hexpertify-blogs',
       images: seo.ogImage ? [{ url: seo.ogImage }] : [],
       type: seo.ogType as any,
     },
