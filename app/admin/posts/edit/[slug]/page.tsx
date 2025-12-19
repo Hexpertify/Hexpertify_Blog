@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useTransition, use } from 'react';
+import { useState, useEffect, useTransition, use, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +16,7 @@ import AdminNav from '@/components/admin/AdminNav';
 import ProtectedRoute from '@/components/admin/ProtectedRoute';
 import MDXEditor from '@/components/admin/MDXEditor';
 import { fetchPostBySlug, updatePost, fetchAllCategories, fetchSEOByPage, updateSEO, createSEO } from '@/lib/actions';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
 
 interface TOCItem {
@@ -32,6 +33,9 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
+  const featuredImageInputRef = useRef<HTMLInputElement | null>(null);
+  const authorAvatarInputRef = useRef<HTMLInputElement | null>(null);
+  const seoOgImageInputRef = useRef<HTMLInputElement | null>(null);
   const [originalSlug, setOriginalSlug] = useState('');
   const [formData, setFormData] = useState({
     title: '',
@@ -153,6 +157,105 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
 
   const removeTocItem = (id: number) => {
     setTocItems(tocItems.filter(item => item.id !== id));
+  };
+
+  const handleFeaturedImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+
+      if (!data?.url) {
+        throw new Error('Upload succeeded but no URL returned');
+      }
+
+      setFormData(prev => ({ ...prev, imageUrl: data.url as string }));
+    } catch (error: any) {
+      alert(error?.message || 'Failed to upload image');
+    } finally {
+      if (featuredImageInputRef.current) {
+        featuredImageInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleAuthorAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+
+      if (!data?.url) {
+        throw new Error('Upload succeeded but no URL returned');
+      }
+
+      setFormData(prev => ({ ...prev, authorAvatar: data.url as string }));
+    } catch (error: any) {
+      alert(error?.message || 'Failed to upload image');
+    } finally {
+      if (authorAvatarInputRef.current) {
+        authorAvatarInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleSeoOgImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+
+      if (!data?.url) {
+        throw new Error('Upload succeeded but no URL returned');
+      }
+
+      setFormData(prev => ({ ...prev, seoOgImage: data.url as string }));
+    } catch (error: any) {
+      alert(error?.message || 'Failed to upload image');
+    } finally {
+      if (seoOgImageInputRef.current) {
+        seoOgImageInputRef.current.value = '';
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -381,16 +484,46 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="authorAvatar">Author Avatar URL</Label>
-                          <Input
-                            id="authorAvatar"
-                            value={formData.authorAvatar}
-                            onChange={(e) => setFormData({ ...formData, authorAvatar: e.target.value })}
-                            placeholder="https://images.pexels.com/..."
-                          />
+                          <Label htmlFor="authorAvatar">Author Avatar</Label>
+                          <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                            <Input
+                              id="authorAvatar"
+                              value={formData.authorAvatar}
+                              onChange={(e) => setFormData({ ...formData, authorAvatar: e.target.value })}
+                              placeholder="Image URL or upload using the button"
+                            />
+                            <input
+                              type="file"
+                              accept="image/*"
+                              ref={authorAvatarInputRef}
+                              onChange={handleAuthorAvatarUpload}
+                              className="hidden"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="whitespace-nowrap flex items-center gap-2"
+                              onClick={() => authorAvatarInputRef.current?.click()}
+                            >
+                              <Upload size={16} />
+                              Upload
+                            </Button>
+                          </div>
                           <p className="text-xs text-gray-500">
-                            Image URL for author profile picture
+                            You can paste an existing image URL or upload directly from your computer.
                           </p>
+                          {formData.authorAvatar && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-100">
+                                <Image
+                                  src={formData.authorAvatar}
+                                  alt="Author avatar preview"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         <div className="space-y-2">
@@ -441,14 +574,44 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                     </div>
 
                     <div className="space-y-2 border-t pt-6">
-                      <Label htmlFor="imageUrl">Featured Image URL *</Label>
-                      <Input
-                        id="imageUrl"
-                        value={formData.imageUrl}
-                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                        placeholder="https://images.pexels.com/..."
-                        required
-                      />
+                      <Label htmlFor="imageUrl">Featured Image *</Label>
+                      <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                        <Input
+                          id="imageUrl"
+                          value={formData.imageUrl}
+                          onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                          placeholder="Image URL or upload using the button"
+                          required
+                        />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          ref={featuredImageInputRef}
+                          onChange={handleFeaturedImageUpload}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="whitespace-nowrap flex items-center gap-2"
+                          onClick={() => featuredImageInputRef.current?.click()}
+                        >
+                          <Upload size={16} />
+                          Upload
+                        </Button>
+                      </div>
+                      {formData.imageUrl && (
+                        <div className="mt-3">
+                          <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden bg-gray-100">
+                            <Image
+                              src={formData.imageUrl}
+                              alt="Featured image preview"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center space-x-2 border-t pt-6">
@@ -577,16 +740,46 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="seoOgImage">Social Share Image URL</Label>
-                        <Input
-                          id="seoOgImage"
-                          value={formData.seoOgImage}
-                          onChange={(e) => setFormData({ ...formData, seoOgImage: e.target.value })}
-                          placeholder="Defaults to featured image if left empty"
-                        />
+                        <Label htmlFor="seoOgImage">Social Share Image</Label>
+                        <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                          <Input
+                            id="seoOgImage"
+                            value={formData.seoOgImage}
+                            onChange={(e) => setFormData({ ...formData, seoOgImage: e.target.value })}
+                            placeholder="Image URL or upload using the button (defaults to featured image if empty)"
+                          />
+                          <input
+                            type="file"
+                            accept="image/*"
+                            ref={seoOgImageInputRef}
+                            onChange={handleSeoOgImageUpload}
+                            className="hidden"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="whitespace-nowrap flex items-center gap-2"
+                            onClick={() => seoOgImageInputRef.current?.click()}
+                          >
+                            <Upload size={16} />
+                            Upload
+                          </Button>
+                        </div>
                         <p className="text-xs text-gray-500">
                           Recommended: 1200x630 image used for social previews.
                         </p>
+                        {(formData.seoOgImage || formData.imageUrl) && (
+                          <div className="mt-3">
+                            <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden bg-gray-100">
+                              <Image
+                                src={formData.seoOgImage || formData.imageUrl}
+                                alt="Social share image preview"
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       <div className="border-t pt-4 space-y-3">

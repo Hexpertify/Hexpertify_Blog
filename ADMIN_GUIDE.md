@@ -118,12 +118,24 @@ The admin panel uses Supabase with the following tables:
 
 ## Environment Variables
 
-Make sure your `.env` file contains:
+Make sure your `.env` file (or hosting provider env settings) includes at least:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+GITHUB_TOKEN=your_github_personal_access_token
+GITHUB_OWNER=cheliyan-sankar
+GITHUB_REPO=Hexpertify_Blog
+GITHUB_BRANCH=main
+GITHUB_ASSETS_PATH_PREFIX=assets/uploads
 ```
+
+These are used by:
+- Newsletter / subscriber API (server-side, Supabase)
+- Content editing (posts, FAQs, SEO) via GitHub commits
+- Image uploads from the admin (stored in GitHub and served via raw URLs)
 
 ## Support
 

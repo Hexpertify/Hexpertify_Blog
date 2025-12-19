@@ -47,6 +47,21 @@ export async function commitFile(path: string, content: string, message: string)
   });
 }
 
+export async function commitBinaryFile(path: string, bytes: Uint8Array, message: string) {
+  const sha = await getFileSha(path);
+  const body = {
+    message,
+    content: Buffer.from(bytes).toString('base64'),
+    sha: sha || undefined,
+    branch: GITHUB_BRANCH,
+  };
+  await githubRequest(`/contents/${path}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
 export async function getFileContent(path: string): Promise<string | null> {
   try {
     const data = await githubRequest(`/contents/${path}?ref=${GITHUB_BRANCH}`);
@@ -86,6 +101,17 @@ export async function deleteFile(path: string, message: string) {
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' },
   });
+}
+
+export function getGithubRawUrl(path: string): string {
+  const owner = GITHUB_OWNER;
+  const repo = GITHUB_REPO;
+  const branch = GITHUB_BRANCH;
+  const encodedPath = path
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${encodedPath}`;
 }
 
 export async function triggerRebuild() {

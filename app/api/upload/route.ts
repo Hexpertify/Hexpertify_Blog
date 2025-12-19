@@ -1,28 +1,12 @@
 import { NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
-
-const TOKEN_ENV_NAMES = ['BLOB_READ_WRITE_TOKEN', 'VERCEL_BLOB_TOKEN', 'VERCEL_TOKEN', 'VERCEL_BLOB_UPLOAD_TOKEN'];
-
-function getBlobToken(): string | undefined {
-  for (const name of TOKEN_ENV_NAMES) {
-    if (process.env[name]) return process.env[name];
-  }
-  return undefined;
-}
+import { commitBinaryFile, getGithubRawUrl } from '@/lib/github';
 
 export async function POST(req: Request) {
   try {
-    // Accept token from environment or Authorization header for testing
-    let token = getBlobToken();
-    const authHeader = (req.headers && (req as any).headers?.get)
-      ? (req as any).headers.get('authorization')
-      : (req as any).headers?.authorization || '';
-    const bearer = authHeader?.toString?.().startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined;
-    if (bearer) token = bearer;
-    if (!token) {
-      const message =
-        'Vercel Blob token not configured. Create a token in Vercel (Account → Tokens) and add it to Project Settings as `VERCEL_BLOB_TOKEN`. See https://vercel.com/docs/storage/blob#using-the-api';
-      console.error('Upload API error: token missing');
+    const githubToken = process.env.GITHUB_TOKEN;
+    if (!githubToken) {
+      const message = 'GitHub not configured. Set GITHUB_TOKEN and related repo vars.';
+      console.error('Upload API error: GitHub env missing');
       return NextResponse.json({ error: message }, { status: 500 });
     }
 
@@ -43,22 +27,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Only image files are allowed.' }, { status: 400 });
     }
 
-    const fileName = file.name || `upload-${Date.now()}`;
+    const originalName: string = file.name || `upload-${Date.now()}`;
+    const fileExt = originalName.includes('.') ? originalName.split('.').pop() : undefined;
+    const safeExt = fileExt ? `.${fileExt}` : '';
+
+    const baseDir = process.env.GITHUB_ASSETS_PATH_PREFIX || 'assets/uploads';
+    const filePath = `${baseDir}/${Date.now()}-${Math.random().toString(36).slice(2)}${safeExt}`;
+
     const arrayBuffer = await file.arrayBuffer();
-    const uint8 = new Uint8Array(arrayBuffer);
+    const bytes = new Uint8Array(arrayBuffer);
 
-    // Pass token option directly to put to avoid relying on env mutation
-    const result = await put(`blog-images/${Date.now()}-${fileName}`, uint8, {
-      access: 'public',
-      token,
-    });
+    await commitBinaryFile(filePath, bytes, `Upload image: ${originalName}`);
 
-    if (!result?.url) {
-      console.error('Upload API error: no url in result', result);
-      return NextResponse.json({ error: 'Upload succeeded but no URL returned' }, { status: 500 });
-    }
+    const url = getGithubRawUrl(filePath);
 
-    return NextResponse.json({ url: result.url });
+    return NextResponse.json({ url });
   } catch (err: any) {
     console.error('Upload API error:', err);
     const message = err?.message || String(err) || 'Upload failed';

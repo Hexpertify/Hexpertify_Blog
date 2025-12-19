@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,10 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Textarea } from '@/components/ui/textarea';
+import Image from 'next/image';
 import AdminNav from '@/components/admin/AdminNav';
 import ProtectedRoute from '@/components/admin/ProtectedRoute';
 import { fetchSEOByPage, updateSEO, fetchDefaultSEO } from '@/lib/actions';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Upload } from 'lucide-react';
 import Link from 'next/link';
 
 export default function EditSEOPage({ params }: { params: Promise<{ page: string }> }) {
@@ -20,6 +21,8 @@ export default function EditSEOPage({ params }: { params: Promise<{ page: string
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState('');
+  const ogImageInputRef = useRef<HTMLInputElement | null>(null);
+  const twitterImageInputRef = useRef<HTMLInputElement | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -35,6 +38,72 @@ export default function EditSEOPage({ params }: { params: Promise<{ page: string
     canonicalUrl: '',
     robots: 'index, follow',
   });
+
+  const handleOgImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+
+      if (!data?.url) {
+        throw new Error('Upload succeeded but no URL returned');
+      }
+
+      setFormData(prev => ({ ...prev, ogImage: data.url as string }));
+    } catch (error: any) {
+      alert(error?.message || 'Failed to upload image');
+    } finally {
+      if (ogImageInputRef.current) {
+        ogImageInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleTwitterImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+
+      if (!data?.url) {
+        throw new Error('Upload succeeded but no URL returned');
+      }
+
+      setFormData(prev => ({ ...prev, twitterImage: data.url as string }));
+    } catch (error: any) {
+      alert(error?.message || 'Failed to upload image');
+    } finally {
+      if (twitterImageInputRef.current) {
+        twitterImageInputRef.current.value = '';
+      }
+    }
+  };
 
   useEffect(() => {
     loadSEO();
@@ -218,14 +287,44 @@ export default function EditSEOPage({ params }: { params: Promise<{ page: string
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="ogImage">OG Image URL</Label>
-                      <Input
-                        id="ogImage"
-                        value={formData.ogImage}
-                        onChange={(e) => setFormData({ ...formData, ogImage: e.target.value })}
-                        placeholder="https://example.com/image.jpg"
-                      />
+                      <Label htmlFor="ogImage">OG Image</Label>
+                      <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                        <Input
+                          id="ogImage"
+                          value={formData.ogImage}
+                          onChange={(e) => setFormData({ ...formData, ogImage: e.target.value })}
+                          placeholder="Image URL or upload using the button"
+                        />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          ref={ogImageInputRef}
+                          onChange={handleOgImageUpload}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="whitespace-nowrap flex items-center gap-2"
+                          onClick={() => ogImageInputRef.current?.click()}
+                        >
+                          <Upload size={16} />
+                          Upload
+                        </Button>
+                      </div>
                       <p className="text-xs text-gray-500">1200x630px recommended</p>
+                      {formData.ogImage && (
+                        <div className="mt-3">
+                          <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden bg-gray-100">
+                            <Image
+                              src={formData.ogImage}
+                              alt="OG image preview"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -278,13 +377,43 @@ export default function EditSEOPage({ params }: { params: Promise<{ page: string
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="twitterImage">Twitter Image URL</Label>
-                      <Input
-                        id="twitterImage"
-                        value={formData.twitterImage}
-                        onChange={(e) => setFormData({ ...formData, twitterImage: e.target.value })}
-                        placeholder="Leave blank to use OG image"
-                      />
+                      <Label htmlFor="twitterImage">Twitter Image</Label>
+                      <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                        <Input
+                          id="twitterImage"
+                          value={formData.twitterImage}
+                          onChange={(e) => setFormData({ ...formData, twitterImage: e.target.value })}
+                          placeholder="Image URL or upload using the button (leave blank to use OG image)"
+                        />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          ref={twitterImageInputRef}
+                          onChange={handleTwitterImageUpload}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="whitespace-nowrap flex items-center gap-2"
+                          onClick={() => twitterImageInputRef.current?.click()}
+                        >
+                          <Upload size={16} />
+                          Upload
+                        </Button>
+                      </div>
+                      {formData.twitterImage && (
+                        <div className="mt-3">
+                          <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden bg-gray-100">
+                            <Image
+                              src={formData.twitterImage}
+                              alt="Twitter image preview"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
