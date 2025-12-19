@@ -13,7 +13,7 @@ interface BlogGridCardProps {
 
 export default function BlogGridCard({ title, description, date, imageUrl, author, authorDesignation, slug = '#' }: BlogGridCardProps) {
   return (
-    <Link href={`/blog/${slug}`}>
+    <Link href={`/blog/${slug}`} title={`Read blog: ${title}`}>
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full flex flex-col">
       <div className="relative w-full h-36 sm:h-48 bg-gray-200">
         <Image
@@ -22,13 +22,17 @@ export default function BlogGridCard({ title, description, date, imageUrl, autho
           title={title}
           fill
           className="object-cover"
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 100vw"
         />
       </div>
       <div className="p-4 sm:p-5 flex flex-col flex-1">
         <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 line-clamp-2">
           {title}
         </h3>
-        <p className="text-xs text-gray-500 mb-3">By <span className="font-semibold">{author}</span>{authorDesignation ? `, ${authorDesignation}` : ''} • {date}</p>
+        <p className="text-xs text-gray-500 mb-3">
+          By <span className="font-semibold">{author}</span>
+          {authorDesignation ? ` • ${authorDesignation}` : ''} • {date}
+        </p>
         <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">
           {description}
         </p>

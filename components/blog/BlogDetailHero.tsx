@@ -46,7 +46,7 @@ export default function BlogDetailHero({ blog }: BlogDetailHeroProps) {
         <span>{blog.readTime}</span>
       </div>
 
-      <div className="w-full sm:w-2/3 lg:w-1/2 mx-auto rounded-lg overflow-hidden mb-3 sm:mb-4">
+      <div className="w-full sm:w-2/3 lg:w-1/2 mx-auto rounded-lg overflow-hidden mb-2 sm:mb-3 lg:mb-4">
         <Image
           src={blog.imageUrl}
           alt={blog.title}

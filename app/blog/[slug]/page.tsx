@@ -165,7 +165,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         <div className="page-padding">
         <BlogDetailHero blog={blog} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-4 pb-8 sm:pt-6 sm:pb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-1 pb-8 sm:pt-6 sm:pb-10">
           <div className="order-2 lg:order-1 space-y-4 sm:space-y-6 max-w-sm mx-auto lg:max-w-none lg:mx-0">
             <div className="hidden lg:block">
               <BlogAuthorCard
@@ -249,16 +249,25 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                         />
                       </span>
                     ),
-                    a: ({ href, children }) => (
-                      <a
-                        href={href}
-                        className="text-purple-600 hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {children}
-                      </a>
-                    ),
+                    a: ({ href, children }) => {
+                      const text =
+                        typeof children === 'string'
+                          ? children
+                          : Array.isArray(children)
+                          ? children.join(' ')
+                          : undefined;
+                      return (
+                        <a
+                          href={href}
+                          className="text-purple-600 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={text || href || undefined}
+                        >
+                          {children}
+                        </a>
+                      );
+                    },
                     code: ({ children }) => (
                       <code className="bg-gray-100 px-2 py-1 rounded text-sm">
                         {children}

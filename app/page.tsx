@@ -66,6 +66,7 @@ export default function Home() {
     date: new Date(allPosts[0].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
     imageUrl: allPosts[0].imageUrl,
     author: allPosts[0].author,
+    authorDesignation: allPosts[0].authorDesignation,
   } : null;
 
   const topReads = allPosts.slice(0, 3).map((post, index) => ({
@@ -173,11 +174,11 @@ export default function Home() {
       <main className="section-padding-y">
         <div className="max-w-7xl mx-auto page-padding">
           <div className="text-center mb-12">
-            <h1 className="font-extrabold tracking-tight leading-snug">
-              <span className="block text-4xl sm:text-5xl md:text-6xl bg-gradient-to-r from-purple-700 via-purple-600 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.2]">
+              <span className="block bg-gradient-to-r from-purple-700 via-purple-600 to-purple-400 bg-clip-text text-transparent">
                 Blogs by
               </span>
-              <span className="block mt-1 sm:mt-2 text-4xl sm:text-5xl md:text-6xl bg-gradient-to-r from-purple-700 via-purple-600 to-purple-400 bg-clip-text text-transparent">
+              <span className="mt-2 block bg-gradient-to-r from-purple-700 via-purple-600 to-purple-400 bg-clip-text text-transparent">
                 Certified Experts
               </span>
             </h1>

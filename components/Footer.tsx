@@ -90,6 +90,7 @@ export default function Footer() {
                     <Link
                       href={link.href}
                       className="text-sm hover:opacity-80 transition-opacity"
+                      title={link.label}
                     >
                       {link.label}
                     </Link>
@@ -106,6 +107,7 @@ export default function Footer() {
                     <Link
                       href={link.href}
                       className="text-sm hover:opacity-80 transition-opacity"
+                      title={link.label}
                     >
                       {link.label}
                     </Link>
@@ -122,6 +124,7 @@ export default function Footer() {
                     <Link
                       href={link.href}
                       className="text-sm hover:opacity-80 transition-opacity"
+                      title={link.label}
                     >
                       {link.label}
                     </Link>
@@ -138,6 +141,7 @@ export default function Footer() {
                     <Link
                       href={link.href}
                       className="text-sm hover:opacity-80 transition-opacity"
+                      title={link.label}
                     >
                       {link.label}
                     </Link>
