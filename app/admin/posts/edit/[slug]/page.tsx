@@ -122,7 +122,12 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
       setFetching(false);
     }
   };
-
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
 
   const addTocItem = () => {
     const newId = tocItems.length > 0 ? Math.max(...tocItems.map(item => item.id)) + 1 : 1;
