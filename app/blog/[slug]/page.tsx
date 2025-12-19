@@ -155,13 +155,17 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                 socialLinks={blog.authorSocialLinks}
               />
             </div>
-            <BlogSubscribe />
-            <RelatedPostsSidebar posts={blog.relatedPosts} />
+            <div className="hidden lg:block">
+              <BlogSubscribe />
+            </div>
+            <div className="hidden lg:block">
+              <RelatedPostsSidebar posts={blog.relatedPosts} />
+            </div>
           </div>
 
           <div className="order-1 lg:order-2 lg:col-span-3">
             {/* Mobile author card above TOC */}
-            <div className="lg:hidden mb-6 sm:mb-8 max-w-sm mx-auto">
+            <div className="lg:hidden mb-4 sm:mb-6 max-w-sm mx-auto">
               <BlogAuthorCard
                 author={blog.author}
                 authorDesignation={blog.authorDesignation}
@@ -169,6 +173,12 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                 authorConsultationUrl={blog.authorConsultationUrl}
                 socialLinks={blog.authorSocialLinks}
               />
+            </div>
+
+            {/* Mobile subscribe + related blogs directly under author card */}
+            <div className="lg:hidden mb-6 sm:mb-8 max-w-sm mx-auto space-y-4">
+              <BlogSubscribe />
+              <RelatedPostsSidebar posts={blog.relatedPosts} />
             </div>
 
             {blog.tableOfContents.length > 0 && (
