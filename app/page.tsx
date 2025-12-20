@@ -111,55 +111,6 @@ export default function Home() {
     );
   }
 
-  const webPageSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    url: SITE_URL,
-    name: 'hexpertify-blogs',
-    description:
-      'hexpertify-blogs - Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.',
-  };
-
-  const webSiteSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    url: SITE_URL,
-    name: 'hexpertify-blogs',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${SITE_URL}/?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
-  };
-
-  const organizationSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'hexpertify-blogs',
-    url: SITE_URL,
-    logo: `${SITE_URL}/assets/logo.png`,
-    sameAs: [
-      'https://www.instagram.com/hexpertify',
-      'https://x.com/hexpertifyapp',
-      'https://www.linkedin.com/company/hexpertify',
-    ],
-  };
-
-  const faqSchema = faqs.length
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: faqs.map((faq) => ({
-          '@type': 'Question',
-          name: faq.question,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: faq.answer,
-          },
-        })),
-      }
-    : null;
-
   const hexpertifyHomeSchema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -250,23 +201,9 @@ export default function Home() {
     ],
   };
 
-  const pageSchema = [webPageSchema, webSiteSchema, organizationSchema];
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
-      />
-
-      {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      )}
 
       <script
         type="application/ld+json"

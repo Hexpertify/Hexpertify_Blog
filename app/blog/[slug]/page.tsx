@@ -88,32 +88,85 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 import Schema from '@/components/Schema';
 
-function buildArticleSchema(blog: any) {
+function buildBlogGraphSchema(blog: any, faqs: any[]) {
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify-blog-sigma.vercel.app';
-  const url = `${SITE_URL}/blog/${blog.slug}`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': url,
-    },
-    headline: blog.title,
-    description: blog.description,
-    image: blog.imageUrl ? [blog.imageUrl] : [],
-    datePublished: blog.rawDate ? new Date(blog.rawDate).toISOString() : new Date().toISOString(),
-    author: {
-      '@type': 'Person',
-      name: blog.author,
-    },
-    publisher: {
+  const BLOGS_SITE_URL = SITE_URL;
+  const MAIN_SITE_URL = 'https://hexpertify.com';
+
+  const blogUrl = `${BLOGS_SITE_URL}/blog/${blog.slug}`;
+  const authorSlug = blog.author
+    ? String(blog.author).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    : 'author';
+
+  const imageUrl = blog.imageUrl
+    ? blog.imageUrl.startsWith('http')
+      ? blog.imageUrl
+      : `${BLOGS_SITE_URL}${blog.imageUrl}`
+    : undefined;
+
+  const graph: any[] = [
+    {
       '@type': 'Organization',
-      name: 'hexpertify-blogs',
+      '@id': `${MAIN_SITE_URL}/#organization`,
+      name: 'Hexpertify',
+      url: MAIN_SITE_URL,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/assets/logo.png`,
+        url: `${MAIN_SITE_URL}/logo.png`,
       },
     },
+    {
+      '@type': 'Person',
+      '@id': `${MAIN_SITE_URL}/experts/${authorSlug}#person`,
+      name: blog.author,
+      jobTitle: blog.authorDesignation || undefined,
+      description: blog.authorBio || undefined,
+      worksFor: {
+        '@id': `${MAIN_SITE_URL}/#organization`,
+      },
+    },
+    {
+      '@type': 'BlogPosting',
+      '@id': `${blogUrl}#blogposting`,
+      headline: blog.title,
+      description: blog.description,
+      image: imageUrl,
+      datePublished: blog.rawDate ? new Date(blog.rawDate).toISOString() : undefined,
+      dateModified: blog.rawDate ? new Date(blog.rawDate).toISOString() : undefined,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': blogUrl,
+      },
+      author: {
+        '@id': `${MAIN_SITE_URL}/experts/${authorSlug}#person`,
+      },
+      publisher: {
+        '@id': `${MAIN_SITE_URL}/#organization`,
+      },
+      isPartOf: {
+        '@id': `${BLOGS_SITE_URL}/#blog`,
+      },
+    },
+  ];
+
+  if (faqs && faqs.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${blogUrl}#faq`,
+      mainEntity: faqs.map((faq: any) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer,
+        },
+      })),
+    });
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': graph,
   };
 }
 
@@ -136,32 +189,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     );
   }
 
-  const faqSchema = faqs.length
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: faqs.map((faq) => ({
-          '@type': 'Question',
-          name: faq.question,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: faq.answer,
-          },
-        })),
-      }
-    : null;
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <Schema
-        value={
-          faqSchema
-            ? [buildArticleSchema(blog), faqSchema]
-            : buildArticleSchema(blog)
-        }
-      />
+      <Schema value={buildBlogGraphSchema(blog, faqs)} />
 
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">
