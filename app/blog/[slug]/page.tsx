@@ -108,7 +108,7 @@ function buildArticleSchema(blog: any) {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Hexpertify',
+      name: 'hexpertify-blogs',
       logo: {
         '@type': 'ImageObject',
         url: `${SITE_URL}/assets/logo.png`,

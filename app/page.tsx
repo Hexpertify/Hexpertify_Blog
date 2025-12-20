@@ -115,16 +115,16 @@ export default function Home() {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     url: SITE_URL,
-    name: 'Hexpertify Blog',
+    name: 'hexpertify-blogs',
     description:
-      'Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.',
+      'hexpertify-blogs - Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.',
   };
 
   const webSiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     url: SITE_URL,
-    name: 'Hexpertify Blog',
+    name: 'hexpertify-blogs',
     potentialAction: {
       '@type': 'SearchAction',
       target: `${SITE_URL}/?q={search_term_string}`,
@@ -135,7 +135,7 @@ export default function Home() {
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Hexpertify',
+    name: 'hexpertify-blogs',
     url: SITE_URL,
     logo: `${SITE_URL}/assets/logo.png`,
     sameAs: [

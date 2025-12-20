@@ -116,15 +116,17 @@ export async function deleteSEO(page: string) {
 
 export function getDefaultSEO(): Omit<SEOMetadata, 'page'> {
   return {
-    title: 'Hexpertify - Connect with Certified Experts',
-    description: 'Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development. Get personalized consulting and expert guidance.',
-    ogTitle: 'Hexpertify - Connect with Certified Experts',
+    title: 'hexpertify-blogs - Connect with Certified Experts',
+    description:
+      'hexpertify-blogs - Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development. Get personalized consulting and expert guidance.',
+    ogTitle: 'hexpertify-blogs - Connect with Certified Experts',
     ogDescription: 'hexpertify-blogs',
     ogImage: 'https://hexpertify-blog-sigma.vercel.app/assets/images/logo.png',
     ogType: 'website',
     twitterCard: 'summary_large_image',
-    twitterTitle: 'Hexpertify - Connect with Certified Experts',
-    twitterDescription: 'Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.',
+    twitterTitle: 'hexpertify-blogs - Connect with Certified Experts',
+    twitterDescription:
+      'hexpertify-blogs - Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.',
     twitterImage: 'https://hexpertify-blog-sigma.vercel.app/assets/images/logo.png',
     keywords: 'experts, consulting, AI, cloud computing, mental health, fitness, career development',
     canonicalUrl: '',

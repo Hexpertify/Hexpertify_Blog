@@ -11,8 +11,8 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify-blog-si
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await SEOHead({
     page: 'homepage',
-    fallbackTitle: 'Hexpertify - Connect with Certified Experts',
-    fallbackDescription: 'Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.'
+    fallbackTitle: 'hexpertify-blogs - Connect with Certified Experts',
+    fallbackDescription: 'hexpertify-blogs - Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.'
   });
 
   return {
@@ -33,12 +33,13 @@ export default function RootLayout({
   const siteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Hexpertify',
+    name: 'hexpertify-blogs',
     url: SITE_URL,
-    description: 'Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.',
+    description:
+      'hexpertify-blogs - Connect with certified experts across AI, Cloud Computing, Mental Health, Fitness, and Career Development.',
     publisher: {
       '@type': 'Organization',
-      name: 'Hexpertify',
+      name: 'hexpertify-blogs',
       url: SITE_URL,
       logo: {
         '@type': 'ImageObject',
