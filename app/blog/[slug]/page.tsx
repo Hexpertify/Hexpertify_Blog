@@ -195,100 +195,97 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
       <Schema value={buildBlogGraphSchema(blog, faqs)} />
 
-          {blog.slug === 'hexpertify' && (
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                  '@context': 'https://schema.org',
-                  '@graph': [
-                    {
-                      '@type': 'Organization',
-                      '@id': 'https://hexpertify.com/#organization',
-                      name: 'Hexpertify',
-                      url: 'https://hexpertify.com',
-                      logo: {
-                        '@type': 'ImageObject',
-                        url: 'https://hexpertify.com/logo.png',
-                      },
+      {blog.slug === 'hexpertify' && (
+        <Schema
+          value={{
+            '@context': 'https://schema.org',
+            '@graph': [
+              {
+                '@type': 'Organization',
+                '@id': 'https://hexpertify.com/#organization',
+                name: 'Hexpertify',
+                url: 'https://hexpertify.com',
+                logo: {
+                  '@type': 'ImageObject',
+                  url: 'https://hexpertify.com/logo.png',
+                },
+              },
+              {
+                '@type': 'Person',
+                '@id': 'https://hexpertify.com/experts/jaswanth#person',
+                name: 'Jaswanth',
+                jobTitle: 'Founder',
+                description:
+                  'Founder of Hexpertify and an advocate for expert-driven, verified online guidance.',
+                worksFor: {
+                  '@id': 'https://hexpertify.com/#organization',
+                },
+              },
+              {
+                '@type': 'BlogPosting',
+                '@id': 'https://blogs.hexpertify.com/blog/hexpertify#blogposting',
+                headline: 'Hexpertify',
+                description:
+                  'Hexpertify is an online consulting platform that connects users with certified and verified professionals across healthcare, finance, career, fitness, and mental health.',
+                image: 'https://blogs.hexpertify.com/images/hexpertify-cover.png',
+                datePublished: '2025-12-01',
+                dateModified: '2025-12-01',
+                mainEntityOfPage: {
+                  '@type': 'WebPage',
+                  '@id': 'https://blogs.hexpertify.com/blog/hexpertify',
+                },
+                author: {
+                  '@id': 'https://hexpertify.com/experts/jaswanth#person',
+                },
+                publisher: {
+                  '@id': 'https://hexpertify.com/#organization',
+                },
+                isPartOf: {
+                  '@id': 'https://blogs.hexpertify.com/#blog',
+                },
+              },
+              {
+                '@type': 'FAQPage',
+                '@id': 'https://blogs.hexpertify.com/blog/hexpertify#faq',
+                mainEntity: [
+                  {
+                    '@type': 'Question',
+                    name: 'What is Hexpertify?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'Hexpertify is an online consulting platform that connects users with certified and verified professionals across multiple domains such as healthcare, finance, career, fitness, and mental health.',
                     },
-                    {
-                      '@type': 'Person',
-                      '@id': 'https://hexpertify.com/experts/jaswanth#person',
-                      name: 'Jaswanth',
-                      jobTitle: 'Founder',
-                      description:
-                        'Founder of Hexpertify and an advocate for expert-driven, verified online guidance.',
-                      worksFor: {
-                        '@id': 'https://hexpertify.com/#organization',
-                      },
+                  },
+                  {
+                    '@type': 'Question',
+                    name: 'Who writes blogs on Hexpertify?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'All blogs on Hexpertify are written by certified and verified experts to ensure accuracy, trust, and credibility.',
                     },
-                    {
-                      '@type': 'BlogPosting',
-                      '@id': 'https://blogs.hexpertify.com/blog/hexpertify#blogposting',
-                      headline: 'Hexpertify',
-                      description:
-                        'Hexpertify is an online consulting platform that connects users with certified and verified professionals across healthcare, finance, career, fitness, and mental health.',
-                      image: 'https://blogs.hexpertify.com/images/hexpertify-cover.png',
-                      datePublished: '2025-12-01',
-                      dateModified: '2025-12-01',
-                      mainEntityOfPage: {
-                        '@type': 'WebPage',
-                        '@id': 'https://blogs.hexpertify.com/blog/hexpertify',
-                      },
-                      author: {
-                        '@id': 'https://hexpertify.com/experts/jaswanth#person',
-                      },
-                      publisher: {
-                        '@id': 'https://hexpertify.com/#organization',
-                      },
-                      isPartOf: {
-                        '@id': 'https://blogs.hexpertify.com/#blog',
-                      },
+                  },
+                  {
+                    '@type': 'Question',
+                    name: 'Can I consult experts on Hexpertify?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'Yes, users can consult experts on Hexpertify through text, call, or video consultations.',
                     },
-                    {
-                      '@type': 'FAQPage',
-                      '@id': 'https://blogs.hexpertify.com/blog/hexpertify#faq',
-                      mainEntity: [
-                        {
-                          '@type': 'Question',
-                          name: 'What is Hexpertify?',
-                          acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Hexpertify is an online consulting platform that connects users with certified and verified professionals across multiple domains such as healthcare, finance, career, fitness, and mental health.',
-                          },
-                        },
-                        {
-                          '@type': 'Question',
-                          name: 'Who writes blogs on Hexpertify?',
-                          acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'All blogs on Hexpertify are written by certified and verified experts to ensure accuracy, trust, and credibility.',
-                          },
-                        },
-                        {
-                          '@type': 'Question',
-                          name: 'Can I consult experts on Hexpertify?',
-                          acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Yes, users can consult experts on Hexpertify through text, call, or video consultations.',
-                          },
-                        },
-                        {
-                          '@type': 'Question',
-                          name: 'What fields does Hexpertify cover?',
-                          acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Hexpertify covers a wide range of fields including healthcare, mental health counseling, finance, business consulting, career counseling, fashion consulting, and fitness coaching.',
-                          },
-                        },
-                      ],
+                  },
+                  {
+                    '@type': 'Question',
+                    name: 'What fields does Hexpertify cover?',
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: 'Hexpertify covers a wide range of fields including healthcare, mental health counseling, finance, business consulting, career counseling, fashion consulting, and fitness coaching.',
                     },
-                  ],
-                }),
-              }}
-            />
-          )}
+                  },
+                ],
+              },
+            ],
+          }}
+        />
+      )}
 
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">

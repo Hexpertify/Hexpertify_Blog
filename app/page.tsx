@@ -9,6 +9,7 @@ import BlogCategoryFilter from '@/components/blog/BlogCategoryFilter';
 import BlogSearchBar from '@/components/blog/BlogSearchBar';
 import BlogGridCard from '@/components/blog/BlogGridCard';
 import FAQSection from '@/components/FAQSection';
+import Schema from '@/components/Schema';
 import { fetchAllPosts, fetchAllCategories, fetchFAQsByPage } from '@/lib/actions';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify-blog-sigma.vercel.app';
@@ -205,10 +206,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(hexpertifyHomeSchema) }}
-      />
+      <Schema value={hexpertifyHomeSchema} />
 
       <main className="section-padding-y">
         <div className="max-w-7xl mx-auto page-padding">
