@@ -53,6 +53,7 @@ const Carousel = React.forwardRef<
       setApi,
       plugins,
       className,
+      tabIndex: tabIndexProp,
       children,
       ...props
     },
@@ -87,15 +88,26 @@ const Carousel = React.forwardRef<
 
     const handleKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === 'ArrowLeft') {
+        if (orientation === 'horizontal') {
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            scrollPrev();
+          } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            scrollNext();
+          }
+          return;
+        }
+
+        if (event.key === 'ArrowUp') {
           event.preventDefault();
           scrollPrev();
-        } else if (event.key === 'ArrowRight') {
+        } else if (event.key === 'ArrowDown') {
           event.preventDefault();
           scrollNext();
         }
       },
-      [scrollPrev, scrollNext]
+      [orientation, scrollPrev, scrollNext]
     );
 
     React.useEffect(() => {
@@ -140,6 +152,7 @@ const Carousel = React.forwardRef<
           className={cn('relative', className)}
           role="region"
           aria-roledescription="carousel"
+          tabIndex={tabIndexProp ?? 0}
           {...props}
         >
           {children}
@@ -157,7 +170,10 @@ const CarouselContent = React.forwardRef<
   const { carouselRef, orientation } = useCarousel();
 
   return (
-    <div ref={carouselRef} className="overflow-hidden">
+    <div
+      ref={carouselRef}
+      className={cn('overflow-hidden', orientation === 'vertical' && 'h-full')}
+    >
       <div
         ref={ref}
         className={cn(

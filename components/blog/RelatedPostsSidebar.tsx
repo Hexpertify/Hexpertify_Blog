@@ -1,14 +1,13 @@
 "use client";
 
 import * as React from 'react';
+import AutoScroll from 'embla-carousel-auto-scroll';
 import TopReadsCard from '@/components/blog/TopReadsCard';
 import {
   type CarouselApi,
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from '@/components/ui/carousel';
 
 interface RelatedPost {
@@ -29,21 +28,36 @@ export default function RelatedPostsSidebar({ posts }: RelatedPostsSidebarProps)
   if (!posts || posts.length === 0) return null;
 
   const [api, setApi] = React.useState<CarouselApi | null>(null);
+  const carouselRegionRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Auto-advance the carousel every 5 seconds
   React.useEffect(() => {
     if (!api) return;
+    const node = carouselRegionRef.current;
+    if (!node) return;
 
-    const interval = setInterval(() => {
-      if (!api) return;
-      if (api.canScrollNext()) {
+    const onWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+
+      event.preventDefault();
+
+      const autoScroll = (api.plugins() as any)?.autoScroll;
+      autoScroll?.stop?.();
+
+      // Resume slow auto-scroll shortly after user input
+      window.setTimeout(() => {
+        const resume = (api.plugins() as any)?.autoScroll;
+        resume?.play?.();
+      }, 1500);
+
+      if (event.deltaY > 0) {
         api.scrollNext();
       } else {
-        api.scrollTo(0);
+        api.scrollPrev();
       }
-    }, 5000);
+    };
 
-    return () => clearInterval(interval);
+    node.addEventListener('wheel', onWheel, { passive: false });
+    return () => node.removeEventListener('wheel', onWheel);
   }, [api]);
 
   return (
@@ -52,14 +66,23 @@ export default function RelatedPostsSidebar({ posts }: RelatedPostsSidebarProps)
       <p className="text-xs text-gray-600 mb-2.5">Discover more from this category</p>
 
       <Carousel
+        ref={carouselRegionRef}
         orientation="vertical"
-        opts={{ align: 'start', loop: true }}
+        opts={{ align: 'start', loop: true, skipSnaps: true }}
+        plugins={[
+          AutoScroll({
+            playOnInit: true,
+            stopOnInteraction: true,
+            stopOnMouseEnter: true,
+            speed: 0.35,
+          }) as any,
+        ]}
         setApi={setApi}
-        className="w-full"
+        className="w-full h-96 touch-pan-x"
       >
-        <CarouselContent>
+        <CarouselContent className="mt-4">
           {posts.map((post) => (
-            <CarouselItem key={post.slug} className="basis-full">
+            <CarouselItem key={post.slug} className="basis-1/3 pt-0 pb-3">
               <TopReadsCard
                 title={post.title}
                 date={post.date}
@@ -68,12 +91,11 @@ export default function RelatedPostsSidebar({ posts }: RelatedPostsSidebarProps)
                 slug={post.slug}
                 author={post.author}
                 authorDesignation={post.authorDesignation}
+                compact
               />
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="-left-4" />
-        <CarouselNext className="-right-4" />
       </Carousel>
     </div>
   );

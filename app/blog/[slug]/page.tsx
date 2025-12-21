@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import * as React from 'react';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -220,6 +221,10 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     );
   }
 
+  const tocAnchorByTitle = new Map(
+    (blog.tableOfContents || []).map((item) => [item.title.trim(), item.anchor])
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -265,7 +270,9 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
             {blog.tableOfContents.length > 0 && (
               <div className="bg-purple-50/50 rounded-lg px-4 sm:px-9 py-4 sm:py-6 mb-6 sm:mb-8 max-w-xl mx-auto">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 text-center">Table of Contents</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 text-center">
+                  Table of Contents
+                </h3>
                 <ol className="space-y-2">
                   {blog.tableOfContents.map((item, index) => (
                     <li key={item.id} className="text-sm leading-relaxed">
@@ -286,11 +293,22 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
-                    h2: ({ children }) => (
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">
-                        {children}
-                      </h2>
-                    ),
+                    h2: ({ children }) => {
+                      const text = React.Children.toArray(children)
+                        .map((child) => (typeof child === 'string' ? child : ''))
+                        .join('')
+                        .trim();
+                      const id = tocAnchorByTitle.get(text);
+
+                      return (
+                        <h2
+                          id={id}
+                          className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4"
+                        >
+                          {children}
+                        </h2>
+                      );
+                    },
                     h3: ({ children }) => (
                       <h3 className="text-lg sm:text-xl font-bold text-gray-900 mt-6 mb-3">
                         {children}
@@ -340,15 +358,9 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                         {children}
                       </code>
                     ),
-                    li: ({ children }) => (
-                      <li className="ml-6">{children}</li>
-                    ),
-                    ul: ({ children }) => (
-                      <ul className="mb-4">{children}</ul>
-                    ),
-                    ol: ({ children }) => (
-                      <ol className="mb-4">{children}</ol>
-                    ),
+                    li: ({ children }) => <li className="ml-6">{children}</li>,
+                    ul: ({ children }) => <ul className="mb-4">{children}</ul>,
+                    ol: ({ children }) => <ol className="mb-4">{children}</ol>,
                   }}
                 >
                   {blog.content}
