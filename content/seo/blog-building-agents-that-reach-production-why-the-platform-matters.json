@@ -1,0 +1,18 @@
+{
+  "title": "Building Agents That Reach Production: Why the Platform Matters",
+  "description": "Discover why AI agents struggle to reach production and how the right platform enables orchestration, governance, observability, and reliable enterprise-scale agentic workflows.",
+  "ogTitle": "Building Agents That Reach Production: Why the Platform Matters",
+  "ogDescription": "Most AI agents fail to move beyond demos. Learn how orchestration, governance, observability, and platform design determine whether agentic workflows succeed in production.",
+  "ogImage": "https://raw.githubusercontent.com/cheliyan-sankar/Hexpertify_Blog/main/assets/uploads/1766325168863-vn84el83iuo.jfif",
+  "ogImageAlt": "Illustration showing an enterprise AI agent workflow with orchestration, governance, observability, and human-in-the-loop automation.",
+  "ogType": "article",
+  "twitterCard": "summary_large_image",
+  "twitterTitle": "Building Agents That Reach Production: Why the Platform Matters",
+  "twitterDescription": "AI agents aren’t failing because of models—but because of missing platforms. See what it takes to move agentic workflows from prototype to production.",
+  "twitterImage": "https://raw.githubusercontent.com/cheliyan-sankar/Hexpertify_Blog/main/assets/uploads/1766325168863-vn84el83iuo.jfif",
+  "twitterImageAlt": "",
+  "keywords": "agentic workflows, AI agents production, enterprise AI automation, AI orchestration, AI governance, observability, workflow automation, LLM agents, production AI platforms",
+  "canonicalUrl": "https://hexpertify.com/blog/building-agents-that-reach-production-why-the-platform-matters",
+  "robots": "index, follow",
+  "updatedAt": "2025-12-21T13:53:40.039Z"
+}
