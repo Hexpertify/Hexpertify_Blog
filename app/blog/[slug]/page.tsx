@@ -198,8 +198,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: `<script type="application/ld+json">
-{
+            __html: `{
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -283,8 +282,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
       ]
     }
   ]
-}
-</script>`,
+}`,
           }}
         />
       ) : (
