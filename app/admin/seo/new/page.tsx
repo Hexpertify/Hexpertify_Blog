@@ -190,12 +190,12 @@ export default function NewSEOPage() {
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="title">Page Title *</Label>
+                      <Label htmlFor="title">Meta Title *</Label>
                       <Input
                         id="title"
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        placeholder="Page Title - Your Brand"
+                        placeholder="Meta title shown in search results"
                         required
                       />
                       <p className="text-xs text-gray-500">50-60 characters recommended</p>

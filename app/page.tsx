@@ -127,18 +127,18 @@ export default function Home() {
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://blogs.hexpertify.com/#website',
+        '@id': `${SITE_URL}/#website`,
         name: 'Hexpertify Blogs',
-        url: 'https://blogs.hexpertify.com',
+        url: SITE_URL,
         publisher: {
           '@id': 'https://hexpertify.com/#organization',
         },
       },
       {
         '@type': 'Blog',
-        '@id': 'https://blogs.hexpertify.com/#blog',
+        '@id': `${SITE_URL}/#blog`,
         name: 'Hexpertify Blogs',
-        url: 'https://blogs.hexpertify.com',
+        url: SITE_URL,
         description:
           'Blogs written by certified and verified experts from healthcare, mental health, fitness, technology, and career domains.',
         publisher: {
@@ -147,7 +147,7 @@ export default function Home() {
       },
       {
         '@type': 'FAQPage',
-        '@id': 'https://blogs.hexpertify.com/#faq',
+        '@id': `${SITE_URL}/#faq`,
         mainEntity: [
           {
             '@type': 'Question',

@@ -90,83 +90,111 @@ import Schema from '@/components/Schema';
 
 function buildBlogGraphSchema(blog: any, faqs: any[]) {
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://blogs.hexpertify.com';
-  const BLOGS_SITE_URL = SITE_URL;
   const MAIN_SITE_URL = 'https://hexpertify.com';
 
-  const blogUrl = `${BLOGS_SITE_URL}/blog/${blog.slug}`;
+  const blogUrl = `${SITE_URL}/blog/${blog.slug}`;
   const authorSlug = blog.author
-    ? String(blog.author).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-    : 'author';
+    ? String(blog.author)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+    : 'jaswanth';
 
   const imageUrl = blog.imageUrl
     ? blog.imageUrl.startsWith('http')
       ? blog.imageUrl
-      : `${BLOGS_SITE_URL}${blog.imageUrl}`
+      : `${SITE_URL}${blog.imageUrl.startsWith('/') ? '' : '/'}${blog.imageUrl}`
     : undefined;
 
-  const graph: any[] = [
+  const rawDate = blog.rawDate ? new Date(blog.rawDate) : null;
+  const dateString = rawDate && !Number.isNaN(rawDate.getTime()) ? rawDate.toISOString().slice(0, 10) : undefined;
+
+  const organizationId = 'https://hexpertify.com/#organization';
+  const personId = `${MAIN_SITE_URL}/experts/${authorSlug}#person`;
+  const blogId = `${SITE_URL}/#blog`;
+
+  const fallbackFaqs = [
     {
-      '@type': 'Organization',
-      '@id': `${MAIN_SITE_URL}/#organization`,
-      name: 'Hexpertify',
-      url: MAIN_SITE_URL,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${MAIN_SITE_URL}/logo.png`,
-      },
+      question: 'What is Hexpertify?',
+      answer:
+        'Hexpertify is an online consulting platform that connects users with certified and verified professionals across multiple domains such as healthcare, finance, career, fitness, and mental health.',
     },
     {
-      '@type': 'Person',
-      '@id': `${MAIN_SITE_URL}/experts/${authorSlug}#person`,
-      name: blog.author,
-      jobTitle: blog.authorDesignation || undefined,
-      description: blog.authorBio || undefined,
-      worksFor: {
-        '@id': `${MAIN_SITE_URL}/#organization`,
-      },
+      question: 'Who writes blogs on Hexpertify?',
+      answer: 'All blogs on Hexpertify are written by certified and verified experts to ensure accuracy, trust, and credibility.',
     },
     {
-      '@type': 'BlogPosting',
-      '@id': `${blogUrl}#blogposting`,
-      headline: blog.title,
-      description: blog.description,
-      image: imageUrl,
-      datePublished: blog.rawDate ? new Date(blog.rawDate).toISOString() : undefined,
-      dateModified: blog.rawDate ? new Date(blog.rawDate).toISOString() : undefined,
-      mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': blogUrl,
-      },
-      author: {
-        '@id': `${MAIN_SITE_URL}/experts/${authorSlug}#person`,
-      },
-      publisher: {
-        '@id': `${MAIN_SITE_URL}/#organization`,
-      },
-      isPartOf: {
-        '@id': `${BLOGS_SITE_URL}/#blog`,
-      },
+      question: 'Can I consult experts on Hexpertify?',
+      answer: 'Yes, users can consult experts on Hexpertify through text, call, or video consultations.',
+    },
+    {
+      question: 'What fields does Hexpertify cover?',
+      answer:
+        'Hexpertify covers a wide range of fields including healthcare, mental health counseling, finance, business consulting, career counseling, fashion consulting, and fitness coaching.',
     },
   ];
 
-  if (faqs && faqs.length) {
-    graph.push({
-      '@type': 'FAQPage',
-      '@id': `${blogUrl}#faq`,
-      mainEntity: faqs.map((faq: any) => ({
-        '@type': 'Question',
-        name: faq.question,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: faq.answer,
-        },
-      })),
-    });
-  }
+  const faqItems = (faqs && faqs.length ? faqs : fallbackFaqs).map((faq: any) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  }));
 
   return {
     '@context': 'https://schema.org',
-    '@graph': graph,
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': organizationId,
+        name: 'Hexpertify',
+        url: MAIN_SITE_URL,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${MAIN_SITE_URL}/logo.png`,
+        },
+      },
+      {
+        '@type': 'Person',
+        '@id': personId,
+        name: blog.author || 'Jaswanth',
+        jobTitle: blog.authorDesignation || 'Founder',
+        description:
+          blog.authorBio || 'Founder of Hexpertify and an advocate for expert-driven, verified online guidance.',
+        worksFor: {
+          '@id': organizationId,
+        },
+      },
+      {
+        '@type': 'BlogPosting',
+        '@id': `${blogUrl}#blogposting`,
+        headline: blog.title,
+        description: blog.description,
+        image: imageUrl,
+        datePublished: dateString,
+        dateModified: dateString,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': blogUrl,
+        },
+        author: {
+          '@id': personId,
+        },
+        publisher: {
+          '@id': organizationId,
+        },
+        isPartOf: {
+          '@id': blogId,
+        },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${blogUrl}#faq`,
+        mainEntity: faqItems,
+      },
+    ],
   };
 }
 
@@ -193,101 +221,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {blog.slug === 'hexpertify' ? (
-        // eslint-disable-next-line react/no-danger
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: `{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://hexpertify.com/#organization",
-      "name": "Hexpertify",
-      "url": "https://hexpertify.com",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://hexpertify.com/logo.png"
-      }
-    },
-    {
-      "@type": "Person",
-      "@id": "https://hexpertify.com/experts/jaswanth#person",
-      "name": "Jaswanth",
-      "jobTitle": "Founder",
-      "description": "Founder of Hexpertify and an advocate for expert-driven, verified online guidance.",
-      "worksFor": {
-        "@id": "https://hexpertify.com/#organization"
-      }
-    },
-    {
-      "@type": "BlogPosting",
-      "@id": "https://blogs.hexpertify.com/blog/hexpertify#blogposting",
-      "headline": "Hexpertify",
-      "description": "Hexpertify is an online consulting platform that connects users with certified and verified professionals across healthcare, finance, career, fitness, and mental health.",
-      "image": "https://blogs.hexpertify.com/images/hexpertify-cover.png",
-      "datePublished": "2025-12-01",
-      "dateModified": "2025-12-01",
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https://blogs.hexpertify.com/blog/hexpertify"
-      },
-      "author": {
-        "@id": "https://hexpertify.com/experts/jaswanth#person"
-      },
-      "publisher": {
-        "@id": "https://hexpertify.com/#organization"
-      },
-      "isPartOf": {
-        "@id": "https://blogs.hexpertify.com/#blog"
-      }
-    },
-    {
-      "@type": "FAQPage",
-      "@id": "https://blogs.hexpertify.com/blog/hexpertify#faq",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "What is Hexpertify?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Hexpertify is an online consulting platform that connects users with certified and verified professionals across multiple domains such as healthcare, finance, career, fitness, and mental health."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Who writes blogs on Hexpertify?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "All blogs on Hexpertify are written by certified and verified experts to ensure accuracy, trust, and credibility."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can I consult experts on Hexpertify?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, users can consult experts on Hexpertify through text, call, or video consultations."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What fields does Hexpertify cover?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Hexpertify covers a wide range of fields including healthcare, mental health counseling, finance, business consulting, career counseling, fashion consulting, and fitness coaching."
-          }
-        }
-      ]
-    }
-  ]
-}`,
-          }}
-        />
-      ) : (
-        <Schema value={buildBlogGraphSchema(blog, faqs)} />
-      )}
+      <Schema value={buildBlogGraphSchema(blog, faqs)} />
 
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">
