@@ -2,6 +2,22 @@
   "name": "nextjs",
   "version": "0.1.0",
   "private": true,
+  "description": "A modern, file-based blog platform built with Next.js, featuring an admin panel for easy content management. Blog posts are stored as MDX files for version control and portability.",
+  "homepage": "https://github.com/cheliyan-sankar/Hexpertify_Blog#readme",
+  "bugs": {
+    "url": "https://github.com/cheliyan-sankar/Hexpertify_Blog/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheliyan-sankar/Hexpertify_Blog.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "next.config.js",
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
     "dev": "next dev",
     "dev:clean": "node scripts/clean-next.cjs && next dev",
@@ -60,7 +76,7 @@
     "gray-matter": "^4.0.3",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.446.0",
-    "next": "15.5.9",
+    "next": "^15.5.9",
     "next-themes": "^0.3.0",
     "postcss": "8.4.30",
     "react": "18.2.0",

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import blogImg from '../../assets/uploads/blogs/blog.jpeg';
 
 export default function Header() {
   return (
@@ -10,7 +11,7 @@ export default function Header() {
         <div className="flex justify-center items-center h-16">
           <Link href="/">
             <Image
-              src="/blog.jpeg"
+              src={blogImg}
               alt="Blogs by Certified Experts"
               title="Blogs by Certified Experts"
               width={654}

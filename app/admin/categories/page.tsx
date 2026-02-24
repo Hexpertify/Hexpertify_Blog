@@ -24,14 +24,27 @@ function CategoriesPage() {
   const loadCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/categories');
-      const data = await response.json();
-      if (data.success) {
-        setCategories(data.categories);
+      const text = await response.text();
+      if (!text) {
+        throw new Error('Empty response from server');
+      }
+      let data: any;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON from /api/categories:', text);
+        throw new Error('Invalid JSON response from server');
+      }
+
+      if (data && data.success) {
+        setCategories(Array.isArray(data.categories) ? data.categories : []);
       } else {
-        console.error('Error loading categories:', data.error);
+        console.error('Error loading categories:', data?.error);
+        setError(data?.error || 'Failed to load categories');
       }
     } catch (error) {
       console.error('Error loading categories:', error);
+      setError((error as any)?.message || 'Failed to load categories');
     } finally {
       setLoading(false);
     }
@@ -57,9 +70,16 @@ function CategoriesPage() {
         },
         body: JSON.stringify({ categoryName: newCategory.trim() }),
       });
-      
-      const result = await response.json();
-      
+      const text = await response.text();
+      if (!text) throw new Error('Empty response from server');
+      let result: any;
+      try {
+        result = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON from POST /api/categories:', text);
+        throw new Error('Invalid JSON response from server');
+      }
+
       if (result.success) {
         setSuccess('Category added successfully!');
         setNewCategory('');
@@ -90,9 +110,16 @@ function CategoriesPage() {
         },
         body: JSON.stringify({ categoryName: category }),
       });
-      
-      const result = await response.json();
-      
+      const text = await response.text();
+      if (!text) throw new Error('Empty response from server');
+      let result: any;
+      try {
+        result = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON from DELETE /api/categories:', text);
+        throw new Error('Invalid JSON response from server');
+      }
+
       if (result.success) {
         setSuccess('Category deleted successfully!');
         await loadCategories();

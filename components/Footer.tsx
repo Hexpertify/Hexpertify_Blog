@@ -1,32 +1,33 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import nImg from '../assets/uploads/blogs/n.png';
 import { Instagram, Twitter, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   const footerLinks = {
     home: [
-      { label: 'Home', href: 'https://hexpertify.vercel.app/' },
-      { label: 'Categories', href: 'https://hexpertify.vercel.app/#categories' },
-      { label: 'Recently Onboarded', href: 'https://hexpertify.vercel.app/#recently-onboarded' },
-      { label: 'Top Consultants', href: 'https://hexpertify.vercel.app/#top-consultants' },
+      { label: 'Home', href: 'https://hexpertify.com' },
+      { label: 'Categories', href: 'https://hexpertify.com/services/doctors-hexpertify#:~:text=Home-,Categories,-Recently%20Onboarded' },
+      { label: 'Recently Onboarded', href: 'https://hexpertify.com/#recently-onboarded' },
+      { label: 'Top Consultants', href: 'https://hexpertify.com/#top-consultants' },
     ],
     services: [
-      { label: 'Services', href: 'https://hexpertify.vercel.app/#categories' },
-      { label: '1:1 Online Consultation', href: 'https://hexpertify.vercel.app/#categories' },
-      { label: 'Hire A Mentor', href: 'https://hexpertify.vercel.app/hire-a-mentor' },
-      { label: 'Webinars', href: 'https://hexpertify.vercel.app/services/webinar' },
+      { label: 'Services', href: 'https://hexpertify.com/services' },
+      { label: '1:1 Online Consultation', href: 'https://hexpertify.com/#categories' },
+      { label: 'Hire A Mentor', href: 'https://hexpertify.com/hire-a-mentor' },
+      { label: 'Webinars', href: 'https://hexpertify.com/services/corporate-webinars-and-group-sessions' },
     ],
     about: [
-      { label: 'About Us', href: 'https://hexpertify.vercel.app/about-us' },
-      { label: 'Terms & Conditions', href: 'https://hexpertify.vercel.app/terms-conditions' },
-      { label: 'Privacy Policy', href: 'https://hexpertify.vercel.app/privacy-policy' },
-      { label: 'Refund Policy', href: 'https://hexpertify.vercel.app/refund-policy' },
+      { label: 'About Us', href: 'https://hexpertify.com/about-us' },
+      { label: 'Terms & Conditions', href: 'https://hexpertify.com/terms-conditions' },
+      { label: 'Privacy Policy', href: 'https://hexpertify.com/privacy-policy' },
+      { label: 'Refund Policy', href: 'https://hexpertify.com/refund-policy' },
     ],
     contact: [
-      { label: 'Contact Us', href: 'https://hexpertify.vercel.app/contact-us' },
-      { label: 'Call Us', href: 'tel:8940506900' },
+      { label: 'Contact Us', href: 'https://hexpertify.com/contact-us' },
+      { label: 'Call Us', href: 'tel:+918940506900' },
       { label: 'Email Us', href: 'mailto:hexpertifyapp@gmail.com' },
-      { label: 'Join as Consultant', href: 'mailto:hexpertifyapp@gmail.com' },
+      { label: 'Join as Consultant', href: 'https://hexpertify.com/contact-us' },
     ],
   };
 
@@ -39,7 +40,7 @@ export default function Footer() {
               <div className="mb-4 flex justify-center md:justify-start">
                 <div className="w-[160px]">
                   <Image
-                    src="/n.png"
+                    src={nImg}
                     alt="Hexpertify Logo"
                     title="Hexpertify Logo"
                     width={160}
