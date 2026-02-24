@@ -1,4 +1,5 @@
-import { withMicrofrontends } from '@vercel/microfrontends/next/config';
+// `@vercel/microfrontends` removed to avoid install-time peer conflicts.
+// If you need microfrontends, reinstall the package and re-enable the wrapper.
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -14,8 +15,4 @@ const nextConfig = {
   },
 };
 
-<<<<<<< HEAD:next.config.js
-export default withMicrofrontends(nextConfig);
-=======
 export default nextConfig;
->>>>>>> c8a6bec (fix(next): use ESM next.config.mjs to resolve build import error):next.config.mjs
