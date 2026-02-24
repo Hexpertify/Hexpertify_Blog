@@ -9,10 +9,17 @@ import path from 'path';
 // permissions.  When running locally we also fall back to file‑system writes if
 // no usable token is available.
 const rawToken = process.env.GITHUB_TOKEN || '';
-const GITHUB_TOKEN = rawToken && /^gh[pou]_[A-Za-z0-9]+$/.test(rawToken) ? rawToken : '';
-
-if (rawToken && !GITHUB_TOKEN) {
-  console.warn('Ignoring provided GITHUB_TOKEN because it does not appear to be a write-capable personal access token. Falling back to local file operations.');
+// Only treat the token as usable if it isn't the ephemeral read‑only variant
+// that Codespaces/Actions inject (those start with "ghu_").  All other tokens
+// will be passed through; callers will still see a warning if the GitHub API
+// returns a permission error.
+let GITHUB_TOKEN = '';
+if (rawToken) {
+  if (rawToken.startsWith('ghu_')) {
+    console.warn('Detected ephemeral read-only GitHub token (ghu_...). ignoring it and using local file I/O instead.');
+  } else {
+    GITHUB_TOKEN = rawToken;
+  }
 }
 
 const GITHUB_OWNER = process.env.GITHUB_OWNER || 'ranjanihub';
