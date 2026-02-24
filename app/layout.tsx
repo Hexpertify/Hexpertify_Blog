@@ -49,9 +49,9 @@ gtag('config', '${process.env.NEXT_PUBLIC_GA_ID || 'G-S5X3C2J8LV'}');`}
       </head>
       <body className={inter.className}>
         {/* client-side analytics will track route changes */}
-        <React.Suspense fallback={null}>
+        <Suspense fallback={null}>
           <Analytics />
-        </React.Suspense>
+        </Suspense>
 
         {children}
         <Footer />
