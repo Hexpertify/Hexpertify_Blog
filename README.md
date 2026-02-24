@@ -125,7 +125,15 @@ Your markdown content here...
 ```
 
 See `MDX_MIGRATION_GUIDE.md` for detailed format specification.
+### Google Analytics
 
+The site is configured to use Google Analytics through the global `gtag.js` snippet. By default the tracking ID is hard‑coded to `G-S5X3C2J8LV`, but you can override it with an environment variable in development or production:
+
+```bash
+export NEXT_PUBLIC_GA_ID="G-XXXXXXXXXX"
+```
+
+A small client component (`components/Analytics.tsx`) sends page view events on every route change.
 ## Available Scripts
 
 ```bash
