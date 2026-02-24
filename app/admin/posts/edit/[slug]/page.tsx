@@ -165,6 +165,12 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     setTocItems(tocItems.filter(item => item.id !== id));
   };
 
+  // basePath helper for client requests
+  const getApiUrl = (path: string) => {
+    const bp = typeof window !== 'undefined' ? (window as any).__NEXT_DATA__?.basePath || '' : '';
+    return `${bp}${path}`;
+  };
+
   const handleFeaturedImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -173,12 +179,18 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
       const formData = new FormData();
       formData.append('file', file, file.name);
 
-      const res = await fetch('/api/upload', {
+      const res = await fetch(getApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        throw new Error('Invalid JSON response from upload API: ' + text);
+      }
 
       if (!res.ok) {
         throw new Error(data?.error || 'Upload failed');
@@ -206,12 +218,18 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
       const formData = new FormData();
       formData.append('file', file, file.name);
 
-      const res = await fetch('/api/upload', {
+      const res = await fetch(getApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        throw new Error('Invalid JSON response from upload API: ' + text);
+      }
 
       if (!res.ok) {
         throw new Error(data?.error || 'Upload failed');
@@ -239,12 +257,18 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
       const formData = new FormData();
       formData.append('file', file, file.name);
 
-      const res = await fetch('/api/upload', {
+      const res = await fetch(getApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        throw new Error('Invalid JSON response from upload API: ' + text);
+      }
 
       if (!res.ok) {
         throw new Error(data?.error || 'Upload failed');
