@@ -5,15 +5,15 @@ import { Instagram, Twitter, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   const footerLinks = {
-    home: [
+      home: [
       { label: 'Home', href: 'https://hexpertify.com' },
-      { label: 'Categories', href: 'https://hexpertify.com/services/doctors-hexpertify#:~:text=Home-,Categories,-Recently%20Onboarded' },
+      { label: 'Categories', href: 'https://hexpertify.com/#categories' },
       { label: 'Recently Onboarded', href: 'https://hexpertify.com/#recently-onboarded' },
       { label: 'Top Consultants', href: 'https://hexpertify.com/#top-consultants' },
     ],
     services: [
       { label: 'Services', href: 'https://hexpertify.com/services' },
-      { label: '1:1 Online Consultation', href: 'https://hexpertify.com/#categories' },
+      { label: '1:1 Online Consultation', href: 'https://hexpertify.com/services' },
       { label: 'Hire A Mentor', href: 'https://hexpertify.com/hire-a-mentor' },
       { label: 'Webinars', href: 'https://hexpertify.com/services/corporate-webinars-and-group-sessions' },
     ],
