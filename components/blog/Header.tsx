@@ -12,7 +12,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-4">
-            <a href="https://hexpertify.com/blogs">
+            <a href="https://hexpertify.com/blogs" className="ml-2">
               <Image
                 src={blogImg}
                 alt="Blog"
@@ -27,11 +27,11 @@ export default function Header() {
 
           <section className="hidden md:flex justify-center items-center gap-[30px]">
             <ul className="flex menuText gap-[40px] cursor-pointer items-center">
-              <li><a href="https://hexpertify.com/">Home</a></li>
-              <li><a href="https://hexpertify.com/blogs">Blogs</a></li>
-              <li><a href="https://hexpertify.com/services">Services</a></li>
-              <li><a href="https://hexpertify.com/about-us">About Us</a></li>
-              <li><a href="https://hexpertify.com/contact-us">Contact Us</a></li>
+              <li><a href="https://hexpertify.com/" className="font-bold text-sm hover:text-[#450bc8] transition-colors">Home</a></li>
+              <li><a href="https://hexpertify.com/blogs" className="font-bold text-sm hover:text-[#450bc8] transition-colors">Blogs</a></li>
+              <li><a href="https://hexpertify.com/services" className="font-bold text-sm hover:text-[#450bc8] transition-colors">Services</a></li>
+              <li><a href="https://hexpertify.com/about-us" className="font-bold text-sm hover:text-[#450bc8] transition-colors">About Us</a></li>
+              <li><a href="https://hexpertify.com/contact-us" className="font-bold text-sm hover:text-[#450bc8] transition-colors">Contact Us</a></li>
             </ul>
             <div className="flex gap-[10px]" />
           </section>
@@ -62,13 +62,13 @@ export default function Header() {
             </button>
           </div>
 
-          <ul className="flex flex-col gap-6 text-lg font-medium text-gray-800">
-                <li><a href="https://hexpertify.com/" onClick={() => setOpen(false)} className="hover:text-[#450bc8] transition-colors">Home</a></li>
-                <li><a href="https://hexpertify.com/blogs" onClick={() => setOpen(false)} className="hover:text-[#450bc8] transition-colors">Blogs</a></li>
-                <li><a href="https://hexpertify.com/services" onClick={() => setOpen(false)} className="hover:text-[#450bc8] transition-colors">Services</a></li>
-                <li><a href="https://hexpertify.com/about-us" onClick={() => setOpen(false)} className="hover:text-[#450bc8] transition-colors">About Us</a></li>
-                <li><a href="https://hexpertify.com/contact-us" onClick={() => setOpen(false)} className="hover:text-[#450bc8] transition-colors">Contact Us</a></li>
-          </ul>
+              <ul className="flex flex-col gap-6 text-base text-gray-800">
+                <li><a href="https://hexpertify.com/" onClick={() => setOpen(false)} className="font-bold hover:text-[#450bc8] transition-colors">Home</a></li>
+                <li><a href="https://hexpertify.com/blogs" onClick={() => setOpen(false)} className="font-bold hover:text-[#450bc8] transition-colors">Blogs</a></li>
+                <li><a href="https://hexpertify.com/services" onClick={() => setOpen(false)} className="font-bold hover:text-[#450bc8] transition-colors">Services</a></li>
+                <li><a href="https://hexpertify.com/about-us" onClick={() => setOpen(false)} className="font-bold hover:text-[#450bc8] transition-colors">About Us</a></li>
+                <li><a href="https://hexpertify.com/contact-us" onClick={() => setOpen(false)} className="font-bold hover:text-[#450bc8] transition-colors">Contact Us</a></li>
+              </ul>
 
         </div>
       </div>
