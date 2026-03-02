@@ -223,7 +223,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-              Each and every blog is written by <span className="font-extrabold">CERTIFIED</span> & Verified Experts from Hexpertify.
+              Information you can truly rely on - written by <span className="font-extrabold">CERTIFIED</span> &amp; Verified Experts at Hexpertify.
             </p>
           </div>
 
