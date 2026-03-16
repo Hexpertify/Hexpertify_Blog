@@ -10,11 +10,15 @@ interface BlogGridCardProps {
   author: string;
   authorDesignation?: string;
   slug?: string;
+  category?: string;
 }
 
-export default function BlogGridCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#' }: BlogGridCardProps) {
+export default function BlogGridCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#', category }: BlogGridCardProps) {
+  const categorySlug = category ? String(category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+  const href = categorySlug ? `/blogs/${categorySlug}/${slug}` : `/blog/${slug}`;
+
   return (
-    <Link href={`/blog/${slug}`} title={`Read blog: ${title}`}>
+    <Link href={href} title={`Read blog: ${title}`}>
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full flex flex-col">
       <div className="relative w-full h-44 sm:h-60 bg-gray-200">
         <Image

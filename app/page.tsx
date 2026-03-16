@@ -24,6 +24,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    category: allPosts[0].category,
     loadData();
   }, []);
 
@@ -34,6 +35,7 @@ export default function Home() {
         fetchAllCategories(),
         fetchFAQsByPage('homepage')
       ]);
+    category: post.category,
       const publishedPosts = posts.filter(post => post.published);
       setAllPosts(publishedPosts);
       setFilteredPosts(publishedPosts);
@@ -51,6 +53,7 @@ export default function Home() {
     if (category === 'All') {
       setFilteredPosts(allPosts);
     } else {
+      category: post.category,
       const filtered = allPosts.filter(post => post.category === category);
       setFilteredPosts(filtered);
     }
@@ -76,14 +79,14 @@ export default function Home() {
     title: post.title,
     date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
     imageUrl: post.imageUrl,
-    imageAlt: post.imageAlt,
+                <LatestBlogCard {...latestBlog} category={latestBlog.category} />
     slug: post.slug,
     author: post.author,
     authorDesignation: post.authorDesignation,
   }));
-
-  const blogPosts = filteredPosts
-    .filter(post =>
+                  {topReads.map((post) => (
+                    <TopReadsCard key={post.id} {...post} category={post.category} />
+                  ))}
       searchQuery === '' ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -97,10 +100,10 @@ export default function Home() {
       imageUrl: post.imageUrl,
       imageAlt: post.imageAlt,
       author: post.author,
-      authorDesignation: post.authorDesignation,
-    }));
-
-  if (loading) {
+            {blogPosts.length > 0 ? (
+              blogPosts.map((post) => (
+                <BlogGridCard key={post.id} title={post.title} description={post.description} date={post.date} imageUrl={post.imageUrl} imageAlt={post.imageAlt} author={post.author} authorDesignation={post.authorDesignation} slug={post.slug} category={post.category} />
+              ))
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />

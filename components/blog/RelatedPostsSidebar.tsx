@@ -18,6 +18,7 @@ interface RelatedPost {
   imageAlt?: string;
   author: string;
   authorDesignation?: string;
+  category?: string;
 }
 
 interface RelatedPostsSidebarProps {
@@ -81,7 +82,7 @@ export default function RelatedPostsSidebar({ posts }: RelatedPostsSidebarProps)
         className="w-full h-96 touch-pan-x"
       >
         <CarouselContent className="mt-4">
-          {posts.map((post) => (
+            {posts.map((post) => (
             <CarouselItem key={post.slug} className="basis-1/3 pt-0 pb-3">
               <TopReadsCard
                 title={post.title}
@@ -92,6 +93,7 @@ export default function RelatedPostsSidebar({ posts }: RelatedPostsSidebarProps)
                 author={post.author}
                 authorDesignation={post.authorDesignation}
                 compact
+                category={post.category}
               />
             </CarouselItem>
           ))}

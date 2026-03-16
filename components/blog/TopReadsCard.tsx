@@ -10,6 +10,7 @@ interface TopReadsCardProps {
   author: string;
   authorDesignation?: string;
   compact?: boolean;
+  category?: string;
 }
 
 export default function TopReadsCard({
@@ -21,6 +22,7 @@ export default function TopReadsCard({
   author,
   authorDesignation,
   compact = false,
+  category,
 }: TopReadsCardProps) {
   const containerClasses = compact
     ? 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer flex gap-3 p-3'
@@ -34,8 +36,11 @@ export default function TopReadsCard({
     ? 'text-[13px] font-semibold text-gray-900 mb-0.5 line-clamp-2'
     : 'text-sm font-semibold text-gray-900 mb-1 line-clamp-2';
 
+  const categorySlug = category ? String(category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+  const href = categorySlug ? `/blogs/${categorySlug}/${slug}` : `/blog/${slug}`;
+
   return (
-    <Link href={`/blog/${slug}`} className="block" title={`Read blog: ${title}`}>
+    <Link href={href} className="block" title={`Read blog: ${title}`}>
       <div className={containerClasses}>
         <div className={imageWrapperClasses}>
           <Image
