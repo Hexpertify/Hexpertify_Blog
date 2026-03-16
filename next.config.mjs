@@ -21,14 +21,14 @@ const nextConfig = {
   },
   async rewrites() {
     return [
-      // Map public `/blogs/:slug` to the internal route `/blog/:slug` (with basePath applied in production).
+      // Map public `/:slug` to the internal route `/blog/:slug`
       {
-        source: '/blogs/:slug',
+        source: `${basePath}/:slug`,
         destination: '/blog/:slug',
       },
-      // Map public `/blogs/:category/:slug` to the internal `/blog/:slug`
+      // Map public `/:category/:slug` to the internal `/blog/:slug`
       {
-        source: '/blogs/:category/:slug',
+        source: `${basePath}/:category/:slug`,
         destination: '/blog/:slug',
       },
     ];
