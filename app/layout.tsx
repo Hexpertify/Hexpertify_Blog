@@ -11,6 +11,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify-blog-sigma.vercel.app';
 
+export const metadataBase = new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify-blog-sigma.vercel.app');
+
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await SEOHead({
     page: 'homepage',
@@ -20,9 +22,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     ...seo,
-    alternates: {
-      canonical: SITE_URL,
-    },
   };
 }
 

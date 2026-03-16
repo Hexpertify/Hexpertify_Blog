@@ -29,17 +29,6 @@ export default async function SEOHead({ page, fallbackTitle, fallbackDescription
       updatedAt: defaultSEO.updatedAt,
     };
   }
-  // Ensure canonical is always provided and uses SITE_URL when missing
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify.com';
-
-  function pageToPath(p: string) {
-    if (p === 'homepage') return '/';
-    if (p.startsWith('blog-')) return `/blog/${p.replace(/^blog-/, '')}`;
-    return `/${p.replace(/-/g, '/')}`;
-  }
-
-  const canonical = seo.canonicalUrl && seo.canonicalUrl !== '' ? seo.canonicalUrl : `${SITE_URL}${pageToPath(page)}`;
-
   return {
     title: seo.title,
     description: seo.description,
@@ -57,8 +46,6 @@ export default async function SEOHead({ page, fallbackTitle, fallbackDescription
       images: seo.twitterImage ? [seo.twitterImage] : [],
     },
     robots: seo.robots,
-    alternates: {
-      canonical,
-    },
+    // canonical URLs are generated from `metadataBase` in the root layout
   };
 }

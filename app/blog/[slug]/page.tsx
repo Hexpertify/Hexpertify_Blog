@@ -13,7 +13,7 @@ import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { getFAQsByPage } from '@/lib/faqs';
 import SEOHead from '@/components/SEOHead';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://blogs.hexpertify.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify.com';
 
 interface TOCItem {
   id: number;
@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     ...seo,
     alternates: {
-      canonical: `${SITE_URL}/blog/${slug}`,
+      canonical: `${SITE_URL}/blogs/${slug}`,
     },
   };
 }
@@ -93,10 +93,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 import Schema from '@/components/Schema';
 
 function buildBlogGraphSchema(blog: any, faqs: any[]) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://blogs.hexpertify.com';
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify.com';
   const MAIN_SITE_URL = 'https://hexpertify.com';
 
-  const blogUrl = `${SITE_URL}/blog/${blog.slug}`;
+  const blogUrl = `${SITE_URL}/blogs/${blog.slug}`;
   const authorSlug = blog.author
     ? String(blog.author)
         .toLowerCase()
