@@ -119,12 +119,7 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
     : 'uncategorized';
 
   const blogUrl = `${SITE_URL}/blogs/${categorySlug}/${blog.slug}`;
-  const authorSlug = blog.author
-    ? String(blog.author)
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-    : 'jaswanth';
+
 
   const imageUrl = blog.imageUrl
     ? blog.imageUrl.startsWith('http')
