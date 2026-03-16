@@ -62,6 +62,7 @@ export default function NewPostPage() {
     seoOgDescription: '',
     seoTwitterTitle: '',
     seoTwitterDescription: '',
+    seoCanonical: '',
   });
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
 
@@ -127,6 +128,24 @@ export default function NewPostPage() {
     const bp = typeof window !== 'undefined' ? (window as any).__NEXT_DATA__?.basePath || '' : '';
     return `${bp}${path}`;
   };
+
+  // compute hosted canonical URL for preview
+  const computeCanonical = () => {
+    if (typeof window === 'undefined') return '';
+    const site = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    const category = formData.category
+      ? String(formData.category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      : 'uncategorized';
+    const slug = formData.slug || '';
+    if (!slug) return `${site}/blogs/${category}/`;
+    return `${site.replace(/\/$/, '')}/blogs/${category}/${slug}`;
+  };
+
+  useEffect(() => {
+    // update canonical preview when slug or category changes but only if user hasn't manually set one
+    setFormData((prev) => ({ ...prev, seoCanonical: prev.seoCanonical || computeCanonical() }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.slug, formData.category]);
 
   const handleFeaturedImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -302,7 +321,7 @@ export default function NewPostPage() {
             twitterImage: '',
             twitterImageAlt: '',
             keywords: formData.seoKeywords || '',
-            canonicalUrl: '',
+            canonicalUrl: formData.seoCanonical || computeCanonical(),
             robots: 'index, follow',
             updatedAt: new Date().toISOString(),
           };
@@ -794,6 +813,17 @@ export default function NewPostPage() {
                             </div>
                           </div>
                         )}
+                      </div>
+
+                      <div className="space-y-2 pt-3">
+                        <Label htmlFor="seoCanonical">Page URL (canonical)</Label>
+                        <Input
+                          id="seoCanonical"
+                          value={formData.seoCanonical}
+                          onChange={(e) => setFormData({ ...formData, seoCanonical: e.target.value })}
+                          placeholder="Canonical URL for this post"
+                        />
+                        <p className="text-xs text-gray-500">This shows the hosted page URL preview; change only if you need a custom canonical.</p>
                       </div>
 
                       <div className="border-t pt-4 space-y-3">

@@ -65,6 +65,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     seoOgDescription: '',
     seoTwitterTitle: '',
     seoTwitterDescription: '',
+    seoCanonical: '',
   });
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
 
@@ -123,6 +124,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
         seoOgDescription: seo?.ogDescription || '',
         seoTwitterTitle: seo?.twitterTitle || '',
         seoTwitterDescription: seo?.twitterDescription || '',
+        seoCanonical: seo?.canonicalUrl || '',
       });
 
       setTocItems(toc);
@@ -170,6 +172,23 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     const bp = typeof window !== 'undefined' ? (window as any).__NEXT_DATA__?.basePath || '' : '';
     return `${bp}${path}`;
   };
+
+  const computeCanonical = () => {
+    if (typeof window === 'undefined') return '';
+    const site = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    const category = formData.category
+      ? String(formData.category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      : 'uncategorized';
+    const slug = formData.slug || originalSlug || '';
+    if (!slug) return `${site}/blogs/${category}/`;
+    return `${site.replace(/\/$/, '')}/blogs/${category}/${slug}`;
+  };
+
+  useEffect(() => {
+    // if no explicit canonical is set, update preview when slug/category changes
+    setFormData((prev) => ({ ...prev, seoCanonical: prev.seoCanonical || computeCanonical() }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.slug, formData.category]);
 
   const handleFeaturedImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -350,7 +369,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
             twitterImage: '',
             twitterImageAlt: '',
             keywords: formData.seoKeywords || '',
-            canonicalUrl: '',
+            canonicalUrl: formData.seoCanonical || computeCanonical(),
             robots: 'index, follow',
             updatedAt: new Date().toISOString(),
           };
@@ -851,6 +870,17 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                             </div>
                           </div>
                         )}
+                      </div>
+
+                      <div className="space-y-2 pt-3">
+                        <Label htmlFor="seoCanonical">Page URL (canonical)</Label>
+                        <Input
+                          id="seoCanonical"
+                          value={formData.seoCanonical}
+                          onChange={(e) => setFormData({ ...formData, seoCanonical: e.target.value })}
+                          placeholder="Canonical URL for this post"
+                        />
+                        <p className="text-xs text-gray-500">This shows the hosted page URL preview; change only if you need a custom canonical.</p>
                       </div>
 
                       <div className="border-t pt-4 space-y-3">
