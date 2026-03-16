@@ -24,7 +24,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    category: allPosts[0].category,
     loadData();
   }, []);
 
@@ -33,10 +32,10 @@ export default function Home() {
       const [posts, cats, homepageFaqs] = await Promise.all([
         fetchAllPosts(),
         fetchAllCategories(),
-        fetchFAQsByPage('homepage')
+        fetchFAQsByPage('homepage'),
       ]);
-    category: post.category,
-      const publishedPosts = posts.filter(post => post.published);
+
+      const publishedPosts = posts.filter((post: any) => post.published);
       setAllPosts(publishedPosts);
       setFilteredPosts(publishedPosts);
       setCategories(cats);
@@ -53,8 +52,7 @@ export default function Home() {
     if (category === 'All') {
       setFilteredPosts(allPosts);
     } else {
-      category: post.category,
-      const filtered = allPosts.filter(post => post.category === category);
+      const filtered = allPosts.filter((post) => post.category === category);
       setFilteredPosts(filtered);
     }
   };
@@ -63,30 +61,34 @@ export default function Home() {
     setSearchQuery(query);
   };
 
-  const latestBlog = allPosts[0] ? {
-    slug: allPosts[0].slug,
-    title: allPosts[0].title,
-    description: allPosts[0].description,
-    date: new Date(allPosts[0].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-    imageUrl: allPosts[0].imageUrl,
-    imageAlt: allPosts[0].imageAlt,
-    author: allPosts[0].author,
-    authorDesignation: allPosts[0].authorDesignation,
-  } : null;
+  const latestBlog = allPosts[0]
+    ? {
+        slug: allPosts[0].slug,
+        title: allPosts[0].title,
+        description: allPosts[0].description,
+        date: new Date(allPosts[0].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+        imageUrl: allPosts[0].imageUrl,
+        imageAlt: allPosts[0].imageAlt,
+        author: allPosts[0].author,
+        authorDesignation: allPosts[0].authorDesignation,
+        category: allPosts[0].category,
+      }
+    : null;
 
   const topReads = allPosts.slice(0, 3).map((post, index) => ({
     id: index + 1,
     title: post.title,
     date: new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
     imageUrl: post.imageUrl,
-                <LatestBlogCard {...latestBlog} category={latestBlog.category} />
+    imageAlt: post.imageAlt,
     slug: post.slug,
     author: post.author,
     authorDesignation: post.authorDesignation,
+    category: post.category,
   }));
-                  {topReads.map((post) => (
-                    <TopReadsCard key={post.id} {...post} category={post.category} />
-                  ))}
+
+  const blogPosts = filteredPosts
+    .filter((post) =>
       searchQuery === '' ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -100,10 +102,11 @@ export default function Home() {
       imageUrl: post.imageUrl,
       imageAlt: post.imageAlt,
       author: post.author,
-            {blogPosts.length > 0 ? (
-              blogPosts.map((post) => (
-                <BlogGridCard key={post.id} title={post.title} description={post.description} date={post.date} imageUrl={post.imageUrl} imageAlt={post.imageAlt} author={post.author} authorDesignation={post.authorDesignation} slug={post.slug} category={post.category} />
-              ))
+      authorDesignation: post.authorDesignation,
+      category: post.category,
+    }));
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
@@ -171,38 +174,6 @@ export default function Home() {
               text: 'You can book a consultation by selecting an expert on Hexpertify, choosing a suitable time slot, and completing the booking process online.',
             },
           },
-          {
-            '@type': 'Question',
-            name: 'What are your pricing options?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Pricing varies depending on the expert and service. Each expert profile displays clear pricing before booking.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'What is your refund policy?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Refund policies depend on the service booked and are clearly mentioned during the booking process.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'How can I become a consultant on Hexpertify?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'You can apply to become a consultant on Hexpertify by submitting your credentials through the Join as Consultant page.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'How do you protect my personal information?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Hexpertify follows strict data protection and privacy standards to ensure your personal information is secure.',
-            },
-          },
         ],
       },
     ],
@@ -234,14 +205,14 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
               <div className="lg:col-span-2">
                 <SectionHeader title="Latest" />
-                <LatestBlogCard {...latestBlog} />
+                <LatestBlogCard {...latestBlog} category={latestBlog.category} />
               </div>
 
               <div>
                 <SectionHeader title="Top Reads" />
                 <div className="space-y-4">
                   {topReads.map((post) => (
-                    <TopReadsCard key={post.id} {...post} />
+                    <TopReadsCard key={post.id} {...post} category={post.category} />
                   ))}
                 </div>
               </div>
@@ -261,16 +232,26 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-16">
             {blogPosts.length > 0 ? (
               blogPosts.map((post) => (
-                <BlogGridCard key={post.id} title={post.title} description={post.description} date={post.date} imageUrl={post.imageUrl} imageAlt={post.imageAlt} author={post.author} authorDesignation={post.authorDesignation} slug={post.slug} />
+                <BlogGridCard
+                  key={post.id}
+                  title={post.title}
+                  description={post.description}
+                  date={post.date}
+                  imageUrl={post.imageUrl}
+                  imageAlt={post.imageAlt}
+                  author={post.author}
+                  authorDesignation={post.authorDesignation}
+                  slug={post.slug}
+                  category={post.category}
+                />
               ))
             ) : (
               <div className="col-span-3 text-center py-12 text-gray-500">
                 {searchQuery
                   ? `No blog posts found matching "${searchQuery}".`
                   : selectedCategory === 'All'
-                    ? 'No blog posts available yet.'
-                    : `No blog posts found in the "${selectedCategory}" category.`
-                }
+                  ? 'No blog posts available yet.'
+                  : `No blog posts found in the "${selectedCategory}" category.`}
               </div>
             )}
           </div>
