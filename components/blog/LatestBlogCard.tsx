@@ -13,7 +13,7 @@ interface LatestBlogCardProps {
   category?: string;
 }
 
-export default function LatestBlogCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#' }: LatestBlogCardProps) {
+export default function LatestBlogCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#', category }: LatestBlogCardProps) {
   const categorySlug = categoryToSlug(category);
 
   function categoryToSlug(cat?: string) {
