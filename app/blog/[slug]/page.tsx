@@ -82,10 +82,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     fallbackDescription: blog.description,
   });
 
+  // build a safe category slug for canonical and schema
+  const categorySlug = blog.category
+    ? String(blog.category)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+    : 'uncategorized';
+
   return {
     ...seo,
     alternates: {
-      canonical: `${SITE_URL}/blogs/${slug}`,
+      canonical: `${SITE_URL}/blogs/${categorySlug}/${slug}`,
     },
   };
 }
@@ -96,7 +104,21 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify.com';
   const MAIN_SITE_URL = 'https://hexpertify.com';
 
-  const blogUrl = `${SITE_URL}/blogs/${blog.slug}`;
+  const authorSlug = blog.author
+    ? String(blog.author)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+    : 'jaswanth';
+
+  const categorySlug = blog.category
+    ? String(blog.category)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+    : 'uncategorized';
+
+  const blogUrl = `${SITE_URL}/blogs/${categorySlug}/${blog.slug}`;
   const authorSlug = blog.author
     ? String(blog.author)
         .toLowerCase()

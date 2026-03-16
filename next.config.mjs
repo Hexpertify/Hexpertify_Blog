@@ -26,6 +26,11 @@ const nextConfig = {
         source: '/blogs/:slug',
         destination: '/blog/:slug',
       },
+      // Map public `/blogs/:category/:slug` to the internal `/blog/:slug`
+      {
+        source: '/blogs/:category/:slug',
+        destination: '/blog/:slug',
+      },
     ];
   },
   experimental: {
