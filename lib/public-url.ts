@@ -5,17 +5,19 @@ function trimSlashes(value: string): string {
 export function getPublicBlogPath(slug?: string): string {
   const cleanSlug = trimSlashes(slug || '');
 
-  // ✅ FINAL FIX: always take last part
+  // always take last part (safe)
   const finalSlug = cleanSlug.split('/').pop();
 
-  if (!finalSlug) return '/blogs';
+  if (!finalSlug) return '/';
 
-  return `/blogs/${finalSlug}`;
+  // ❗ IMPORTANT: NO /blogs here
+  return `/${finalSlug}`;
 }
 
 export function getPublicBlogUrl(siteUrl: string, slug?: string): string {
   const origin = siteUrl.replace(/\/$/, '');
   const path = getPublicBlogPath(slug);
 
-  return `${origin}${path}`;
+  // basePath will automatically be applied by Next.js
+  return `${origin}/blogs${path}`;
 }

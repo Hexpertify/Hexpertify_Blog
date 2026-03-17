@@ -24,6 +24,12 @@ export default function TopReadsCard({
   authorDesignation,
   compact = false,
 }: TopReadsCardProps) {
+
+  // ✅ clean slug (important fix)
+  const cleanSlug = slug?.split('/').pop();
+
+  const href = cleanSlug ? getPublicBlogPath(cleanSlug) : '/';
+
   const containerClasses = compact
     ? 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer flex gap-3 p-3'
     : 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer flex gap-4 p-4';
@@ -36,13 +42,10 @@ export default function TopReadsCard({
     ? 'text-[13px] font-semibold text-gray-900 mb-0.5 line-clamp-2'
     : 'text-sm font-semibold text-gray-900 mb-1 line-clamp-2';
 
-  const href = getPublicBlogPath(slug);
-
-  console.log('Generated href for TopReadsCard:', href);
-
   return (
     <Link href={href} className="block" title={`Read blog: ${title}`}>
       <div className={containerClasses}>
+
         <div className={imageWrapperClasses}>
           <Image
             src={imageUrl}
@@ -53,6 +56,7 @@ export default function TopReadsCard({
             sizes={compact ? '64px' : '96px'}
           />
         </div>
+
         <div className="flex flex-col justify-center flex-1 min-w-0">
           <h4 className={titleClasses}>{title}</h4>
           <p className="text-[11px] text-gray-500">
@@ -60,6 +64,7 @@ export default function TopReadsCard({
             {authorDesignation ? ` • ${authorDesignation}` : ''} • {date}
           </p>
         </div>
+
       </div>
     </Link>
   );

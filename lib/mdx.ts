@@ -53,7 +53,7 @@ export async function getAllPosts(): Promise<Post[]> {
         .filter((fileName) => fileName.endsWith('.mdx'))
         .map(async (fileName) => {
 
-          // ✅ FINAL FIX: Always extract only filename
+          // ✅ FIX: extract clean slug from file name
           const fileSlug = fileName
             .split('/')
             .pop()!
@@ -92,7 +92,7 @@ export async function getPublishedPosts(): Promise<Post[]> {
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
-    // ✅ FINAL FIX
+    // ✅ ensure clean slug
     const cleanSlug = slug.split('/').pop()!;
 
     const filePath = `content/posts/${cleanSlug}.mdx`;
