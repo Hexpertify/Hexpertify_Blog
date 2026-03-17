@@ -44,6 +44,7 @@ export function ensurePostsDirectory() {
   }
 }
 
+// ✅ GET ALL POSTS
 export async function getAllPosts(): Promise<Post[]> {
   try {
     const fileNames = await listDirectory('content/posts');
@@ -53,15 +54,23 @@ export async function getAllPosts(): Promise<Post[]> {
         .filter((fileName) => fileName.endsWith('.mdx'))
         .map(async (fileName) => {
 
-          // ✅ FIX: extract clean slug from file name
+          // ✅ extract clean slug
           const fileSlug = fileName
             .split('/')
             .pop()!
             .replace(/\.mdx$/, '');
 
-          const filePath = `content/posts/${fileName}`;
-          const fileContents = await getFileContent(filePath);
-          if (!fileContents) return null;
+          const filePath = `content/posts/${fileSlug}.mdx`;
+
+          // ✅ safe fetch with fallback
+          let fileContents =
+            await getFileContent(filePath) ||
+            await getFileContent(`${fileSlug}.mdx`);
+
+          if (!fileContents) {
+            console.log("❌ Skipping file (not found):", fileSlug);
+            return null;
+          }
 
           const { data, content } = matter(fileContents);
 
@@ -85,19 +94,36 @@ export async function getAllPosts(): Promise<Post[]> {
   }
 }
 
+// ✅ ONLY PUBLISHED POSTS
 export async function getPublishedPosts(): Promise<Post[]> {
   const allPosts = await getAllPosts();
   return allPosts.filter((post) => post.published);
 }
 
+// ✅ GET SINGLE POST (CRITICAL FIX)
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
-    // ✅ ensure clean slug
     const cleanSlug = slug.split('/').pop()!;
 
-    const filePath = `content/posts/${cleanSlug}.mdx`;
-    const fileContents = await getFileContent(filePath);
-    if (!fileContents) return null;
+    const possiblePaths = [
+      `content/posts/${cleanSlug}.mdx`,
+      `${cleanSlug}.mdx`,
+    ];
+
+    let fileContents: string | null = null;
+
+    for (const p of possiblePaths) {
+      fileContents = await getFileContent(p);
+      if (fileContents) {
+        console.log("✅ Found file at:", p);
+        break;
+      }
+    }
+
+    if (!fileContents) {
+      console.log("❌ File not found for slug:", cleanSlug);
+      return null;
+    }
 
     const { data, content } = matter(fileContents);
 
@@ -106,11 +132,14 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       slug: cleanSlug,
       content,
     };
+
   } catch (error) {
+    console.error("❌ Error in getPostBySlug:", error);
     return null;
   }
 }
 
+// ✅ SAVE POST
 export async function savePost(slug: string, metadata: PostMetadata, content: string) {
   const cleanSlug = slug.split('/').pop()!;
 
@@ -123,6 +152,7 @@ export async function savePost(slug: string, metadata: PostMetadata, content: st
   await commitFile(filePath, frontmatter, `Update post: ${cleanSlug}`);
 }
 
+// ✅ DELETE POST
 export async function deletePost(slug: string) {
   const cleanSlug = slug.split('/').pop()!;
 
