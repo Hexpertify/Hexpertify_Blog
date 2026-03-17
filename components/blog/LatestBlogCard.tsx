@@ -21,7 +21,7 @@ export default function LatestBlogCard({ title, description, date, imageUrl, ima
     return String(cat).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   }
 
-  const href = categorySlug ? `/blogs/${categorySlug}/${slug}` : `/blog/${slug}`;
+  const href = categorySlug ? `/${categorySlug}/${slug}` : `/${slug}`;
 
   return (
     <Link href={href} title={`Read blog: ${title}`}>
