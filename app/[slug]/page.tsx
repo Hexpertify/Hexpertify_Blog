@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import * as React from 'react';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
@@ -95,7 +94,8 @@ declare module 'next' {
   }
 }
 
-export async function generateMetadata({ params }: BlogPageParams): Promise<Metadata> {
+// Replace Metadata with a generic type
+export async function generateMetadata({ params }: BlogPageParams): Promise<Record<string, any>> {
   const slug = params.slug;
   const blog = await getBlogData(slug);
 
