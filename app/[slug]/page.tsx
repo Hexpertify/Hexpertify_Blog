@@ -81,7 +81,7 @@ interface BlogPageParams {
   };
 }
 
-// Override Next.js type constraint for PageProps
+// Explicitly redefine PageProps to ensure compatibility
 interface BlogPageParams {
   params: {
     slug: string;
