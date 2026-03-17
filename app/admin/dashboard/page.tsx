@@ -77,7 +77,7 @@ function AdminDashboard() {
               <h1 className="text-3xl font-bold text-gray-900">Blog Management</h1>
               <p className="text-gray-600 mt-2">Manage your blog posts and content</p>
             </div>
-            <Link href="/admin/posts/new">
+            <Link href="/blogs/new">
               <Button
                 className="flex items-center gap-2"
                 style={{ backgroundColor: '#450BC8' }}
@@ -169,7 +169,7 @@ function AdminDashboard() {
                         >
                           <Eye size={16} />
                         </Button>
-                        <Link href={`/admin/posts/edit/${post.slug}`}>
+                        <Link href={`/blogs/edit/${post.slug}`}>
                           <Button variant="outline" size="sm" disabled={isPending}>
                             <Edit size={16} />
                           </Button>
