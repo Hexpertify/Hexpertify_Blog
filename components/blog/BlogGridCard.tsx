@@ -15,7 +15,7 @@ interface BlogGridCardProps {
 
 export default function BlogGridCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#', category }: BlogGridCardProps) {
   const categorySlug = category ? String(category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
-  const href = categorySlug ? `/blogs/${categorySlug}/${slug}` : `/blog/${slug}`;
+  const href = categorySlug ? `/${categorySlug}/${slug}` : `/${slug}`;
 
   return (
     <Link href={href} title={`Read blog: ${title}`}>
