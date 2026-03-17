@@ -205,14 +205,14 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
               <div className="lg:col-span-2">
                 <SectionHeader title="Latest" />
-                <LatestBlogCard {...latestBlog} category={latestBlog.category} />
+                <LatestBlogCard {...latestBlog} />
               </div>
 
               <div>
                 <SectionHeader title="Top Reads" />
                 <div className="space-y-4">
                   {topReads.map((post) => (
-                    <TopReadsCard key={post.id} {...post} category={post.category} />
+                    <TopReadsCard key={post.id} {...post} />
                   ))}
                 </div>
               </div>
@@ -242,7 +242,6 @@ export default function Home() {
                   author={post.author}
                   authorDesignation={post.authorDesignation}
                   slug={post.slug}
-                  category={post.category}
                 />
               ))
             ) : (

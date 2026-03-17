@@ -23,7 +23,7 @@ const nextConfig = {
     return [
       // Map public `/:slug` to the internal route `/blog/:slug`
       {
-        source: '/:slug',
+        source: '/blogs/:slug',
         destination: '/blog/:slug',
       },
     ];
