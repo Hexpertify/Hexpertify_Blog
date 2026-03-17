@@ -37,7 +37,7 @@ export default function TopReadsCard({
     : 'text-sm font-semibold text-gray-900 mb-1 line-clamp-2';
 
   const categorySlug = category ? String(category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
-  const href = categorySlug ? `/${categorySlug}/${slug}` : `/${slug}`;
+  const href = categorySlug ? `/blogs/${categorySlug}/${slug}` : `/blog/${slug}`;
 
   return (
     <Link href={href} className="block" title={`Read blog: ${title}`}>

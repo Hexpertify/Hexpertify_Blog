@@ -93,7 +93,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     ...seo,
     alternates: {
-      canonical: `${SITE_URL}/${categorySlug}/${slug}`,
+      canonical: `${SITE_URL}/blogs/${categorySlug}/${slug}`,
     },
   };
 }
@@ -118,7 +118,7 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
         .replace(/(^-|-$)/g, '')
     : 'uncategorized';
 
-  const blogUrl = `${SITE_URL}/${categorySlug}/${blog.slug}`;
+  const blogUrl = `${SITE_URL}/blogs/${categorySlug}/${blog.slug}`;
 
 
   const imageUrl = blog.imageUrl
