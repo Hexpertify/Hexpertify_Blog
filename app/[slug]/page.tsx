@@ -115,15 +115,14 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
   };
 }
 
-// Adjusted BlogPageProps to handle asynchronous params
+// Corrected BlogPageProps to remove Promise from params
 interface BlogPageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
-// ✅ MAIN PAGE
+// Updated BlogDetailPage function
 export default async function BlogDetailPage({ params }: BlogPageProps) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+  const slug = params.slug;
 
   console.log('👉 Incoming slug:', slug);
 
