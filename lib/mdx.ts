@@ -47,11 +47,17 @@ export function ensurePostsDirectory() {
 export async function getAllPosts(): Promise<Post[]> {
   try {
     const fileNames = await listDirectory('content/posts');
+
     const allPostsData = await Promise.all(
       fileNames
         .filter((fileName) => fileName.endsWith('.mdx'))
         .map(async (fileName) => {
-          const fileSlug = fileName.replace(/\.mdx$/, '');
+
+          // 🔥 FIX: Clean slug properly
+          const fileSlug = fileName
+            .replace(/\.mdx$/, '')
+            .replace(/^blogs\/+/, ''); // removes "blogs/" if present
+
           const filePath = `content/posts/${fileName}`;
           const fileContents = await getFileContent(filePath);
           if (!fileContents) return null;
@@ -75,6 +81,7 @@ export async function getAllPosts(): Promise<Post[]> {
           return -1;
         }
       });
+
   } catch (error) {
     console.error('Error reading posts:', error);
     return [];
@@ -88,7 +95,10 @@ export async function getPublishedPosts(): Promise<Post[]> {
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
-    const filePath = `content/posts/${slug}.mdx`;
+    // 🔥 FIX: ensure slug is clean before fetching
+    const cleanSlug = slug.replace(/^blogs\/+/, '');
+
+    const filePath = `content/posts/${cleanSlug}.mdx`;
     const fileContents = await getFileContent(filePath);
     if (!fileContents) return null;
 
@@ -96,7 +106,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
     return {
       ...(data as PostMetadata),
-      slug,
+      slug: cleanSlug,
       content,
     };
   } catch (error) {
@@ -105,9 +115,11 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 }
 
 export async function savePost(slug: string, metadata: PostMetadata, content: string) {
+  const cleanSlug = slug.replace(/^blogs\/+/, '');
+
   const frontmatter = matter.stringify(content, {
     title: metadata.title,
-    slug: metadata.slug,
+    slug: metadata.slug.replace(/^blogs\/+/, ''), // 🔥 ensure clean slug
     description: metadata.description,
     author: metadata.author,
     authorDesignation: metadata.authorDesignation || '',
@@ -126,11 +138,13 @@ export async function savePost(slug: string, metadata: PostMetadata, content: st
     tableOfContents: metadata.tableOfContents || [],
   });
 
-  const filePath = `content/posts/${slug}.mdx`;
-  await commitFile(filePath, frontmatter, `Update post: ${slug}`);
+  const filePath = `content/posts/${cleanSlug}.mdx`;
+  await commitFile(filePath, frontmatter, `Update post: ${cleanSlug}`);
 }
 
 export async function deletePost(slug: string) {
-  const filePath = `content/posts/${slug}.mdx`;
-  await deleteFile(filePath, `Delete post: ${slug}`);
+  const cleanSlug = slug.replace(/^blogs\/+/, '');
+
+  const filePath = `content/posts/${cleanSlug}.mdx`;
+  await deleteFile(filePath, `Delete post: ${cleanSlug}`);
 }
