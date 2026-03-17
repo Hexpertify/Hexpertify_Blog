@@ -75,8 +75,9 @@ async function getBlogData(slug: string) {
 }
 
 // Replace Metadata with a generic type
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Record<string, any>> {
-  const slug = params.slug;
+export async function generateMetadata({ params }: { params: { slug: string } | Promise<{ slug: string }> }): Promise<Record<string, any>> {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
   const blog = await getBlogData(slug);
 
   if (!blog) {
@@ -115,8 +116,9 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
 }
 
 // Updated BlogDetailPage function
-export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
-  const slug = params.slug;
+export default async function BlogDetailPage({ params }: { params: { slug: string } | Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
 
   console.log('👉 Incoming slug:', slug);
 
