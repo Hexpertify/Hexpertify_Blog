@@ -82,6 +82,19 @@ interface BlogPageParams {
   };
 }
 
+// Override Next.js type constraint for PageProps
+interface BlogPageParams {
+  params: {
+    slug: string;
+  };
+}
+
+declare module 'next' {
+  interface PageProps {
+    params: BlogPageParams['params'];
+  }
+}
+
 export async function generateMetadata({ params }: BlogPageParams): Promise<Metadata> {
   const slug = params.slug;
   const blog = await getBlogData(slug);
