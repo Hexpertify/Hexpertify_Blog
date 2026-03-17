@@ -13,6 +13,7 @@ export default function BlogCategoryFilter({ categories, onCategoryChange }: Blo
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
     onCategoryChange?.(category);
+    console.log('Selected category:', selectedCategory);
   };
 
   const allCategories = categories[0] === 'All' ? categories : ['All', ...categories];

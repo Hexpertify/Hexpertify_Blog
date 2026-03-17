@@ -16,6 +16,7 @@ interface LatestBlogCardProps {
 
 export default function LatestBlogCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#' }: LatestBlogCardProps) {
   const href = slug === '#' ? '#' : getPublicBlogPath(slug);
+  console.log('Generated href for LatestBlogCard:', href);
 
   return (
     <Link href={href} title={`Read blog: ${title}`}>

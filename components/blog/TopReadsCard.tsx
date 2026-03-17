@@ -38,6 +38,8 @@ export default function TopReadsCard({
 
   const href = getPublicBlogPath(slug);
 
+  console.log('Generated href for TopReadsCard:', href);
+
   return (
     <Link href={href} className="block" title={`Read blog: ${title}`}>
       <div className={containerClasses}>
