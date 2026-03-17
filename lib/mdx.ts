@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { commitFile, getFileSha, deleteFile, getFileContent, listDirectory } from './github';
+import { commitFile, deleteFile, getFileContent, listDirectory } from './github';
 
 const postsDirectory = path.join(process.cwd(), 'content/posts');
 
@@ -53,10 +53,11 @@ export async function getAllPosts(): Promise<Post[]> {
         .filter((fileName) => fileName.endsWith('.mdx'))
         .map(async (fileName) => {
 
-          // 🔥 FIX: Clean slug properly
+          // ✅ FINAL FIX: Always extract only filename
           const fileSlug = fileName
-            .replace(/\.mdx$/, '')
-            .replace(/^blogs\/+/, ''); // removes "blogs/" if present
+            .split('/')
+            .pop()!
+            .replace(/\.mdx$/, '');
 
           const filePath = `content/posts/${fileName}`;
           const fileContents = await getFileContent(filePath);
@@ -74,13 +75,9 @@ export async function getAllPosts(): Promise<Post[]> {
 
     return allPostsData
       .filter((post): post is Post => post !== null)
-      .sort((a, b) => {
-        if (new Date(a.date) < new Date(b.date)) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
+      .sort((a, b) =>
+        new Date(a.date) < new Date(b.date) ? 1 : -1
+      );
 
   } catch (error) {
     console.error('Error reading posts:', error);
@@ -95,8 +92,8 @@ export async function getPublishedPosts(): Promise<Post[]> {
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
-    // 🔥 FIX: ensure slug is clean before fetching
-    const cleanSlug = slug.replace(/^blogs\/+/, '');
+    // ✅ FINAL FIX
+    const cleanSlug = slug.split('/').pop()!;
 
     const filePath = `content/posts/${cleanSlug}.mdx`;
     const fileContents = await getFileContent(filePath);
@@ -115,27 +112,11 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 }
 
 export async function savePost(slug: string, metadata: PostMetadata, content: string) {
-  const cleanSlug = slug.replace(/^blogs\/+/, '');
+  const cleanSlug = slug.split('/').pop()!;
 
   const frontmatter = matter.stringify(content, {
-    title: metadata.title,
-    slug: metadata.slug.replace(/^blogs\/+/, ''), // 🔥 ensure clean slug
-    description: metadata.description,
-    author: metadata.author,
-    authorDesignation: metadata.authorDesignation || '',
-    authorBio: metadata.authorBio || '',
-    authorAvatar: metadata.authorAvatar || '',
-    authorAvatarAlt: metadata.authorAvatarAlt || '',
-    authorConsultationUrl: metadata.authorConsultationUrl || '',
-    authorSocialLinks: metadata.authorSocialLinks || {},
-    category: metadata.category,
-    imageUrl: metadata.imageUrl,
-    imageAlt: metadata.imageAlt || '',
-    readTime: metadata.readTime,
-    published: metadata.published,
-    date: metadata.date,
-    seoOgImageAlt: metadata.seoOgImageAlt || '',
-    tableOfContents: metadata.tableOfContents || [],
+    ...metadata,
+    slug: cleanSlug,
   });
 
   const filePath = `content/posts/${cleanSlug}.mdx`;
@@ -143,7 +124,7 @@ export async function savePost(slug: string, metadata: PostMetadata, content: st
 }
 
 export async function deletePost(slug: string) {
-  const cleanSlug = slug.replace(/^blogs\/+/, '');
+  const cleanSlug = slug.split('/').pop()!;
 
   const filePath = `content/posts/${cleanSlug}.mdx`;
   await deleteFile(filePath, `Delete post: ${cleanSlug}`);
