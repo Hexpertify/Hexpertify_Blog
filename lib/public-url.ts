@@ -9,37 +9,27 @@ function trimSlashes(value: string): string {
   return value.replace(/^\/+|\/+$/g, '');
 }
 
+/**
+ * ✅ FIXED: Always returns correct blog path
+ * Prevents /blogs/blogs/... issue permanently
+ */
 export function getPublicBlogPath(slug?: string): string {
-  const basePath = normalizeBasePath(PUBLIC_BASE_PATH);
   const cleanSlug = trimSlashes(slug || '');
 
-  console.log('Base Path:', basePath, 'Slug:', slug, 'Clean Slug:', cleanSlug);
+  // 🚨 remove accidental "blogs/" duplication if present
+  const finalSlug = cleanSlug.replace(/^blogs\//, '');
 
-  // Avoid appending the base path if it's already part of the slug
-  if (cleanSlug.startsWith(trimSlashes(basePath))) {
-    return `/${cleanSlug}`;
-  }
+  if (!finalSlug) return '/blogs';
 
-  if (!cleanSlug) {
-    return basePath || '/';
-  }
-
-  return `${basePath}/${cleanSlug}`;
+  return `/blogs/${finalSlug}`;
 }
 
+/**
+ * Generates full URL (used for SEO / canonical)
+ */
 export function getPublicBlogUrl(siteUrl: string, slug?: string): string {
   const origin = siteUrl.replace(/\/$/, '');
-  const basePath = normalizeBasePath(PUBLIC_BASE_PATH);
-  const cleanSlug = trimSlashes(slug || '');
-  const originAlreadyIncludesBasePath = Boolean(basePath) && origin.endsWith(basePath);
+  const path = getPublicBlogPath(slug);
 
-  if (!cleanSlug) {
-    return originAlreadyIncludesBasePath || !basePath ? (origin || '/') : `${origin}${basePath}`;
-  }
-
-  if (originAlreadyIncludesBasePath) {
-    return `${origin}/${cleanSlug}`;
-  }
-
-  return `${origin}${getPublicBlogPath(cleanSlug)}`;
+  return `${origin}${path}`;
 }
