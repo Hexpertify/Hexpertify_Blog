@@ -8,6 +8,7 @@ import Link from 'next/link';
 interface BlogAuthorCardProps {
   author: string;
   authorDesignation?: string;
+  authorBio?: string;
   authorAvatar?: string;
   authorAvatarAlt?: string;
   authorConsultationUrl?: string;
@@ -18,7 +19,7 @@ interface BlogAuthorCardProps {
   };
 }
 
-export default function BlogAuthorCard({ author, authorDesignation, authorAvatar, authorAvatarAlt, authorConsultationUrl, socialLinks }: BlogAuthorCardProps) {
+export default function BlogAuthorCard({ author, authorDesignation, authorBio, authorAvatar, authorAvatarAlt, authorConsultationUrl, socialLinks }: BlogAuthorCardProps) {
   return (
     <div className="rounded-lg bg-[#A687EF]/50 p-3 sm:p-4">
       <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 text-center">Know your Author</h3>
@@ -43,6 +44,24 @@ export default function BlogAuthorCard({ author, authorDesignation, authorAvatar
           </p>
           {authorDesignation && (
             <p className="text-xs text-gray-700 mt-0.5 md:mt-1 text-center md:text-center">({authorDesignation})</p>
+          )}
+
+          {authorBio && (
+            <div className="mt-2 md:mt-3">
+              <p className="text-sm text-gray-600 line-clamp-2 text-center md:text-center">
+                {authorBio}
+              </p>
+              {authorConsultationUrl && (
+                <Link
+                  href={authorConsultationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-purple-600 font-semibold hover:text-purple-800 hover:underline"
+                >
+                  See More
+                </Link>
+              )}
+            </div>
           )}
 
           <div className="mt-3 sm:mt-3 md:mt-4 md:w-full">

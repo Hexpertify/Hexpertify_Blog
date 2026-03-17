@@ -13,6 +13,7 @@ interface BlogDetailHeroProps {
     imageUrl: string;
     imageAlt?: string;
     category: string;
+    authorConsultationUrl?: string;
   };
 }
 
@@ -40,7 +41,21 @@ export default function BlogDetailHero({ blog }: BlogDetailHeroProps) {
       </h1>
 
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs sm:text-sm text-gray-600 mb-6 sm:mb-8">
-        <span className="text-purple-600 font-medium">By {blog.author}</span>
+        <span className="text-purple-600 font-medium">
+          By{' '}
+          {blog.authorConsultationUrl ? (
+            <Link
+              href={blog.authorConsultationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-purple-800 underline"
+            >
+              {blog.author}
+            </Link>
+          ) : (
+            <span>{blog.author}</span>
+          )}
+        </span>
         {blog.authorDesignation && (
           <>
             <span className="text-gray-700 font-semibold">|</span>
