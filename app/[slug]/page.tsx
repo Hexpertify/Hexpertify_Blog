@@ -115,13 +115,8 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
   };
 }
 
-// Corrected BlogPageProps to remove Promise from params
-interface BlogPageProps {
-  params: { slug: string };
-}
-
 // Updated BlogDetailPage function
-export default async function BlogDetailPage({ params }: BlogPageProps) {
+export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
 
   console.log('👉 Incoming slug:', slug);
