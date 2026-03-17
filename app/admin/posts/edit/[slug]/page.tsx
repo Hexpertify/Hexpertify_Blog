@@ -180,8 +180,8 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
       ? String(formData.category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
       : 'uncategorized';
     const slug = formData.slug || originalSlug || '';
-    if (!slug) return `${site}/blogs/${category}/`;
-    return `${site.replace(/\/$/, '')}/blogs/${category}/${slug}`;
+    if (!slug) return `${site}/${category}/`;
+    return `${site.replace(/\/$/, '')}/${category}/${slug}`;
   };
 
   useEffect(() => {
