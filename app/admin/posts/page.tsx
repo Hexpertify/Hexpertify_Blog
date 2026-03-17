@@ -118,7 +118,7 @@ function AllPostsPage() {
                 {filteredPosts.length} of {posts.length} posts
               </p>
             </div>
-            <Link href="/blogs/new">
+            <Link href="/admin/posts/new">
               <Button className="flex items-center gap-2" style={{ backgroundColor: '#450BC8' }}>
                 <Plus size={20} />
                 New Post
@@ -211,7 +211,7 @@ function AllPostsPage() {
                         >
                           <Eye size={16} />
                         </Button>
-                        <Link href={`/blogs/edit/${post.slug}`}>
+                        <Link href={`/admin/posts/edit/${post.slug}`}>
                           <Button variant="outline" size="sm" disabled={isPending}>
                             <Edit size={16} />
                           </Button>

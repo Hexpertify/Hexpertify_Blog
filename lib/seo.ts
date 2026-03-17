@@ -6,10 +6,12 @@ const seoDirectory = path.join(process.cwd(), 'content/seo');
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify.com';
 
 function getPageUrl(page: string): string {
+  if (page === 'homepage') return '/';
   if (page.startsWith('blog-')) {
     const slug = page.replace('blog-', '');
-    return `/blogs/${slug}`;
+    return `/blog/${slug}`;
   }
+  // Add more mappings as needed
   return `/${page.replace(/-/g, '/')}`;
 }
 
@@ -87,7 +89,7 @@ export async function getSEOByPage(page: string): Promise<SEOMetadata | null> {
 }
 
 export async function saveSEO(page: string, metadata: Omit<SEOMetadata, 'page'>) {
-  const canonicalUrl = metadata.canonicalUrl || `${SITE_URL}/blogs/${page}`;
+  const canonicalUrl = metadata.canonicalUrl || `${SITE_URL}${getPageUrl(page)}`;
   const data = {
     title: metadata.title,
     description: metadata.description,

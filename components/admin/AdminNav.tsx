@@ -33,35 +33,35 @@ export default function AdminNav() {
             </Link>
             <nav className="hidden md:flex items-center space-x-6">
               <Link
-                href="/dashboard"
+                href="/admin/dashboard"
                 className="flex items-center gap-2 text-gray-700 hover:text-purple-600 transition-colors text-sm font-medium"
               >
                 <LayoutDashboard size={18} />
                 Dashboard
               </Link>
               <Link
-                href="/blogs"
+                href="/admin/posts"
                 className="flex items-center gap-2 text-gray-700 hover:text-purple-600 transition-colors text-sm font-medium"
               >
                 <FileText size={18} />
                 All Posts
               </Link>
               <Link
-                href="/categories"
+                href="/admin/categories"
                 className="flex items-center gap-2 text-gray-700 hover:text-purple-600 transition-colors text-sm font-medium"
               >
                 <FolderOpen size={18} />
                 Categories
               </Link>
               <Link
-                href="/faqs"
+                href="/admin/faqs"
                 className="flex items-center gap-2 text-gray-700 hover:text-purple-600 transition-colors text-sm font-medium"
               >
                 <HelpCircle size={18} />
                 FAQs
               </Link>
               <Link
-                href="/seo"
+                href="/admin/seo"
                 className="flex items-center gap-2 text-gray-700 hover:text-purple-600 transition-colors text-sm font-medium"
               >
                 <Search size={18} />

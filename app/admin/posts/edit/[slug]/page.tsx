@@ -124,7 +124,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
         seoOgDescription: seo?.ogDescription || '',
         seoTwitterTitle: seo?.twitterTitle || '',
         seoTwitterDescription: seo?.twitterDescription || '',
-        seoCanonical: seo?.canonicalUrl || `/blogs/${post.slug}`,
+        seoCanonical: seo?.canonicalUrl || '',
       });
 
       setTocItems(toc);
@@ -369,7 +369,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
             twitterImage: '',
             twitterImageAlt: '',
             keywords: formData.seoKeywords || '',
-            canonicalUrl: formData.seoCanonical || `/blogs/${formData.slug}`,
+            canonicalUrl: formData.seoCanonical || computeCanonical(),
             robots: 'index, follow',
             updatedAt: new Date().toISOString(),
           };
@@ -406,7 +406,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
         <AdminNav />
 
         <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Link href="/dashboard">
+          <Link href="/admin/dashboard">
             <Button variant="ghost" className="mb-6">
               <ArrowLeft size={18} className="mr-2" />
               Back to Dashboard
