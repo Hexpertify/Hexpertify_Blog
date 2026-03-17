@@ -74,28 +74,8 @@ async function getBlogData(slug: string) {
   };
 }
 
-// ✅ FIXED PARAM TYPE
-interface BlogPageParams {
-  params: {
-    slug: string;
-  };
-}
-
-// Explicitly redefine PageProps to ensure compatibility
-interface BlogPageParams {
-  params: {
-    slug: string;
-  };
-}
-
-declare module 'next' {
-  interface PageProps {
-    params: BlogPageParams['params'];
-  }
-}
-
 // Replace Metadata with a generic type
-export async function generateMetadata({ params }: BlogPageParams): Promise<Record<string, any>> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Record<string, any>> {
   const slug = params.slug;
   const blog = await getBlogData(slug);
 
@@ -135,7 +115,7 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
 }
 
 // Updated BlogDetailPage function
-export default async function BlogDetailPage({ params }: BlogPageParams) {
+export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
 
   console.log('👉 Incoming slug:', slug);
