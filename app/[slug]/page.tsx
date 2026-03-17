@@ -115,14 +115,15 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
   };
 }
 
-// Explicitly defining the type for params
+// Adjusted BlogPageProps to handle asynchronous params
 interface BlogPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 // ✅ MAIN PAGE
 export default async function BlogDetailPage({ params }: BlogPageProps) {
-  const slug = params.slug;
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
 
   console.log('👉 Incoming slug:', slug);
 
