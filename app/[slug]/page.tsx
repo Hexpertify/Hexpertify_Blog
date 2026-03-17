@@ -115,8 +115,13 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
   };
 }
 
+// Explicitly defining the type for params
+interface BlogPageProps {
+  params: { slug: string };
+}
+
 // ✅ MAIN PAGE
-export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
+export default async function BlogDetailPage({ params }: BlogPageProps) {
   const slug = params.slug;
 
   console.log('👉 Incoming slug:', slug);
