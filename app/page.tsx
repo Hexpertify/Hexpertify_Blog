@@ -8,9 +8,8 @@ import TopReadsCard from '@/components/blog/TopReadsCard';
 import BlogCategoryFilter from '@/components/blog/BlogCategoryFilter';
 import BlogSearchBar from '@/components/blog/BlogSearchBar';
 import BlogGridCard from '@/components/blog/BlogGridCard';
-import FAQSection from '@/components/FAQSection';
 import Schema from '@/components/Schema';
-import { fetchAllPosts, fetchAllCategories, fetchFAQsByPage } from '@/lib/actions';
+import { fetchAllPosts, fetchAllCategories } from '@/lib/actions';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify-blog-sigma.vercel.app';
 
@@ -20,7 +19,6 @@ export default function Home() {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [faqs, setFaqs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,17 +27,15 @@ export default function Home() {
 
   const loadData = async () => {
     try {
-      const [posts, cats, homepageFaqs] = await Promise.all([
+      const [posts, cats] = await Promise.all([
         fetchAllPosts(),
         fetchAllCategories(),
-        fetchFAQsByPage('homepage'),
       ]);
 
       const publishedPosts = posts.filter((post: any) => post.published);
       setAllPosts(publishedPosts);
       setFilteredPosts(publishedPosts);
       setCategories(cats);
-      setFaqs(homepageFaqs);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -255,8 +251,6 @@ export default function Home() {
               </div>
             )}
           </div>
-
-          <FAQSection faqs={faqs} />
         </div>
       </main>
     </div>

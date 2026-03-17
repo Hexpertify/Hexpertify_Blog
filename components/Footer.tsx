@@ -84,7 +84,7 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-base mb-4">Home</h3>
+              <div className="font-semibold text-base mb-4">Home</div>
               <ul className="space-y-2">
                 {footerLinks.home.map((link) => (
                   <li key={link.label}>
@@ -101,7 +101,7 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-base mb-4">Services</h3>
+              <div className="font-semibold text-base mb-4">Services</div>
               <ul className="space-y-2">
                 {footerLinks.services.map((link) => (
                   <li key={link.label}>
@@ -118,7 +118,7 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-base mb-4">About Us</h3>
+              <div className="font-semibold text-base mb-4">About Us</div>
               <ul className="space-y-2">
                 {footerLinks.about.map((link) => (
                   <li key={link.label}>
@@ -135,7 +135,7 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-base mb-4">Contact</h3>
+              <div className="font-semibold text-base mb-4">Contact</div>
               <ul className="space-y-2">
                 {footerLinks.contact.map((link) => (
                   <li key={link.label}>

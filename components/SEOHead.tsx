@@ -35,7 +35,7 @@ export default async function SEOHead({ page, fallbackTitle, fallbackDescription
     keywords: seo.keywords,
     openGraph: {
       title: seo.ogTitle || seo.title,
-      description: 'hexpertify-blogs',
+      description: seo.ogDescription || seo.description,
       images: seo.ogImage ? [{ url: seo.ogImage }] : [],
       type: seo.ogType as any,
     },
@@ -46,6 +46,8 @@ export default async function SEOHead({ page, fallbackTitle, fallbackDescription
       images: seo.twitterImage ? [seo.twitterImage] : [],
     },
     robots: seo.robots,
-    // canonical URLs are generated from `metadataBase` in the root layout
+    alternates: {
+      canonical: seo.canonicalUrl || undefined,
+    },
   };
 }

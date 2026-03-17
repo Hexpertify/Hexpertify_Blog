@@ -58,7 +58,7 @@ export default function TopReadsCard({
         </div>
 
         <div className="flex flex-col justify-center flex-1 min-w-0">
-          <h4 className={titleClasses}>{title}</h4>
+          <h3 className={titleClasses}>{title}</h3>
           <p className="text-[11px] text-gray-500">
             By <span className="font-semibold">{author}</span>
             {authorDesignation ? ` • ${authorDesignation}` : ''} • {date}

@@ -1,16 +1,16 @@
 {
   "title": "Hexpertify Blogs - by CERTIFIED Experts",
-  "description": "Read Inforrmation and advice from real CERTIFIED Experts from Hexpertify.",
+  "description": "Read Information and advice from real CERTIFIED Experts from Hexpertify.",
   "ogTitle": "Hexpertify Blogs - by CERTIFIED Experts",
-  "ogDescription": "Read Inforrmation and advice from real CERTIFIED Experts from Hexpertify.",
+  "ogDescription": "Read Information and advice from real CERTIFIED Experts from Hexpertify.",
   "ogImage": "https://hexpertify-blog-sigma.vercel.app/assets/images/logo.png",
   "ogType": "website",
   "twitterCard": "summary_large_image",
   "twitterTitle": "hexpertify-blogs - Connect with Certified Experts",
-  "twitterDescription": "hexpertify-blogs - Expert consulting platform connecting you with certified professionals in AI, Cloud Computing, Mental Health, Fitness, and Career Development.",
+  "twitterDescription": "Read Information and advice from real CERTIFIED Experts from Hexpertify.",
   "twitterImage": "https://hexpertify-blog-sigma.vercel.app/assets/images/logo.png",
   "keywords": "expert consulting, certified experts, AI consulting, cloud computing experts, mental health counseling, fitness coaching, career development, 1:1 consulting, online webinars, expert advice",
-  "canonicalUrl": "https://hexpertify.com/",
+  "canonicalUrl": "https://hexpertify.com/blogs",
   "robots": "index, follow",
   "updatedAt": "2025-12-20T05:28:44.562Z"
 }
