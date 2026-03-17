@@ -75,9 +75,15 @@ async function getBlogData(slug: string) {
 }
 
 // Replace Metadata with a generic type
-export async function generateMetadata({ params }: { params: { slug: string } | Promise<{ slug: string }> }): Promise<Record<string, any>> {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+export async function generateMetadata({ params }: { params?: Promise<{ slug: string }> }): Promise<Record<string, any>> {
+  const resolvedParams = params ? await params : undefined;
+  const slug = resolvedParams?.slug;
+  if (!slug) {
+    return {
+      title: 'Blog Not Found',
+      description: 'The requested blog post could not be found.',
+    };
+  }
   const blog = await getBlogData(slug);
 
   if (!blog) {
@@ -116,9 +122,22 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
 }
 
 // Updated BlogDetailPage function
-export default async function BlogDetailPage({ params }: { params: { slug: string } | Promise<{ slug: string }> }) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+export default async function BlogDetailPage({ params }: { params?: Promise<{ slug: string }> }) {
+  const resolvedParams = params ? await params : undefined;
+  const slug = resolvedParams?.slug;
+
+  if (!slug) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="max-w-7xl mx-auto section-padding-y">
+          <div className="page-padding">
+            <h1 className="text-3xl font-bold text-gray-900">Blog not found</h1>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   console.log('👉 Incoming slug:', slug);
 
