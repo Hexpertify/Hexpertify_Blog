@@ -52,14 +52,16 @@ export default function BlogAuthorCard({ author, authorDesignation, authorBio, a
                 {authorBio}
               </p>
               {authorConsultationUrl && (
-                <Link
-                  href={authorConsultationUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline text-purple-600 font-semibold hover:text-purple-800 hover:underline"
-                >
-                  See More
-                </Link>
+                <div className="text-right mt-1">
+                  <Link
+                    href={authorConsultationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline text-purple-600 font-semibold hover:text-purple-800 hover:underline"
+                  >
+                    See More
+                  </Link>
+                </div>
               )}
             </div>
           )}
