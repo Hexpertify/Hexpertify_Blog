@@ -13,6 +13,11 @@ export function getPublicBlogPath(slug?: string): string {
   const basePath = normalizeBasePath(PUBLIC_BASE_PATH);
   const cleanSlug = trimSlashes(slug || '');
 
+  // Avoid appending the base path if it's already part of the slug
+  if (cleanSlug.startsWith(basePath)) {
+    return `/${cleanSlug}`;
+  }
+
   if (!cleanSlug) {
     return basePath || '/';
   }
