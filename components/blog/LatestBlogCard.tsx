@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { getPublicBlogPath } from '@/lib/public-url';
 
 interface LatestBlogCardProps {
   title: string;
@@ -13,15 +14,8 @@ interface LatestBlogCardProps {
   category?: string;
 }
 
-export default function LatestBlogCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#', category }: LatestBlogCardProps) {
-  const categorySlug = categoryToSlug(category);
-
-  function categoryToSlug(cat?: string) {
-    if (!cat) return '';
-    return String(cat).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-  }
-
-  const href = categorySlug ? `/${categorySlug}/${slug}` : `/${slug}`;
+export default function LatestBlogCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#' }: LatestBlogCardProps) {
+  const href = slug === '#' ? '#' : getPublicBlogPath(slug);
 
   return (
     <Link href={href} title={`Read blog: ${title}`}>

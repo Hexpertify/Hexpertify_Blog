@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { getPublicBlogPath } from '@/lib/public-url';
 
 interface TopReadsCardProps {
   title: string;
@@ -22,7 +23,6 @@ export default function TopReadsCard({
   author,
   authorDesignation,
   compact = false,
-  category,
 }: TopReadsCardProps) {
   const containerClasses = compact
     ? 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer flex gap-3 p-3'
@@ -36,8 +36,7 @@ export default function TopReadsCard({
     ? 'text-[13px] font-semibold text-gray-900 mb-0.5 line-clamp-2'
     : 'text-sm font-semibold text-gray-900 mb-1 line-clamp-2';
 
-  const categorySlug = category ? String(category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
-  const href = categorySlug ? `/${categorySlug}/${slug}` : `/${slug}`;
+  const href = getPublicBlogPath(slug);
 
   return (
     <Link href={href} className="block" title={`Read blog: ${title}`}>

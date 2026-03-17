@@ -12,6 +12,7 @@ import FAQSection from '@/components/FAQSection';
 import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { getFAQsByPage } from '@/lib/faqs';
 import SEOHead from '@/components/SEOHead';
+import { getPublicBlogUrl } from '@/lib/public-url';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify.com';
 
@@ -82,18 +83,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     fallbackDescription: blog.description,
   });
 
-  // build a safe category slug for canonical and schema
-  const categorySlug = blog.category
-    ? String(blog.category)
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-    : 'uncategorized';
-
   return {
     ...seo,
     alternates: {
-      canonical: `${SITE_URL}/${categorySlug}/${slug}`,
+      canonical: getPublicBlogUrl(SITE_URL, slug),
     },
   };
 }
@@ -111,14 +104,7 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
         .replace(/(^-|-$)/g, '')
     : 'jaswanth';
 
-  const categorySlug = blog.category
-    ? String(blog.category)
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-    : 'uncategorized';
-
-  const blogUrl = `${SITE_URL}/${categorySlug}/${blog.slug}`;
+  const blogUrl = getPublicBlogUrl(SITE_URL, blog.slug);
 
 
   const imageUrl = blog.imageUrl

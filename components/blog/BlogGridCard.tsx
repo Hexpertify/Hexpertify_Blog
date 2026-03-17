@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { getPublicBlogPath } from '@/lib/public-url';
 
 interface BlogGridCardProps {
   title: string;
@@ -13,9 +14,8 @@ interface BlogGridCardProps {
   category?: string;
 }
 
-export default function BlogGridCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#', category }: BlogGridCardProps) {
-  const categorySlug = category ? String(category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
-  const href = categorySlug ? `/${categorySlug}/${slug}` : `/${slug}`;
+export default function BlogGridCard({ title, description, date, imageUrl, imageAlt, author, authorDesignation, slug = '#' }: BlogGridCardProps) {
+  const href = slug === '#' ? '#' : getPublicBlogPath(slug);
 
   return (
     <Link href={href} title={`Read blog: ${title}`}>

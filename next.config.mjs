@@ -19,16 +19,20 @@ const nextConfig = {
     // expose the basePath to the client so we can build absolute URLs
     NEXT_PUBLIC_BASE_PATH: basePath,
   },
+  async redirects() {
+    return [
+      {
+        source: '/:category((?!admin|api|blog|assets|_next).+)/:slug',
+        destination: '/:slug',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       // Map public `/:slug` to the internal route `/blog/:slug`
       {
         source: '/:slug',
-        destination: '/blog/:slug',
-      },
-      // Map public `/:category/:slug` to the internal `/blog/:slug`
-      {
-        source: '/:category/:slug',
         destination: '/blog/:slug',
       },
     ];

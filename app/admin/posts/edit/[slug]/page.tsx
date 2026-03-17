@@ -16,6 +16,7 @@ import AdminNav from '@/components/admin/AdminNav';
 import ProtectedRoute from '@/components/admin/ProtectedRoute';
 import MDXEditor from '@/components/admin/MDXEditor';
 import { fetchPostBySlug, updatePost, fetchAllCategories, fetchSEOByPage, updateSEO, createSEO } from '@/lib/actions';
+import { getPublicBlogUrl } from '@/lib/public-url';
 import { ArrowLeft, Plus, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
 
@@ -176,19 +177,15 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
   const computeCanonical = () => {
     if (typeof window === 'undefined') return '';
     const site = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-    const category = formData.category
-      ? String(formData.category).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-      : 'uncategorized';
     const slug = formData.slug || originalSlug || '';
-    if (!slug) return `${site}/${category}/`;
-    return `${site.replace(/\/$/, '')}/${category}/${slug}`;
+    return getPublicBlogUrl(site, slug);
   };
 
   useEffect(() => {
-    // if no explicit canonical is set, update preview when slug/category changes
+    // if no explicit canonical is set, update preview when slug changes
     setFormData((prev) => ({ ...prev, seoCanonical: prev.seoCanonical || computeCanonical() }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.slug, formData.category]);
+  }, [formData.slug]);
 
   const handleFeaturedImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

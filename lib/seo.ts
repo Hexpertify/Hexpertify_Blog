@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { commitFile, getFileSha, deleteFile, getFileContent, listDirectory } from './github';
+import { getPublicBlogPath } from './public-url';
 
 const seoDirectory = path.join(process.cwd(), 'content/seo');
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify.com';
@@ -9,7 +10,7 @@ function getPageUrl(page: string): string {
   if (page === 'homepage') return '/';
   if (page.startsWith('blog-')) {
     const slug = page.replace('blog-', '');
-    return `/blog/${slug}`;
+    return getPublicBlogPath(slug);
   }
   // Add more mappings as needed
   return `/${page.replace(/-/g, '/')}`;
