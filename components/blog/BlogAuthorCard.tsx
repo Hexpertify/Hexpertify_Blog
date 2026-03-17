@@ -47,8 +47,8 @@ export default function BlogAuthorCard({ author, authorDesignation, authorBio, a
           )}
 
           {authorBio && (
-            <div className="mt-2 md:mt-3">
-              <p className="text-sm text-gray-600 line-clamp-2 text-center md:text-center">
+            <div className="mt-2 md:mt-3 text-sm text-center md:text-center">
+              <p className="text-gray-600 line-clamp-2">
                 {authorBio}
               </p>
               {authorConsultationUrl && (
@@ -56,7 +56,7 @@ export default function BlogAuthorCard({ author, authorDesignation, authorBio, a
                   href={authorConsultationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-purple-600 font-semibold hover:text-purple-800 hover:underline"
+                  className="inline text-purple-600 font-semibold hover:text-purple-800 hover:underline"
                 >
                   See More
                 </Link>

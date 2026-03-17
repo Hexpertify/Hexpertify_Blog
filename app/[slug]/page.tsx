@@ -170,14 +170,16 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">
           <BlogDetailHero blog={blog} />
+          
+          {/* Mobile: Author Card above TOC */}
+          <div className="md:hidden mb-6 space-y-4">
+            <BlogAuthorCard {...blog} />
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-1 pb-8 sm:pt-6 sm:pb-10">
-            <div className="order-2 lg:order-1 space-y-4 sm:space-y-6 max-w-sm mx-auto lg:max-w-none lg:mx-0">
-              <div className="hidden lg:block">
-                <BlogAuthorCard {...blog} />
-              </div>
-              <div className="hidden lg:block">
-                <BlogSubscribe />
-              </div>
+            <div className="hidden md:block order-2 lg:order-1 space-y-4 sm:space-y-6 max-w-sm mx-auto lg:max-w-none lg:mx-0">
+              <BlogAuthorCard {...blog} />
+              <BlogSubscribe />
               <div className="hidden lg:block">
                 <RelatedPostsSidebar posts={blog.relatedPosts} />
               </div>
@@ -219,6 +221,11 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
                 </ReactMarkdown>
               </div>
             </div>
+          </div>
+
+          {/* Mobile: Subscribe below content */}
+          <div className="md:hidden mb-6">
+            <BlogSubscribe />
           </div>
           <FAQSection faqs={faqs} />
         </div>
