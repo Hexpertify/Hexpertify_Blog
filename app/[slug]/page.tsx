@@ -76,7 +76,13 @@ async function getBlogData(slug: string) {
 }
 
 // ✅ FIXED PARAM TYPE
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+interface BlogPageParams {
+  params: {
+    slug: string;
+  };
+}
+
+export async function generateMetadata({ params }: BlogPageParams): Promise<Metadata> {
   const slug = params.slug;
   const blog = await getBlogData(slug);
 
@@ -116,7 +122,7 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
 }
 
 // Updated BlogDetailPage function
-export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
+export default async function BlogDetailPage({ params }: BlogPageParams) {
   const slug = params.slug;
 
   console.log('👉 Incoming slug:', slug);
@@ -146,17 +152,11 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
       <Schema value={buildBlogGraphSchema(blog, faqs)} />
-
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">
-
           <BlogDetailHero blog={blog} />
-
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-1 pb-8 sm:pt-6 sm:pb-10">
-
-            {/* LEFT SIDE */}
             <div className="order-2 lg:order-1 space-y-4 sm:space-y-6 max-w-sm mx-auto lg:max-w-none lg:mx-0">
               <div className="hidden lg:block">
                 <BlogAuthorCard {...blog} />
@@ -168,27 +168,19 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
                 <RelatedPostsSidebar posts={blog.relatedPosts} />
               </div>
             </div>
-
-            {/* RIGHT SIDE */}
             <div className="order-1 lg:order-2 lg:col-span-3">
-
               {blog.tableOfContents.length > 0 && (
                 <div className="bg-purple-50 rounded-lg p-6 mb-8">
-                  <h3 className="text-xl font-bold text-center mb-4">
-                    Table of Contents
-                  </h3>
+                  <h3 className="text-xl font-bold text-center mb-4">Table of Contents</h3>
                   <ol className="space-y-2">
                     {blog.tableOfContents.map((item, index) => (
                       <li key={item.id}>
-                        <a href={`#${item.anchor}`}>
-                          {index + 1}. {item.title}
-                        </a>
+                        <a href={`#${item.anchor}`}>{index + 1}. {item.title}</a>
                       </li>
                     ))}
                   </ol>
                 </div>
               )}
-
               <div className="prose max-w-none">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
@@ -212,12 +204,9 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
                   {blog.content}
                 </ReactMarkdown>
               </div>
-
             </div>
           </div>
-
           <FAQSection faqs={faqs} />
-
         </div>
       </main>
     </div>
