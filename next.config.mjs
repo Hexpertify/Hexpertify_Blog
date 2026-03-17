@@ -26,6 +26,11 @@ const nextConfig = {
         source: `${basePath}/:slug`,
         destination: '/blog/:slug',
       },
+      // Map public `/:category/:slug` to the internal `/blog/:slug`
+      {
+        source: `${basePath}/:category/:slug`,
+        destination: '/blog/:slug',
+      },
     ];
   },
   experimental: {
