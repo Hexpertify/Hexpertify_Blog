@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -516,6 +516,35 @@ export default function MDXEditor({ value, onChange }: MDXEditorProps) {
                       className="rounded-lg shadow-md max-w-full h-auto my-4"
                     />
                   ),
+                  p: ({ children }: any) => {
+                    // Convert URLs in text to clickable links
+                    const urlRegex = /(https?:\/\/[^\s]+)/g;
+                    
+                    const processedChildren = React.Children.map(children, (child: any) => {
+                      if (typeof child === 'string') {
+                        const parts = child.split(urlRegex);
+                        return parts.map((part: string, i: number) => {
+                          if (urlRegex.test(part)) {
+                            return (
+                              <a
+                                key={i}
+                                href={part}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 underline hover:text-blue-800 break-all"
+                              >
+                                {part}
+                              </a>
+                            );
+                          }
+                          return part;
+                        });
+                      }
+                      return child;
+                    });
+                    
+                    return <p>{processedChildren}</p>;
+                  },
                   table: ({ children }: any) => (
                     <div className="overflow-x-auto my-4">
                       <table className="border-collapse w-full border border-gray-300">

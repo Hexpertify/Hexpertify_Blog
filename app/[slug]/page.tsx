@@ -7,7 +7,6 @@ import BlogDetailHero from '@/components/blog/BlogDetailHero';
 import BlogAuthorCard from '@/components/blog/BlogAuthorCard';
 import BlogSubscribe from '@/components/blog/BlogSubscribe';
 import RelatedPostsSidebar from '@/components/blog/RelatedPostsSidebar';
-import ReviewedBySection from '@/components/blog/ReviewedBySection';
 import FAQSection from '@/components/FAQSection';
 import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { getFAQsByPage } from '@/lib/faqs';
@@ -59,10 +58,7 @@ async function getBlogData(slug: string) {
     authorAvatar: post.authorAvatar || '',
     authorAvatarAlt: post.authorAvatarAlt || '',
     authorConsultationUrl: post.authorConsultationUrl || '',
-    authorDegreeQualification: post.authorDegreeQualification || '',
     authorSocialLinks: post.authorSocialLinks || {},
-    primaryTopic: post.primaryTopic || '',
-    reviewedBy: post.reviewedBy || null,
     tableOfContents: (post.tableOfContents || []) as TOCItem[],
     date: new Date(post.date).toLocaleDateString('en-US', {
       month: 'short',
@@ -111,88 +107,17 @@ export async function generateMetadata({ params }: { params?: Promise<{ slug: st
   };
 }
 
-function buildBlogGraphSchema(blog: any) {
+function buildBlogGraphSchema(blog: any, faqs: any[]) {
   const blogUrl = getPublicBlogUrl(SITE_URL, blog.slug);
 
-  const schema: any = {
+  return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: blog.title,
     description: blog.description,
-    image: blog.imageUrl,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': blogUrl,
-    },
+    author: blog.author,
     datePublished: blog.rawDate,
-    dateModified: blog.rawDate,
-    author: {
-      '@type': 'Person',
-      name: blog.author,
-      jobTitle: blog.authorDesignation || '',
-      description: blog.authorBio || '',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Hexpertify',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://hexpertify.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHexpertify%20purple%20logo%20full.dd09ce1d.png&w=1200&q=75',
-      },
-    },
-    articleSection: blog.category,
-    keywords: blog.primaryTopic ? [blog.primaryTopic] : [],
-    about: blog.primaryTopic
-      ? {
-          '@type': 'Thing',
-          name: blog.primaryTopic,
-        }
-      : undefined,
-  };
-
-  // Add author social links if available
-  if (blog.authorSocialLinks?.linkedin) {
-    schema.author.sameAs = [blog.authorSocialLinks.linkedin];
-  }
-
-  // Add author degree if available
-  if (blog.authorDegreeQualification) {
-    schema.author.hasCredential = {
-      '@type': 'EducationalOccupationalCredential',
-      credentialCategory: 'degree',
-      educationalLevel: blog.authorDegreeQualification,
-    };
-  }
-
-  // Add reviewer if available
-  if (blog.reviewedBy) {
-    schema.reviewedBy = {
-      '@type': 'Person',
-      name: blog.reviewedBy.name,
-      jobTitle: blog.reviewedBy.designation || '',
-    };
-  }
-
-  // Remove undefined properties
-  Object.keys(schema).forEach(key => schema[key] === undefined && delete schema[key]);
-
-  return schema;
-}
-
-function buildFAQSchema(faqs: any[]) {
-  if (!faqs || faqs.length === 0) return null;
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq: any) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
+    mainEntityOfPage: blogUrl,
   };
 }
 
@@ -241,11 +166,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <Schema value={buildBlogGraphSchema(blog)} />
-      {/* Add FAQ schema when FAQs exist */}
-      {faqs && faqs.length > 0 && (
-        <Schema value={buildFAQSchema(faqs)} />
-      )}
+      <Schema value={buildBlogGraphSchema(blog, faqs)} />
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">
           <BlogDetailHero blog={blog} />
@@ -276,66 +197,58 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
                   </ol>
                 </div>
               )}
-              <style>{`
-                .prose h2[data-heading-number]::before {
-                  content: attr(data-heading-number) '. ';
-                  color: black;
-                  font-weight: 600;
-                }
-                .prose h3[data-heading-number]::before {
-                  content: attr(data-heading-number) '. ';
-                  color: black;
-                  font-weight: 600;
-                }
-              `}</style>
               <div className="prose max-w-none">
-                {(() => {
-                  const headingState = { h2: 0, h3: 0 };
-                  return (
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        h2: ({ children }) => {
-                          const text = React.Children.toArray(children).join('').trim();
-                          const id = tocAnchorByTitle.get(text);
-                          const headingIndex = blog.tableOfContents.findIndex(item => item.title.trim() === text);
-                          const headingNumber = headingIndex >= 0 ? headingIndex + 1 : null;
-                          if (headingNumber) {
-                            headingState.h2 = headingNumber;
-                            headingState.h3 = 0;
-                          }
-                          return (
-                            <h2 id={id} {...(headingNumber ? { 'data-heading-number': headingNumber } : {})}>
-                              {children}
-                            </h2>
-                          );
-                        },
-                        h3: ({ children }) => {
-                          headingState.h3++;
-                          const subNumber = `${headingState.h2 || 1}.${headingState.h3}`;
-                          return (
-                            <h3 data-heading-number={subNumber}>
-                              {children}
-                            </h3>
-                          );
-                        },
-                        img: ({ src, alt }) => (
-                          <Image
-                            src={src || ''}
-                            alt={alt || ''}
-                            width={800}
-                            height={400}
-                            className="rounded-lg w-full h-auto"
-                          />
-                        ),
-                      }}
-                    >
-                      {blog.content}
-                    </ReactMarkdown>
-                  );
-                })()}
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h2: ({ children }) => {
+                      const text = React.Children.toArray(children).join('').trim();
+                      const id = tocAnchorByTitle.get(text);
+                      return <h2 id={id}>{children}</h2>;
+                    },
+                    img: ({ src, alt }) => (
+                      <Image
+                        src={src || ''}
+                        alt={alt || ''}
+                        width={800}
+                        height={400}
+                        className="rounded-lg w-full h-auto"
+                      />
+                    ),
+                    p: ({ children }: any) => {
+                      // Convert URLs in text to clickable links
+                      const urlRegex = /(https?:\/\/[^\s]+)/g;
+                      
+                      const processedChildren = React.Children.map(children, (child: any) => {
+                        if (typeof child === 'string') {
+                          const parts = child.split(urlRegex);
+                          return parts.map((part: string, i: number) => {
+                            if (urlRegex.test(part)) {
+                              return (
+                                <a
+                                  key={i}
+                                  href={part}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 underline hover:text-blue-800 break-all"
+                                >
+                                  {part}
+                                </a>
+                              );
+                            }
+                            return part;
+                          });
+                        }
+                        return child;
+                      });
+                      
+                      return <p>{processedChildren}</p>;
+                    },
+                  }}
+                >
+                  {blog.content}
+                </ReactMarkdown>
               </div>
-              <ReviewedBySection reviewedBy={blog.reviewedBy ?? undefined} />
             </div>
           </div>
 
