@@ -59,7 +59,10 @@ async function getBlogData(slug: string) {
     authorAvatar: post.authorAvatar || '',
     authorAvatarAlt: post.authorAvatarAlt || '',
     authorConsultationUrl: post.authorConsultationUrl || '',
+    authorDegreeQualification: post.authorDegreeQualification || '',
     authorSocialLinks: post.authorSocialLinks || {},
+    reviewedBy: post.reviewedBy || null,
+    primaryTopic: post.primaryTopic || '',
     tableOfContents: (post.tableOfContents || []) as TOCItem[],
     date: new Date(post.date).toLocaleDateString('en-US', {
       month: 'short',
@@ -111,21 +114,96 @@ export async function generateMetadata({ params }: { params?: Promise<{ slug: st
 function buildBlogGraphSchema(blog: any, faqs: any[], keywords?: string) {
   const blogUrl = getPublicBlogUrl(SITE_URL, blog.slug);
 
-  const schemaGraph: any[] = [
-    {
-      '@type': 'BlogPosting',
-      headline: blog.title,
-      description: blog.description,
-      author: blog.author,
-      datePublished: blog.rawDate,
-      mainEntityOfPage: blogUrl,
-    },
-  ];
+  // Build author object
+  const authorSchema: any = {
+    '@type': 'Person',
+    name: blog.author,
+  };
 
-  // Add keywords to BlogPosting if available
-  if (keywords) {
-    schemaGraph[0].keywords = keywords;
+  if (blog.authorDesignation) {
+    authorSchema.jobTitle = blog.authorDesignation;
   }
+
+  if (blog.authorBio) {
+    authorSchema.description = blog.authorBio;
+  }
+
+  if (blog.authorConsultationUrl) {
+    authorSchema.url = blog.authorConsultationUrl;
+  }
+
+  // Add social links (sameAs)
+  if (blog.authorSocialLinks && Object.keys(blog.authorSocialLinks).length > 0) {
+    authorSchema.sameAs = Object.values(blog.authorSocialLinks).filter(Boolean);
+  }
+
+  // Add credentials if degree is available
+  if (blog.authorDegreeQualification) {
+    authorSchema.hasCredential = {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'degree',
+      educationalLevel: blog.authorDegreeQualification,
+    };
+  }
+
+  // Build BlogPosting schema
+  const blogPostingSchema: any = {
+    '@type': 'BlogPosting',
+    headline: blog.title,
+    description: blog.description,
+    image: blog.imageUrl,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': blogUrl,
+    },
+    datePublished: blog.rawDate,
+    author: authorSchema,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Hexpertify',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://hexpertify.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHexpertify%20purple%20logo%20full.dd09ce1d.png&w=1200&q=75',
+      },
+    },
+    articleSection: blog.category,
+  };
+
+  // Add dateModified (same as datePublished if no update date available)
+  blogPostingSchema.dateModified = blog.rawDate;
+
+  // Add keywords as array if available
+  if (keywords) {
+    // Split keywords string into array if it's comma-separated
+    const keywordArray = keywords
+      .split(',')
+      .map((k: string) => k.trim())
+      .filter((k: string) => k.length > 0);
+    if (keywordArray.length > 0) {
+      blogPostingSchema.keywords = keywordArray;
+    }
+  }
+
+  // Add reviewedBy if available
+  if (blog.reviewedBy && blog.reviewedBy.name) {
+    blogPostingSchema.reviewedBy = {
+      '@type': 'Person',
+      name: blog.reviewedBy.name,
+    };
+    if (blog.reviewedBy.designation) {
+      blogPostingSchema.reviewedBy.jobTitle = blog.reviewedBy.designation;
+    }
+  }
+
+  // Add about section with primaryTopic
+  if (blog.primaryTopic) {
+    blogPostingSchema.about = {
+      '@type': 'Thing',
+      name: blog.primaryTopic,
+    };
+  }
+
+  const schemaGraph: any[] = [blogPostingSchema];
 
   // Add FAQPage schema if FAQs exist
   if (faqs && faqs.length > 0) {
