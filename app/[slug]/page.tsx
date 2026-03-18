@@ -276,28 +276,64 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
                   </ol>
                 </div>
               )}
+              <style>{`
+                .prose h2[data-heading-number]::before {
+                  content: attr(data-heading-number) '. ';
+                  color: black;
+                  font-weight: 600;
+                }
+                .prose h3[data-heading-number]::before {
+                  content: attr(data-heading-number) '. ';
+                  color: black;
+                  font-weight: 600;
+                }
+              `}</style>
               <div className="prose max-w-none">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h2: ({ children }) => {
-                      const text = React.Children.toArray(children).join('').trim();
-                      const id = tocAnchorByTitle.get(text);
-                      return <h2 id={id}>{children}</h2>;
-                    },
-                    img: ({ src, alt }) => (
-                      <Image
-                        src={src || ''}
-                        alt={alt || ''}
-                        width={800}
-                        height={400}
-                        className="rounded-lg w-full h-auto"
-                      />
-                    ),
-                  }}
-                >
-                  {blog.content}
-                </ReactMarkdown>
+                {(() => {
+                  const headingState = { h2: 0, h3: 0 };
+                  return (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        h2: ({ children }) => {
+                          const text = React.Children.toArray(children).join('').trim();
+                          const id = tocAnchorByTitle.get(text);
+                          const headingIndex = blog.tableOfContents.findIndex(item => item.title.trim() === text);
+                          const headingNumber = headingIndex >= 0 ? headingIndex + 1 : null;
+                          if (headingNumber) {
+                            headingState.h2 = headingNumber;
+                            headingState.h3 = 0;
+                          }
+                          return (
+                            <h2 id={id} {...(headingNumber ? { 'data-heading-number': headingNumber } : {})}>
+                              {children}
+                            </h2>
+                          );
+                        },
+                        h3: ({ children }) => {
+                          headingState.h3++;
+                          const subNumber = `${headingState.h2 || 1}.${headingState.h3}`;
+                          return (
+                            <h3 data-heading-number={subNumber}>
+                              {children}
+                            </h3>
+                          );
+                        },
+                        img: ({ src, alt }) => (
+                          <Image
+                            src={src || ''}
+                            alt={alt || ''}
+                            width={800}
+                            height={400}
+                            className="rounded-lg w-full h-auto"
+                          />
+                        ),
+                      }}
+                    >
+                      {blog.content}
+                    </ReactMarkdown>
+                  );
+                })()}
               </div>
               <ReviewedBySection reviewedBy={blog.reviewedBy ?? undefined} />
             </div>
