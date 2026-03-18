@@ -107,7 +107,49 @@ export async function generateMetadata({ params }: { params?: Promise<{ slug: st
   };
 }
 
-function buildBlogGraphSchema(blog: any, faqs: any[]) {
+function buildBlogSchema(blog: any, faqs: any[]) {
+  const blogUrl = getPublicBlogUrl(SITE_URL, blog.slug);
+
+  // If no FAQs, return just BlogPosting schema
+  if (!faqs || faqs.length === 0) {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: blog.title,
+      description: blog.description,
+      author: blog.author,
+      datePublished: blog.rawDate,
+      mainEntityOfPage: blogUrl,
+    };
+  }
+
+  // If FAQs exist, return FAQPage schema with BlogPosting as part of it
+  console.log('✅ Building FAQ schema for', faqs.length, 'FAQs');
+  
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq: any) => ({
+      '@type': 'Question',
+      name: faq.question || '',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer || '',
+      },
+    })),
+    // Also include BlogPosting properties
+    isPartOf: {
+      '@type': 'BlogPosting',
+      headline: blog.title,
+      description: blog.description,
+      author: blog.author,
+      datePublished: blog.rawDate,
+      mainEntityOfPage: blogUrl,
+    },
+  };
+}
+
+function buildBlogGraphSchema(blog: any) {
   const blogUrl = getPublicBlogUrl(SITE_URL, blog.slug);
 
   return {
@@ -118,6 +160,29 @@ function buildBlogGraphSchema(blog: any, faqs: any[]) {
     author: blog.author,
     datePublished: blog.rawDate,
     mainEntityOfPage: blogUrl,
+  };
+}
+
+function buildFAQSchema(faqs: any[]) {
+  if (!faqs || faqs.length === 0) {
+    console.log('❌ No FAQs to build schema');
+    return null;
+  }
+
+  console.log('✅ Building FAQ schema for', faqs.length, 'FAQs');
+  console.log('FAQ data:', JSON.stringify(faqs, null, 2));
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq: any) => ({
+      '@type': 'Question',
+      name: faq.question || '',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer || '',
+      },
+    })),
   };
 }
 
@@ -145,6 +210,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
   const faqs = await getFAQsByPage(slug);
 
   console.log('👉 Blog found:', !!blog);
+  console.log('👉 FAQs found:', faqs?.length || 0);
 
   if (!blog) {
     return (
@@ -166,7 +232,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <Schema value={buildBlogGraphSchema(blog, faqs)} />
+      <Schema value={buildBlogSchema(blog, faqs)} />
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">
           <BlogDetailHero blog={blog} />
