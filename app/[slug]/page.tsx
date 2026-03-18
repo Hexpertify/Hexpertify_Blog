@@ -137,7 +137,7 @@ function buildBlogGraphSchema(blog: any) {
       name: 'Hexpertify',
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/logo.png`,
+        url: 'https://hexpertify.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHexpertify%20purple%20logo%20full.dd09ce1d.png&w=1200&q=75',
       },
     },
     articleSection: blog.category,
