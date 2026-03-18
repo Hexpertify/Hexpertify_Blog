@@ -15,10 +15,16 @@ export interface PostMetadata {
   authorAvatar?: string;
   authorAvatarAlt?: string;
   authorConsultationUrl?: string;
+  authorDegreeQualification?: string;
   authorSocialLinks?: {
     twitter?: string;
     linkedin?: string;
     github?: string;
+  };
+  primaryTopic?: string;
+  reviewedBy?: {
+    name: string;
+    designation: string;
   };
   category: string;
   imageUrl: string;

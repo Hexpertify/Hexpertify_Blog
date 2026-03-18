@@ -7,6 +7,7 @@ import BlogDetailHero from '@/components/blog/BlogDetailHero';
 import BlogAuthorCard from '@/components/blog/BlogAuthorCard';
 import BlogSubscribe from '@/components/blog/BlogSubscribe';
 import RelatedPostsSidebar from '@/components/blog/RelatedPostsSidebar';
+import ReviewedBySection from '@/components/blog/ReviewedBySection';
 import FAQSection from '@/components/FAQSection';
 import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { getFAQsByPage } from '@/lib/faqs';
@@ -58,7 +59,10 @@ async function getBlogData(slug: string) {
     authorAvatar: post.authorAvatar || '',
     authorAvatarAlt: post.authorAvatarAlt || '',
     authorConsultationUrl: post.authorConsultationUrl || '',
+    authorDegreeQualification: post.authorDegreeQualification || '',
     authorSocialLinks: post.authorSocialLinks || {},
+    primaryTopic: post.primaryTopic || '',
+    reviewedBy: post.reviewedBy || null,
     tableOfContents: (post.tableOfContents || []) as TOCItem[],
     date: new Date(post.date).toLocaleDateString('en-US', {
       month: 'short',
@@ -107,80 +111,86 @@ export async function generateMetadata({ params }: { params?: Promise<{ slug: st
   };
 }
 
-function buildBlogSchema(blog: any, faqs: any[]) {
-  const blogUrl = getPublicBlogUrl(SITE_URL, blog.slug);
-
-  // If no FAQs, return just BlogPosting schema
-  if (!faqs || faqs.length === 0) {
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: blog.title,
-      description: blog.description,
-      author: blog.author,
-      datePublished: blog.rawDate,
-      mainEntityOfPage: blogUrl,
-    };
-  }
-
-  // If FAQs exist, return FAQPage schema with BlogPosting as part of it
-  console.log('✅ Building FAQ schema for', faqs.length, 'FAQs');
-  
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq: any) => ({
-      '@type': 'Question',
-      name: faq.question || '',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer || '',
-      },
-    })),
-    // Also include BlogPosting properties
-    isPartOf: {
-      '@type': 'BlogPosting',
-      headline: blog.title,
-      description: blog.description,
-      author: blog.author,
-      datePublished: blog.rawDate,
-      mainEntityOfPage: blogUrl,
-    },
-  };
-}
-
 function buildBlogGraphSchema(blog: any) {
   const blogUrl = getPublicBlogUrl(SITE_URL, blog.slug);
 
-  return {
+  const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: blog.title,
     description: blog.description,
-    author: blog.author,
+    image: blog.imageUrl,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': blogUrl,
+    },
     datePublished: blog.rawDate,
-    mainEntityOfPage: blogUrl,
+    dateModified: blog.rawDate,
+    author: {
+      '@type': 'Person',
+      name: blog.author,
+      jobTitle: blog.authorDesignation || '',
+      description: blog.authorBio || '',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Hexpertify',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/logo.png`,
+      },
+    },
+    articleSection: blog.category,
+    keywords: blog.primaryTopic ? [blog.primaryTopic] : [],
+    about: blog.primaryTopic
+      ? {
+          '@type': 'Thing',
+          name: blog.primaryTopic,
+        }
+      : undefined,
   };
+
+  // Add author social links if available
+  if (blog.authorSocialLinks?.linkedin) {
+    schema.author.sameAs = [blog.authorSocialLinks.linkedin];
+  }
+
+  // Add author degree if available
+  if (blog.authorDegreeQualification) {
+    schema.author.hasCredential = {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'degree',
+      educationalLevel: blog.authorDegreeQualification,
+    };
+  }
+
+  // Add reviewer if available
+  if (blog.reviewedBy) {
+    schema.reviewedBy = {
+      '@type': 'Person',
+      name: blog.reviewedBy.name,
+      jobTitle: blog.reviewedBy.designation || '',
+    };
+  }
+
+  // Remove undefined properties
+  Object.keys(schema).forEach(key => schema[key] === undefined && delete schema[key]);
+
+  return schema;
 }
 
 function buildFAQSchema(faqs: any[]) {
-  if (!faqs || faqs.length === 0) {
-    console.log('❌ No FAQs to build schema');
-    return null;
-  }
-
-  console.log('✅ Building FAQ schema for', faqs.length, 'FAQs');
-  console.log('FAQ data:', JSON.stringify(faqs, null, 2));
+  if (!faqs || faqs.length === 0) return null;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faqs.map((faq: any) => ({
       '@type': 'Question',
-      name: faq.question || '',
+      name: faq.question,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: faq.answer || '',
+        text: faq.answer,
       },
     })),
   };
@@ -210,7 +220,6 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
   const faqs = await getFAQsByPage(slug);
 
   console.log('👉 Blog found:', !!blog);
-  console.log('👉 FAQs found:', faqs?.length || 0);
 
   if (!blog) {
     return (
@@ -232,7 +241,11 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <Schema value={buildBlogSchema(blog, faqs)} />
+      <Schema value={buildBlogGraphSchema(blog)} />
+      {/* Add FAQ schema when FAQs exist */}
+      {faqs && faqs.length > 0 && (
+        <Schema value={buildFAQSchema(faqs)} />
+      )}
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">
           <BlogDetailHero blog={blog} />
@@ -263,17 +276,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
                   </ol>
                 </div>
               )}
-              <div className="prose max-w-none" style={{ counterReset: 'h2Counter' } as React.CSSProperties}>
-                <style>{`
-                  .prose h2 {
-                    counter-increment: h2Counter;
-                  }
-                  .prose h2::before {
-                    content: counter(h2Counter) '. ';
-                    color: black;
-                    font-weight: 600;
-                  }
-                `}</style>
+              <div className="prose max-w-none">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -296,6 +299,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
                   {blog.content}
                 </ReactMarkdown>
               </div>
+              <ReviewedBySection reviewedBy={blog.reviewedBy} />
             </div>
           </div>
 

@@ -49,9 +49,13 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     authorAvatar: '',
     authorAvatarAlt: '',
     authorConsultationUrl: '',
+    authorDegreeQualification: '',
     authorTwitter: '',
     authorLinkedin: '',
     authorGithub: '',
+    primaryTopic: '',
+    reviewedByName: '',
+    reviewedByDesignation: '',
     category: 'AI',
     imageUrl: '',
     imageAlt: '',
@@ -108,9 +112,13 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
         authorAvatar: post.authorAvatar || '',
         authorAvatarAlt: post.authorAvatarAlt || '',
         authorConsultationUrl: post.authorConsultationUrl || '',
+        authorDegreeQualification: post.authorDegreeQualification || '',
         authorTwitter: socialLinks.twitter || '',
         authorLinkedin: socialLinks.linkedin || '',
         authorGithub: socialLinks.github || '',
+        primaryTopic: post.primaryTopic || '',
+        reviewedByName: post.reviewedBy?.name || '',
+        reviewedByDesignation: post.reviewedBy?.designation || '',
         category: post.category,
         imageUrl: post.imageUrl,
         imageAlt: post.imageAlt || '',
@@ -320,11 +328,17 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
           authorAvatar: formData.authorAvatar,
           authorAvatarAlt: formData.authorAvatarAlt,
           authorConsultationUrl: formData.authorConsultationUrl,
+          authorDegreeQualification: formData.authorDegreeQualification,
           authorSocialLinks: {
             twitter: formData.authorTwitter,
             linkedin: formData.authorLinkedin,
             github: formData.authorGithub,
           },
+          primaryTopic: formData.primaryTopic,
+          reviewedBy: formData.reviewedByName && formData.reviewedByDesignation ? {
+            name: formData.reviewedByName,
+            designation: formData.reviewedByDesignation,
+          } : undefined,
           category: formData.category,
           imageUrl: formData.imageUrl,
           imageAlt: formData.imageAlt,
@@ -496,6 +510,16 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                           placeholder="5 Minutes read"
                         />
                       </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="primaryTopic">Primary Topic</Label>
+                        <Input
+                          id="primaryTopic"
+                          value={formData.primaryTopic}
+                          onChange={(e) => setFormData({ ...formData, primaryTopic: e.target.value })}
+                          placeholder="e.g., Machine Learning"
+                        />
+                      </div>
                     </div>
 
                     <div className="border-t pt-6">
@@ -532,6 +556,19 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                             placeholder="Brief bio about the author..."
                             rows={3}
                           />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="authorDegreeQualification">Author Degree/Qualification</Label>
+                          <Input
+                            id="authorDegreeQualification"
+                            value={formData.authorDegreeQualification}
+                            onChange={(e) => setFormData({ ...formData, authorDegreeQualification: e.target.value })}
+                            placeholder="e.g., B.Tech in Computer Science, MBA"
+                          />
+                          <p className="text-xs text-gray-500">
+                            Author's educational qualifications (not displayed on frontend)
+                          </p>
                         </div>
 
                         <div className="space-y-2">
@@ -629,6 +666,35 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                               onChange={(e) => setFormData({ ...formData, authorGithub: e.target.value })}
                               placeholder="https://github.com/..."
                             />
+                          </div>
+                        </div>
+
+                        <div className="border-t pt-6">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-4">Reviewed By (Optional)</h3>
+                          <p className="text-xs text-gray-500 mb-4">
+                            Add reviewer details. This will display at the end of the blog post.
+                          </p>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="reviewedByName">Reviewer Name</Label>
+                              <Input
+                                id="reviewedByName"
+                                value={formData.reviewedByName}
+                                onChange={(e) => setFormData({ ...formData, reviewedByName: e.target.value })}
+                                placeholder="e.g., John Smith"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="reviewedByDesignation">Reviewer Designation</Label>
+                              <Input
+                                id="reviewedByDesignation"
+                                value={formData.reviewedByDesignation}
+                                onChange={(e) => setFormData({ ...formData, reviewedByDesignation: e.target.value })}
+                                placeholder="e.g., Senior Editor"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
