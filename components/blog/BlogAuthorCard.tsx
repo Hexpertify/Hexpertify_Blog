@@ -47,7 +47,7 @@ export default function BlogAuthorCard({ author, authorDesignation, authorBio, a
           )}
 
           {authorBio && (
-            <div className="mt-2 md:mt-3 text-sm text-center md:text-center">
+            <div className="mt-2 md:mt-3 text-xs sm:text-sm text-center md:text-center">
               <p className="text-gray-600 line-clamp-2">
                 {authorBio}
               </p>
