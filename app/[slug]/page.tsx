@@ -13,6 +13,7 @@ import { getFAQsByPage } from '@/lib/faqs';
 import SEOHead from '@/components/SEOHead';
 import { getPublicBlogUrl } from '@/lib/public-url';
 import Schema from '@/components/Schema';
+import { getSEOByPage } from '@/lib/seo';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hexpertify.com';
 
@@ -107,17 +108,43 @@ export async function generateMetadata({ params }: { params?: Promise<{ slug: st
   };
 }
 
-function buildBlogGraphSchema(blog: any, faqs: any[]) {
+function buildBlogGraphSchema(blog: any, faqs: any[], keywords?: string) {
   const blogUrl = getPublicBlogUrl(SITE_URL, blog.slug);
+
+  const schemaGraph: any[] = [
+    {
+      '@type': 'BlogPosting',
+      headline: blog.title,
+      description: blog.description,
+      author: blog.author,
+      datePublished: blog.rawDate,
+      mainEntityOfPage: blogUrl,
+    },
+  ];
+
+  // Add keywords to BlogPosting if available
+  if (keywords) {
+    schemaGraph[0].keywords = keywords;
+  }
+
+  // Add FAQPage schema if FAQs exist
+  if (faqs && faqs.length > 0) {
+    schemaGraph.push({
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((faq: any) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer,
+        },
+      })),
+    });
+  }
 
   return {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: blog.title,
-    description: blog.description,
-    author: blog.author,
-    datePublished: blog.rawDate,
-    mainEntityOfPage: blogUrl,
+    '@graph': schemaGraph,
   };
 }
 
@@ -143,6 +170,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
 
   const blog = await getBlogData(slug);
   const faqs = await getFAQsByPage(slug);
+  const seo = await getSEOByPage(`blog-${slug.split('/').pop()}`);
 
   console.log('👉 Blog found:', !!blog);
 
@@ -166,7 +194,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <Schema value={buildBlogGraphSchema(blog, faqs)} />
+      <Schema value={buildBlogGraphSchema(blog, faqs, seo?.keywords)} />
       <main className="max-w-7xl mx-auto section-padding-y">
         <div className="page-padding">
           <BlogDetailHero blog={blog} />
