@@ -263,7 +263,17 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
                   </ol>
                 </div>
               )}
-              <div className="prose max-w-none">
+              <div className="prose max-w-none" style={{ counterReset: 'h2Counter' } as React.CSSProperties}>
+                <style>{`
+                  .prose h2 {
+                    counter-increment: h2Counter;
+                  }
+                  .prose h2::before {
+                    content: counter(h2Counter) '. ';
+                    color: black;
+                    font-weight: 600;
+                  }
+                `}</style>
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
