@@ -187,7 +187,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
             <div className="order-1 lg:order-2 lg:col-span-3">
               {blog.tableOfContents.length > 0 && (
                 <div className="bg-purple-50 rounded-lg p-6 mb-8">
-                  <h3 className="text-xl font-bold text-center mb-4">Table of Contents</h3>
+                  <div className="text-xl font-bold text-center mb-4">Table of Contents</div>
                   <ol className="space-y-2">
                     {blog.tableOfContents.map((item, index) => (
                       <li key={item.id}>

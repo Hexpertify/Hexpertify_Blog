@@ -22,7 +22,7 @@ interface BlogAuthorCardProps {
 export default function BlogAuthorCard({ author, authorDesignation, authorBio, authorAvatar, authorAvatarAlt, authorConsultationUrl, socialLinks }: BlogAuthorCardProps) {
   return (
     <div className="rounded-lg bg-[#A687EF]/50 p-3 sm:p-4">
-      <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 text-center">Know your Author</h3>
+      <div className="text-base sm:text-lg font-bold text-gray-900 mb-3 text-center">Know your Author</div>
 
       {/* Mobile: horizontal layout with content vertically centered beside avatar; Desktop: stack vertically with tighter spacing */}
       <div className="flex items-center gap-4 text-left md:flex-col md:items-center md:text-center md:gap-3">
