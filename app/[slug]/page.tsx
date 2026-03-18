@@ -299,7 +299,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
                   {blog.content}
                 </ReactMarkdown>
               </div>
-              <ReviewedBySection reviewedBy={blog.reviewedBy} />
+              <ReviewedBySection reviewedBy={blog.reviewedBy ?? undefined} />
             </div>
           </div>
 
