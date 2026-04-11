@@ -6,7 +6,6 @@ import Header from '@/components/blog/Header';
 import BlogDetailHero from '@/components/blog/BlogDetailHero';
 import BlogAuthorCard from '@/components/blog/BlogAuthorCard';
 import BlogSubscribe from '@/components/blog/BlogSubscribe';
-import RelatedPostsSidebar from '@/components/blog/RelatedPostsSidebar';
 import FAQSection from '@/components/FAQSection';
 import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { getFAQsByPage } from '@/lib/faqs';
@@ -286,9 +285,6 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
             <div className="hidden md:block order-2 lg:order-1 space-y-4 sm:space-y-6 max-w-sm mx-auto lg:max-w-none lg:mx-0">
               <BlogAuthorCard {...blog} />
               <BlogSubscribe />
-              <div className="hidden lg:block">
-                <RelatedPostsSidebar posts={blog.relatedPosts} />
-              </div>
             </div>
             <div className="order-1 lg:order-2 lg:col-span-3">
               {blog.tableOfContents.length > 0 && (
