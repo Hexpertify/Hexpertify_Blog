@@ -2,7 +2,7 @@
 
 A modern, file-based blog platform built with Next.js, featuring an admin panel for easy content management. Blog posts are stored as MDX files for version control and portability.
 
-## Features
+## Features 
 
 - MDX-based blog post storage
 - Rich admin panel with visual editor
