@@ -113,11 +113,11 @@ export default async function Home() {
                   Blogs by
                 </span>
                 <span className="mt-2 block bg-gradient-to-r from-purple-700 via-purple-600 to-purple-400 bg-clip-text text-transparent">
-                  <span className="font-extrabold">CERTIFIED</span> Experts
+                  Mental Health Counsellors
                 </span>
               </h1>
               <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-                Information you can truly rely on - written by <span className="font-extrabold">CERTIFIED</span> &amp; Verified Experts at Hexpertify.
+                Insights you can truly rely on - Backed by <span className="font-extrabold">CERTIFIED</span> &amp; & Verified Mental Health Counsellors at Hexpertify.
               </p>
             </div>
 
