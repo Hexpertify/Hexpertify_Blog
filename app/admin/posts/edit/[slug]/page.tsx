@@ -17,6 +17,7 @@ import ProtectedRoute from '@/components/admin/ProtectedRoute';
 import MDXEditor from '@/components/admin/MDXEditor';
 import { fetchPostBySlug, updatePost, fetchAllCategories, fetchSEOByPage, updateSEO, createSEO } from '@/lib/actions';
 import { getPublicBlogUrl } from '@/lib/public-url';
+import { formatDateTimeLocal, parseDateTimeLocal } from '@/lib/post-date';
 import { ArrowLeft, Plus, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
 
@@ -61,6 +62,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     imageAlt: '',
     readTime: '5 Minutes read',
     published: false,
+    publishDate: new Date().toISOString(),
     seoTitle: '',
     seoDescription: '',
     seoKeywords: '',
@@ -124,6 +126,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
         imageAlt: post.imageAlt || '',
         readTime: post.readTime,
         published: post.published,
+        publishDate: post.date || new Date().toISOString(),
         seoTitle: seo?.title || '',
         seoDescription: seo?.description || '',
         seoKeywords: seo?.keywords || '',
@@ -344,7 +347,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
           imageAlt: formData.imageAlt,
           readTime: formData.readTime,
           published: formData.published,
-          date: new Date().toISOString(),
+          date: formData.publishDate,
           seoOgImageAlt: formData.seoOgImageAlt,
           tableOfContents: tocItems,
         };
@@ -519,6 +522,21 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
                           onChange={(e) => setFormData({ ...formData, primaryTopic: e.target.value })}
                           placeholder="e.g., Machine Learning"
                         />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="publishDate">Published Date</Label>
+                        <Input
+                          id="publishDate"
+                          type="datetime-local"
+                          value={formatDateTimeLocal(formData.publishDate)}
+                          onChange={(e) => setFormData({ ...formData, publishDate: parseDateTimeLocal(e.target.value) })}
+                        />
+                        <p className="text-xs text-gray-500">
+                          Choose the date and time that should appear for this post.
+                        </p>
                       </div>
                     </div>
 
