@@ -14,12 +14,13 @@ export default function BlogSubscribe({ pageLabel }: BlogSubscribeProps) {
   const [showModal, setShowModal] = useState(false);
   const pathname = usePathname();
   const effectivePageLabel = pageLabel || (pathname === '/' ? 'homepage' : pathname);
+  const subscribeApiPath = `${process.env.NODE_ENV === 'production' ? '/blogs' : ''}/api/subscribe`;
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/subscribe', {
+      const response = await fetch(subscribeApiPath, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, pageLabel: effectivePageLabel, pagePath: pathname }),
