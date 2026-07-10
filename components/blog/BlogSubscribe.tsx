@@ -2,24 +2,35 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function BlogSubscribe() {
+type BlogSubscribeProps = {
+  pageLabel?: string;
+};
+
+export default function BlogSubscribe({ pageLabel }: BlogSubscribeProps) {
   const [email, setEmail] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const pathname = usePathname();
+  const effectivePageLabel = pageLabel || (pathname === '/' ? 'homepage' : pathname);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // send to API which stores in Supabase
-      await fetch('/api/subscribe', {
+      const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, pageLabel: effectivePageLabel, pagePath: pathname }),
       });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error || 'Unable to subscribe.');
+      }
     } catch (err) {
-      // ignore network errors for now
+      return;
     }
 
     try {
@@ -66,24 +77,24 @@ export default function BlogSubscribe() {
   return (
     <>
       <div className="bg-purple-50/50 rounded-lg p-3 sm:p-4 mx-auto max-w-xs sm:max-w-none">
-      <div className="text-sm sm:text-base font-bold text-gray-900 mb-1.5">Subscribe Now</div>
-      <p className="text-xs text-gray-600 mb-2.5">Get the Latest Expert Insights</p>
+        <div className="text-sm sm:text-base font-bold text-gray-900 mb-1.5">Subscribe Now</div>
+        <p className="text-xs text-gray-600 mb-2.5">Get the Latest Expert Insights</p>
 
         <form onSubmit={handleSubscribe} className="space-y-2">
-        <Input
-          type="email"
-          placeholder="Enter Your Email Id"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border-gray-300 rounded-full"
-          required
-        />
-        <Button
-          type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-full py-2"
-        >
-          Subscribe Now
-        </Button>
+          <Input
+            type="email"
+            placeholder="Enter Your Email Id"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border-gray-300 rounded-full"
+            required
+          />
+          <Button
+            type="submit"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-full py-2"
+          >
+            Subscribe Now
+          </Button>
         </form>
       </div>
 

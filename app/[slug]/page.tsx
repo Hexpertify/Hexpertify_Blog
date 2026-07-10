@@ -284,7 +284,7 @@ export default async function BlogDetailPage({ params }: { params?: Promise<{ sl
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-1 pb-8 sm:pt-6 sm:pb-10">
             <div className="hidden md:block order-2 lg:order-1 space-y-4 sm:space-y-6 max-w-sm mx-auto lg:max-w-none lg:mx-0">
               <BlogAuthorCard {...blog} />
-              <BlogSubscribe />
+              <BlogSubscribe pageLabel={blog.title} />
             </div>
             <div className="order-1 lg:order-2 lg:col-span-3">
               {blog.tableOfContents.length > 0 && (

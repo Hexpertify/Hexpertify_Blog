@@ -2,6 +2,7 @@ import Header from '@/components/blog/Header';
 import FAQSection from '@/components/FAQSection';
 import Schema from '@/components/Schema';
 import HomePageClient from '@/components/home/HomePageClient';
+import BlogSubscribe from '@/components/blog/BlogSubscribe';
 import { fetchAllPosts, fetchAllCategories } from '@/lib/actions';
 import { getFAQsByPage } from '@/lib/faqs';
 
@@ -127,6 +128,10 @@ export default async function Home() {
               allPosts={publishedPosts}
               categories={categories}
             />
+
+            <div className="mt-12 max-w-sm mx-auto">
+              <BlogSubscribe pageLabel="homepage" />
+            </div>
 
             {faqs && faqs.length > 0 && (
               <div className="mt-16">
