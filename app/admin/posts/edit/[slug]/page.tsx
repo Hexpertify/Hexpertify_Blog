@@ -57,7 +57,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     primaryTopic: '',
     reviewedByName: '',
     reviewedByDesignation: '',
-    category: 'AI',
+    categories: ['AI'],
     imageUrl: '',
     imageAlt: '',
     readTime: '5 Minutes read',
@@ -121,7 +121,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
         primaryTopic: post.primaryTopic || '',
         reviewedByName: post.reviewedBy?.name || '',
         reviewedByDesignation: post.reviewedBy?.designation || '',
-        category: post.category,
+        categories: post.categories && post.categories.length > 0 ? post.categories : [post.category].filter(Boolean),
         imageUrl: post.imageUrl,
         imageAlt: post.imageAlt || '',
         readTime: post.readTime,
@@ -145,6 +145,19 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     } finally {
       setFetching(false);
     }
+  };
+
+  const toggleCategory = (category: string) => {
+    setFormData((prev) => {
+      const selected = prev.categories.includes(category)
+        ? prev.categories.filter((item) => item !== category)
+        : [...prev.categories, category];
+
+      return {
+        ...prev,
+        categories: selected,
+      };
+    });
   };
   const generateSlug = (title: string) => {
     return title
@@ -319,6 +332,11 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     e.preventDefault();
     setError('');
 
+    if (formData.categories.length === 0) {
+      setError('Select at least one category for the post.');
+      return;
+    }
+
     startTransition(async () => {
       try {
         const metadata = {
@@ -342,7 +360,8 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
             name: formData.reviewedByName,
             designation: formData.reviewedByDesignation,
           } : undefined,
-          category: formData.category,
+          category: formData.categories[0] || '',
+          categories: formData.categories,
           imageUrl: formData.imageUrl,
           imageAlt: formData.imageAlt,
           readTime: formData.readTime,
@@ -486,22 +505,22 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="category">Category *</Label>
-                        <Select
-                          value={formData.category}
-                          onValueChange={(value) => setFormData({ ...formData, category: value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.map((category) => (
-                              <SelectItem key={category} value={category}>
+                        <Label>Categories *</Label>
+                        <div className="flex flex-wrap gap-2 rounded-md border border-gray-200 p-3">
+                          {categories.map((category) => {
+                            const active = formData.categories.includes(category);
+                            return (
+                              <button
+                                key={category}
+                                type="button"
+                                onClick={() => toggleCategory(category)}
+                                className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${active ? 'border-purple-600 bg-purple-600 text-white' : 'border-gray-300 bg-white text-gray-700 hover:border-purple-500 hover:text-purple-700'}`}
+                              >
                                 {category}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
 
                       <div className="space-y-2">

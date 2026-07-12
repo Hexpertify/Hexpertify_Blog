@@ -32,8 +32,13 @@ async function getBlogData(slug: string) {
 
   if (!post || !post.published) return null;
 
+  const postCategories = post.categories && post.categories.length > 0 ? post.categories : [post.category].filter(Boolean);
+
   const relatedPosts = allPosts
-    .filter((p) => p.slug !== post.slug && p.published && p.category === post.category)
+    .filter((p) => {
+      const candidateCategories = p.categories && p.categories.length > 0 ? p.categories : [p.category].filter(Boolean);
+      return p.slug !== post.slug && p.published && candidateCategories.some((category) => postCategories.includes(category));
+    })
     .slice(0, 5)
     .map((p) => ({
       slug: p.slug,
@@ -72,6 +77,7 @@ async function getBlogData(slug: string) {
     imageUrl: post.imageUrl,
     imageAlt: post.imageAlt || '',
     category: post.category,
+    categories: postCategories,
     content: post.content,
     relatedPosts,
   };
@@ -165,7 +171,7 @@ function buildBlogGraphSchema(blog: any, faqs: any[], keywords?: string) {
         url: 'https://hexpertify.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHexpertify%20purple%20logo%20full.dd09ce1d.png&w=1200&q=75',
       },
     },
-    articleSection: blog.category,
+    articleSection: blog.categories?.[0] || blog.category,
   };
 
   // Add dateModified (same as datePublished if no update date available)

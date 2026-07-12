@@ -33,7 +33,11 @@ export default function HomePageClient({
   };
 
   const filteredPosts = allPosts
-    .filter((post) => selectedCategory === 'All' || post.category === selectedCategory)
+    .filter((post) => {
+      if (selectedCategory === 'All') return true;
+      const postCategories = post.categories && post.categories.length > 0 ? post.categories : [post.category].filter(Boolean);
+      return postCategories.includes(selectedCategory);
+    })
     .filter(
       (post) =>
         searchQuery === '' ||
@@ -51,6 +55,7 @@ export default function HomePageClient({
       author: post.author,
       authorDesignation: post.authorDesignation,
       category: post.category,
+      categories: post.categories,
     }));
 
   return (

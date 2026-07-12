@@ -27,6 +27,7 @@ export interface PostMetadata {
     designation: string;
   };
   category: string;
+  categories?: string[];
   imageUrl: string;
   imageAlt?: string;
   readTime: string;
@@ -42,6 +43,22 @@ export interface PostMetadata {
 
 export interface Post extends PostMetadata {
   content: string;
+}
+
+function normalizeCategories(metadata: Pick<PostMetadata, 'category'> & { categories?: string[] }) {
+  const categories = Array.isArray(metadata.categories)
+    ? metadata.categories
+    : metadata.category
+      ? [metadata.category]
+      : [];
+
+  return Array.from(
+    new Set(
+      categories
+        .map((category) => category.trim())
+        .filter((category) => category.length > 0)
+    )
+  );
 }
 
 export function ensurePostsDirectory() {
@@ -79,9 +96,12 @@ export async function getAllPosts(): Promise<Post[]> {
           }
 
           const { data, content } = matter(fileContents);
+          const categories = normalizeCategories(data as PostMetadata);
 
           return {
             ...(data as PostMetadata),
+            category: categories[0] || (data as PostMetadata).category || '',
+            categories,
             slug: fileSlug,
             content,
           };
@@ -132,9 +152,12 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     }
 
     const { data, content } = matter(fileContents);
+    const categories = normalizeCategories(data as PostMetadata);
 
     return {
       ...(data as PostMetadata),
+      category: categories[0] || (data as PostMetadata).category || '',
+      categories,
       slug: cleanSlug,
       content,
     };
@@ -148,9 +171,12 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 // ✅ SAVE POST
 export async function savePost(slug: string, metadata: PostMetadata, content: string) {
   const cleanSlug = slug.split('/').pop()!;
+  const categories = normalizeCategories(metadata);
 
   const frontmatter = matter.stringify(content, {
     ...metadata,
+    category: categories[0] || metadata.category || '',
+    categories: categories.length > 0 ? categories : [metadata.category],
     slug: cleanSlug,
   });
 
