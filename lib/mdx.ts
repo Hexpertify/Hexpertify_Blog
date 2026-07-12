@@ -108,9 +108,9 @@ export async function getAllPosts(): Promise<Post[]> {
         })
     );
 
-    return allPostsData
-      .filter((post): post is Post => post !== null)
-      .sort((a, b) =>
+    const publishedPosts = allPostsData.filter((post) => post !== null) as Post[];
+
+    return publishedPosts.sort((a, b) =>
         new Date(a.date) < new Date(b.date) ? 1 : -1
       );
 

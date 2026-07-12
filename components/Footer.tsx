@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import nImg from '../assets/uploads/blogs/n.png';
 import { Instagram, Twitter, Linkedin } from 'lucide-react';
 
 export default function Footer() {
@@ -40,7 +39,7 @@ export default function Footer() {
               <div className="mb-4 flex justify-center md:justify-start">
                 <div className="w-[220px]">
                   <Image
-                    src={nImg}
+                    src="/assets/uploads/blogs/n.png"
                     alt="Hexpertify Logo"
                     title="Hexpertify Logo"
                     width={220}

@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import blogImg from '../../assets/uploads/blogs/blog.jpeg';
 import { useState } from 'react';
 
 export default function Header() {
@@ -14,7 +13,7 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <a href="https://hexpertify.com/blogs" className="ml-2">
               <Image
-                src={blogImg}
+                src="/assets/uploads/blogs/blog.jpeg"
                 alt="Blog"
                 title="Blog"
                 width={150}
