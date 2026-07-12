@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { getPublicAssetPath } from '@/lib/public-url';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -13,7 +14,7 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <a href="https://hexpertify.com/blogs" className="ml-2">
               <Image
-                src="/assets/uploads/blogs/blog.jpeg"
+                src={getPublicAssetPath('/assets/uploads/blogs/blog.jpeg')}
                 alt="Blog"
                 title="Blog"
                 width={150}

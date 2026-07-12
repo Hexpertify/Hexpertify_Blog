@@ -2,6 +2,12 @@ function trimSlashes(value: string): string {
   return value.replace(/^\/+|\/+$/g, '');
 }
 
+export function getPublicAssetPath(assetPath: string): string {
+  const cleanPath = assetPath.startsWith('/') ? assetPath : `/${assetPath}`;
+  const basePath = process.env.NODE_ENV === 'production' ? '/blogs' : '';
+  return `${basePath}${cleanPath}`;
+}
+
 export function getPublicBlogPath(slug?: string): string {
   const cleanSlug = trimSlashes(slug || '');
 

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Instagram, Twitter, Linkedin } from 'lucide-react';
+import { getPublicAssetPath } from '@/lib/public-url';
 
 export default function Footer() {
   const footerLinks = {
@@ -39,7 +40,7 @@ export default function Footer() {
               <div className="mb-4 flex justify-center md:justify-start">
                 <div className="w-[220px]">
                   <Image
-                    src="/assets/uploads/blogs/n.png"
+                    src={getPublicAssetPath('/assets/uploads/blogs/n.png')}
                     alt="Hexpertify Logo"
                     title="Hexpertify Logo"
                     width={220}
