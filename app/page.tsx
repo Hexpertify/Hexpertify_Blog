@@ -118,7 +118,7 @@ export default async function Home() {
                 </span>
               </h1>
               <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-                Insights you can truly rely on - Backed by <span className="font-extrabold">CERTIFIED</span> &amp; & Verified Mental Health Counsellors at Hexpertify.
+                Insights you can truly rely on - Backed by <span className="font-extrabold">CERTIFIED</span> & Verified Mental Health Counsellors at Hexpertify.
               </p>
             </div>
 
