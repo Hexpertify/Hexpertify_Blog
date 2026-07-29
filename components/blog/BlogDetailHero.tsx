@@ -30,14 +30,6 @@ export default function BlogDetailHero({ blog }: BlogDetailHeroProps) {
           Blog
         </Link>
         <span>›</span>
-        <span className="flex flex-wrap items-center gap-2">
-          {(blog.categories && blog.categories.length > 0 ? blog.categories : [blog.category].filter(Boolean)).map((category) => (
-            <span key={category} className="rounded-full border border-gray-300 px-2.5 py-0.5 text-gray-700">
-              {category}
-            </span>
-          ))}
-        </span>
-        <span>›</span>
         <span className="text-gray-900 break-words">{blog.title}</span>
       </div>
 
