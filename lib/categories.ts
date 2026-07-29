@@ -16,13 +16,13 @@ export async function getAllCategories(): Promise<string[]> {
   try {
     const fileContents = await getFileContent('content/categories.json');
     if (!fileContents) {
-      return ['All', 'Mental Health', 'Fitness', 'Career', 'AI', 'Cloud', 'Technology'];
+      return ['All', 'Mental Health', 'Fitness', 'Career', 'Cloud', 'Technology'];
     }
     const data: CategoriesData = JSON.parse(fileContents);
     return data.categories;
   } catch (error) {
     // If file not found or error, return default categories
-    return ['All', 'Mental Health', 'Fitness', 'Career', 'AI', 'Cloud', 'Technology'];
+    return ['All', 'Mental Health', 'Fitness', 'Career', 'Cloud', 'Technology'];
   }
 }
 
@@ -31,9 +31,9 @@ export async function addCategory(category: string): Promise<{ success: boolean;
     let data: CategoriesData;
     try {
       const fileContents = await getFileContent('content/categories.json');
-      data = fileContents ? JSON.parse(fileContents) : { categories: ['All', 'Mental Health', 'Fitness', 'Career', 'AI', 'Cloud', 'Technology'] };
+      data = fileContents ? JSON.parse(fileContents) : { categories: ['All', 'Mental Health', 'Fitness', 'Career', 'Cloud', 'Technology'] };
     } catch {
-      data = { categories: ['All', 'Mental Health', 'Fitness', 'Career', 'AI', 'Cloud', 'Technology'] };
+      data = { categories: ['All', 'Mental Health', 'Fitness', 'Career', 'Cloud', 'Technology'] };
     }
 
     if (data.categories.includes(category)) {
@@ -55,9 +55,9 @@ export async function deleteCategory(category: string): Promise<{ success: boole
     let data: CategoriesData;
     try {
       const fileContents = await getFileContent('content/categories.json');
-      data = fileContents ? JSON.parse(fileContents) : { categories: ['All', 'Mental Health', 'Fitness', 'Career', 'AI', 'Cloud', 'Technology'] };
+      data = fileContents ? JSON.parse(fileContents) : { categories: ['All', 'Mental Health', 'Fitness', 'Career', 'Cloud', 'Technology'] };
     } catch {
-      data = { categories: ['All', 'Mental Health', 'Fitness', 'Career', 'AI', 'Cloud', 'Technology'] };
+      data = { categories: ['All', 'Mental Health', 'Fitness', 'Career', 'Cloud', 'Technology'] };
     }
 
     if (category === 'All') {

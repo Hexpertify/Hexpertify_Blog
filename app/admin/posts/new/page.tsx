@@ -54,7 +54,7 @@ export default function NewPostPage() {
     primaryTopic: '',
     reviewedByName: '',
     reviewedByDesignation: '',
-    categories: ['AI'],
+    categories: [''],
     imageUrl: '',
     imageAlt: '',
     readTime: '5 Minutes read',
