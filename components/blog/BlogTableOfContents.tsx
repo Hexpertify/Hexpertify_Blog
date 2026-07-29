@@ -10,9 +10,8 @@ export default function BlogTableOfContents({ items }: BlogTableOfContentsProps)
       <h3 className="text-lg font-bold text-gray-900 mb-4">Table of Contents</h3>
       <ol className="space-y-3">
         {items.map((item, index) => (
-          <li key={index} className="text-sm text-gray-700 flex gap-3">
-            <span className="text-purple-600 font-semibold flex-shrink-0">{index + 1}.</span>
-            <span>{item}</span>
+          <li key={index} className="text-sm text-gray-700">
+            {item}
           </li>
         ))}
       </ol>

@@ -25,19 +25,19 @@ export default function BlogDetailLayout({ blog }: BlogDetailLayoutProps) {
         <div className="bg-purple-50 rounded-lg p-8 w-full max-w-2xl">
           <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">Table of Contents</h3>
           <ol className="space-y-3 text-gray-700">
-            {blog.sections.map((section, index) => (
+            {blog.sections.map((section) => (
               <li key={section.id} className="text-sm leading-relaxed">
-                <span className="font-semibold">{index + 1}.</span> {section.title}
+                {section.title}
               </li>
             ))}
           </ol>
         </div>
       </div>
 
-      {blog.sections.map((section, index) => (
+      {blog.sections.map((section) => (
         <div key={section.id}>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {index + 1}. {section.title}
+            {section.title}
           </h2>
 
           <p className="text-gray-700 leading-relaxed mb-6 text-justify">{section.content}</p>
