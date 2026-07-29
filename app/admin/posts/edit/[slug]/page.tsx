@@ -57,7 +57,7 @@ export default function EditPostPage({ params }: { params: Promise<{ slug: strin
     primaryTopic: '',
     reviewedByName: '',
     reviewedByDesignation: '',
-    categories: ['AI'],
+    categories: [''],
     imageUrl: '',
     imageAlt: '',
     readTime: '5 Minutes read',
